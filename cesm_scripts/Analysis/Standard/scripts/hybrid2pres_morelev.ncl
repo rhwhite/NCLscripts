@@ -61,6 +61,8 @@ do ts = 0,nts - 1
 	
 		lat = cdf_file->lat
 		lon = cdf_file->lon
+		nlats = dimsizes(lat)
+		nlons = dimsizes(lon)
 		P0mb = 0.01*cdf_file->P0
 		U = cdf_file->U
 		V = cdf_file->V
@@ -133,12 +135,18 @@ do ts = 0,nts - 1
 
 		SFza = dim_rmvmean_Wrap(SFpres(time|:,lev_p|:,lat|:,lon|:))
 
+; Get distance of lats and lons for finite differences
+		dlat = gc_latlon(lat(1),lon(0),lat(2),lon(0),0,3)
 ; Get gradients of U using spherical harmonics: near the surface this might look funky
 
 		Ux = Upres
 		Uy = Upres
-		gradsf(Upres,Ux,Uy)
-                copy_VarMeta(Upres,Ux)
+		Uy = tofloat(center_finite_diff_n(Upres(time|:,lev_p|:,lat|:,lon|:),dlat,False,0,2))
+                do ilat = 0,nlats-1
+			dlon = gc_latlon(lat(ilat),lon(0),lat(ilat),lon(1),0,3)
+			Ux(:,:,ilat,:) = tofloat(center_finite_diff_n(Upres(time|:,lev_p|:,lat|ilat,lon|:),dlon,True,0,2))
+		end do
+		copy_VarMeta(Upres,Ux)
                 copy_VarMeta(Upres,Uy)
 		Ux@longname = "longitudinal gradient of U"
 		Uy@longname = "latitudinal gradient of U"
@@ -146,8 +154,12 @@ do ts = 0,nts - 1
 		Uy@units = "1/s"
 ; Do the same for V
                 Vx = Vpres 
-                Vy = Vpres 
-                gradsf(Vpres,Vx,Vy)
+                Vy = Vpres
+                Vy = tofloat(center_finite_diff_n(Vpres(time|:,lev_p|:,lat|:,lon|:),dlat,False,0,2))
+                do ilat = 0,nlats-1
+                        dlon = gc_latlon(lat(ilat),lon(0),lat(ilat),lon(1),0,3)
+                        Vx(:,:,ilat,:) = tofloat(center_finite_diff_n(Vpres(time|:,lev_p|:,lat|ilat,lon|:),dlon,True,0,2))
+                end do 
                 copy_VarMeta(Vpres,Vx)
                 copy_VarMeta(Vpres,Vy)
                 Vx@longname = "longitudinal gradient of V"
@@ -157,7 +169,11 @@ do ts = 0,nts - 1
 ; Do the same for TH
                 THx = TH 
                 THy = TH 
-                gradsf(TH,THx,THy)
+                THy = tofloat(center_finite_diff_n(TH(time|:,lev_p|:,lat|:,lon|:),dlat,False,0,2))
+                do ilat = 0,nlats-1
+                        dlon = gc_latlon(lat(ilat),lon(0),lat(ilat),lon(1),0,3)
+                        THx(:,:,ilat,:) = tofloat(center_finite_diff_n(TH(time|:,lev_p|:,lat|ilat,lon|:),dlon,True,0,2))
+                end do
 		copy_VarMeta(TH,THx)
                 copy_VarMeta(TH,THy)
 
@@ -173,7 +189,11 @@ do ts = 0,nts - 1
 
                 PSIx = Z3pres
                 PSIy = Z3pres 
-                gradsf(Z3pres*g,PSIx,PSIy)
+                PSIy = tofloat(center_finite_diff_n(PSI(time|:,lev_p|:,lat|:,lon|:),dlat,False,0,2))
+                do ilat = 0,nlats-1
+                        dlon = gc_latlon(lat(ilat),lon(0),lat(ilat),lon(1),0,3)
+                        PSIx(:,:,ilat,:) = tofloat(center_finite_diff_n(PSI(time|:,lev_p|:,lat|ilat,lon|:),dlon,True,0,2))
+                end do
 
 		copy_VarMeta(Z3pres,PSIx)
 		copy_VarMeta(Z3pres,PSIy)
