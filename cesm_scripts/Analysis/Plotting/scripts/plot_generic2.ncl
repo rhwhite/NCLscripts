@@ -64,16 +64,16 @@ end do
 
 if (numcols .GT. 1) then
 	if (difexps .EQ. 0) then
-		plotERA(1) = plotERA(0)
-
-		Experiments(1,:) = Experiments(0,:)
-		Titles(1,:) = Titles(0,:)
-		ExpCTLs(1,:) = ExpCTLs(0,:)
-		startyrs(1,:) = startyrs(0,:)
-		nyears(1,:) = nyears(0,:)
-		timespans(1,:) = timespans(0,:)
-		reverses(1,:) = reverses(0,:)
-
+		do ncol = 1,numcols-1
+			plotERA(ncol) = plotERA(0)
+			Experiments(ncol,:) = Experiments(0,:)
+			Titles(ncol,:) = Titles(0,:)
+			ExpCTLs(ncol,:) = ExpCTLs(0,:)
+			startyrs(ncol,:) = startyrs(0,:)
+			nyears(ncol,:) = nyears(0,:)
+			timespans(ncol,:) = timespans(0,:)
+			reverses(ncol,:) = reverses(0,:)
+		end do
 	else
 		plotERA(1) = toint(getenv("NCLplotERA2"))
 
@@ -576,7 +576,15 @@ do es = 0,numcols-1
 					levs_mean = cdf_file->lev_p
 					nlevs = dimsizes(levs_mean)
 					; Check levs
-					if levs_mean(plev) .NE. ilev then
+					getlev=0
+					if (plev .GE. nlevs) then
+						getlev = 1
+					else if (levs_mean(plev) .NE. ilev) then
+						getlev = 1
+					end if
+					end if
+					print(getlev)
+					if (getlev .EQ. 1) then
 						; Find correct pressure level
 						plev = -1
 						do nl = 0,nlevs-1
@@ -671,7 +679,15 @@ do es = 0,numcols-1
 				levs_mean = cdf_file->lev_p
 				nlevs = dimsizes(levs_mean)
 				; Check levs
-				if levs_mean(plev) .NE. ilev then
+				getlev=0
+				if (plev .GE. nlevs) then
+					getlev = 1
+				else if (levs_mean(plev) .NE. ilev) then
+					getlev = 1
+				end if
+				end if
+				print(getlev)
+				if (getlev .EQ. 1) then
 					; Find correct pressure level
 					plev = -1
 					do nl = 0,nlevs-1
@@ -1434,6 +1450,9 @@ end do
 wks   = gsn_open_wks ("eps","/home/disk/eos4/rachel/Figures/" + figtitle + "/" + titleprefix + plotname + "_" + timespantitle) 
 
 
+colorshere = (/"navy","blue3","mediumblue","dodgerblue","deepskyblue","white","white","lightgoldenrod","gold","darkorange","red","red4"/)
+
+;gsn_define_colormap(wks,colorshere)
 gsn_define_colormap(wks,"BlueWhiteOrangeRed")         ; choose colormap
 plots = new((/numcols,singlesize/),graphic)                          ; create a plot array
 
@@ -1510,7 +1529,7 @@ if (plottype .EQ. "map" .OR. plottype .EQ. "CSZ" .OR. plottype .EQ. "CSM") then
 		  resOv@cnInfoLabelOn       = False        ; no info label
 	end if
 
-	plotnum = new(2,"integer")
+	plotnum = new(numcols,"integer")
 	plotnum(:) = 0
 	res@cnLevelSelectionMode = "ManualLevels"       ; manually set the contour levels
 
@@ -1524,7 +1543,7 @@ if (plottype .EQ. "map" .OR. plottype .EQ. "CSZ" .OR. plottype .EQ. "CSM") then
 			res@cnLevelSpacingF       = plotdifs(ic,0)/plotfactor(ic)      ; contour spacing
 	        
 			if (plotERA(ic) .EQ. 1) then
-				res@gsnCenterString = "ERA-I, 1979-2015"
+				res@gsnCenterString = ""
 			else
                                 res@gsnCenterString = "NCAR-NCEP"
 			end if
@@ -1689,6 +1708,25 @@ if (numcols .GT. 1) then
 	end if
 end if
 
+if (numcols .GT. 2) then
+        resP_3                   = True
+        resP_3@gsnFrame          = False
+        resP_3@gsnDraw           = False        ; draw later in maximise mode
+        resP_3@txString = vartitles(2)
+
+        if (plottype .EQ. "CSZ") then
+                resP_3@txString = resP_3@txString + " at " + tostring(slat) + "N-" + tostring(elat) + "N"
+        else if (plottype .EQ. "CSM") then
+                resP_3@txString = resP_3@txString + " at " + tostring(slon) + "E-" + tostring(elon) + "E"
+        else if (ilevs(1) .EQ. 0) then
+                  resP_3@txString = resP_3@txString + " at the surface"
+        else
+                  resP_3@txString = resP_3@txString + " at " + tostring(ilevs(2)) + "mb"
+        end if
+        end if
+        end if
+end if
+
 
 if (numcols .GT. 2) then
 	print ("not set up for 3 columns yet")
@@ -1805,26 +1843,26 @@ else if numcols .EQ. 2 then
                   resP_1@gsnPanelYWhiteSpacePercent = 5
                 else if (max(plotnum) .LT. 4) then
                   resP_1@gsnPanelLeft     = 0.02
-                  resP_1@gsnPanelRight     = 0.48
-                  resP_2@gsnPanelLeft       = 0.52
-                  resP_2@gsnPanelRight       = 0.98
-                  resP_1@gsnPanelBottom = 0.35
-                  resP_2@gsnPanelBottom = 0.35
-                  resP_2@gsnPanelYWhiteSpacePercent = 5
-                  resP_1@gsnPanelYWhiteSpacePercent = 5
-                else if (max(plotnum) .LT. 5) then
-                  resP_1@gsnPanelLeft     = 0.02
-                  resP_1@gsnPanelRight     = 0.52
-                  resP_2@gsnPanelLeft       = 0.48
-                  resP_2@gsnPanelRight       = 0.98
-                  resP_1@gsnPanelBottom = 0.35
-                  resP_2@gsnPanelBottom = 0.35
-                  resP_2@gsnPanelYWhiteSpacePercent = 5
-                  resP_1@gsnPanelYWhiteSpacePercent = 5
+                  resP_1@gsnPanelRight     = 0.5
+                  resP_2@gsnPanelLeft       = 0.5
+                  resP_2@gsnPanelRight       = 0.97
+                  resP_1@gsnPanelBottom = 0.01
+                  resP_2@gsnPanelBottom = 0.01
+                  resP_1@gsnPanelYWhiteSpacePercent = 3
+                  resP_2@gsnPanelYWhiteSpacePercent = 3
+                else
+                  resP_1@gsnPanelLeft       = 0.06
+                  resP_1@gsnPanelRight     = 0.5
+                  resP_2@gsnPanelLeft       = 0.5
+                  resP_2@gsnPanelRight     = 0.94
+                  resP_1@gsnPanelBottom = 0.01
+                  resP_2@gsnPanelBottom = 0.01
+                  resP_2@gsnPanelYWhiteSpacePercent = 3
+                  resP_1@gsnPanelYWhiteSpacePercent = 3
+                  resP_1@txPosXF           = 0.3
+                  resP_2@txPosXF           = 0.68
 		end if
 		end if
-		end if
-
 	end if
 
 else
