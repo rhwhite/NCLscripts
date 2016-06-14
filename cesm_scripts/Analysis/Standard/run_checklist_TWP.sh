@@ -2,10 +2,10 @@
 cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis/Standard/scripts/
 dir="/home/disk/eos4/rachel/TWP/Outputs/"
 #dir="/home/disk/rachel/CESM_outfiles/"
-numexps="2"
+numexps="1"
 exps=("CAM4_f09f09_CTL_ICC14" "CAM4_f09f09_noTWP_FakeSU") 
 start="2"
-end="10"
+end="41"
 nsecs="00000" #"00000"
 
 export NCL_dirstr="/"
@@ -37,6 +37,14 @@ echo 'Calc_VertGrad.ncl'
 ncl Calc_VertGrad.ncl
 echo 'hybrid2pres_morelev.ncl'
 ncl hybrid2pres_morelev.ncl
+
+# Calc EP fluxes
+echo 'Calc_EPfluxes.ncl'
+ncl Calc_EPfluxes.ncl
+echo 'Calc_RIdx.ncl'
+ncl Calc_RIdx.ncl
+echo 'Calc_Ks.ncl'
+ncl Calc_Ks.ncl
 
 # Calc daily PV
 ncl Create_Seas_ts.ncl

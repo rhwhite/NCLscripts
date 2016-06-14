@@ -1,5 +1,5 @@
 #!/bin/sh
-cd /home/disk/eos4/rachel/NCL/cesm_scripts/Analysis/Standard/scripts/
+cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis/Standard/scripts/
 #dir="/home/disk/eos4/rachel/CESM_outfiles/"
 dir="/home/disk/rachel/CESM_outfiles/"
 numexps="5"
@@ -32,10 +32,10 @@ echo $index
 eval export NCL_ARG_$index=$nsecs
 
 echo NCL_N_ARGS 
-ncl LanczosF_Z.ncl
-echo 'LanczosF_Z.ncl'
-ncl Calc_varZ.ncl
-echo 'Calc_varZ.ncl'
+#ncl LanczosF_Z.ncl
+#echo 'LanczosF_Z.ncl'
+echo 'Calc_varZ250.ncl'
+ncl Calc_varZ250.ncl
 
 echo 'finished'
 

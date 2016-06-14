@@ -14,6 +14,8 @@ begin
 
 ; Get experiment names
 
+logp = 0
+
 print("Calc EP fluxes")
 Direc = getenv("NCL_ARG_1")
 nexps = toint(getenv("NCL_ARG_2"))
@@ -32,10 +34,9 @@ nyears = endyr-startyr+1
 lonstart = toint(getenv("NCL_ARG_lonstart"))
 lonend = toint(getenv("NCL_ARG_lonend"))
 
-timespan = "DJF"
+timespan = getenv("NCL_season")
 
 a = 6.37122e06	; radius of Earth
-print(a)
 PI = 3.14159265358979
 
 cp = 1.00464e3
@@ -58,14 +59,18 @@ do exps = 0,nexps-1
 	; open file with seasonal averages
 	cdf_file = addfile(filename,"r")
 
+	filenamePS = Dir + timespan + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + ".cam2.h0.nc"
+        ; open file with seasonal averages
+	filePS = addfile(filenamePS,"r")
+
 	; get pressure levels
 
-	level = cdf_file->lev_p		; in hpa
-	level!0="lev_p"
-	levsizes = dimsizes(level)
-	nlevels = filevardimsizes(cdf_file,"lev_p")
-	
-       nlat = filevardimsizes(cdf_file,"lat")
+	nlevelstemp = filevardimsizes(cdf_file,"lev_p")
+	nlevels = nlevelstemp-1	
+	level = cdf_file->lev_p(0:nlevels-1)
+        level!0="lev_p"
+
+        nlat = filevardimsizes(cdf_file,"lat")
         nlon = filevardimsizes(cdf_file,"lon")
 
         lat = tofloat(cdf_file->lat)
@@ -74,13 +79,10 @@ do exps = 0,nexps-1
         lon!0="lon"
 
         ; find lonstart and lonend
-	print(lon)
 	idxlonstart = 0
 	idxlonend = nlon-1
 
 	do ilon = 0,nlon-2
-		print(lon(ilon))
-		print(lonstart)
 		if (lon(ilon) .LE. lonstart .AND. lon(ilon+1) .GT. lonstart) then
 			idxlonstart = ilon
 			break
@@ -93,33 +95,44 @@ do exps = 0,nexps-1
 		end if
 	end do
 
-	print(lonstart)
-	print(idxlonstart)
-	print(lonend)
-	print(idxlonend)
 
 
-        U = cdf_file->U(:,:,:,:)
-        V = cdf_file->V(:,:,:,:)
-        T = cdf_file->T(:,:,:,:)
+        U = cdf_file->U(:,0:nlevels-1,:,:)
+        V = cdf_file->V(:,0:nlevels-1,:,:)
+        T = cdf_file->T(:,0:nlevels-1,:,:)
+	PS = filePS->PS(0,:,:)
 
-        print("dim of U")
-        print(dimsizes(U))
+	; mask out regions below ground
+	;print(level)
+	do ilat = 0,nlat-1
+		do ilon = 0,nlon-1
+			do ilevp = 0,nlevels-1
+				if PS(ilat,ilon) .LT. (level(ilevp)+20) *100.0
+				;	print(tostring(ilevp) + ", " + tostring(ilat) + ", " + tostring(ilon))
+					U(:,ilevp,ilat,ilon) = U@_FillValue
+                                        V(:,ilevp,ilat,ilon) = V@_FillValue
+                                        T(:,ilevp,ilat,ilon) = T@_FillValue
+				end if
+			end do
+		end do
+	end do
 
 
         ; Calculate potential temperature
         THETA = T
         THETA = T * (conform(T,level,1)/1000.0)^(-1.0 * kappa)
         THETAzm = dim_avg_Wrap(THETA)
+
         ; Calculate d(THETA)/dp from vertical finite differences in log-pressure coordinates
         ; noting that dT/dp = (1/p) * dT/d(lnp)
         loglevel = log(level)
 
         THETAp = center_finite_diff_n(THETAzm(time|:,lev_p|:,lat|:),loglevel,False,0,1) ; derivative in log coords doesn't care whether in Pa or in mb.
         ; named subscripting reorders the dimensions
-        THETAp = THETAp / conform(THETAp,100.0 * level,1) ; converts "level" to pascals from millibars while dividing by pressure.
-        copy_VarMeta(THETAzm,THETAp)
+;        THETAp = THETAp / conform(THETAp,100.0 * level,1) ; converts "level" to pascals from millibars while dividing by pressure.
+	THETAp = center_finite_diff_n(THETAzm(time|:,lev_p|:,lat|:),level*100.0,False,0,1) ; 
 
+        copy_VarMeta(THETAzm,THETAp)
         ; za stands for zonal anomaly
         THETAp!2="lat"
         ; zm stands for zonal mean
@@ -130,7 +143,7 @@ do exps = 0,nexps-1
         Vza = dim_rmvmean_Wrap(V(time|:,lev_p|:,lat|:,lon|:))   ; removes mean of rightmost dimension
         THETAza = dim_rmvmean_Wrap(THETA(time|:,lev_p|:,lat|:,lon|:))
 
-        UV = Uza * Vza
+	UV = Uza * Vza
         copy_VarMeta(Uza,UV)
         UVzm = dim_avg_n_Wrap(UV(time|:,lev_p|:,lat|:,lon|idxlonstart:idxlonend),3) ; averages over longitude dimension
         UVzmtm = dim_avg_n_Wrap(UVzm(time|:,lev_p|:,lat|:),0)   ; average over time dimension
@@ -141,7 +154,6 @@ do exps = 0,nexps-1
         VTHETAzmtm = dim_avg_n_Wrap(VTHETAzm(time|:,lev_p|:,lat|:),0)   ; average over time dimension
 
         THETAptm = dim_avg_n_Wrap(THETAp(time|:,lev_p|:,lat|:),0)       ; time mean of THETAp
-
         phi = lat*PI/180.0      ; Get latitude in radians
         cphi = cos(phi)
 	sphi = sin(phi)
@@ -156,10 +168,8 @@ do exps = 0,nexps-1
 	Fpxy = conform(VTHETAzmtm,f,1) * VTHETAzmtm/THETAptm
 
 	
-	print(level)
-	print(P0)
 	FphiBEH = (1.0 / P0) * conform(Fphi,level,0) * Fphi
-	FpBEH = (1.0/P0) * conform(Fphi,level,0) * Fp
+	FpBEH = (1.0/P0) * conform(Fp,level,0) * Fp
 
         copy_VarMeta(UVzmtm,Fphi)
         copy_VarMeta(UVzmtm,FphiBEH)
@@ -183,7 +193,6 @@ do exps = 0,nexps-1
 	EPdivBEH1 = center_finite_diff_n(FphiBEHcphi(lev_p|:,lat|:),phi,False,0,1)/conform(Fphicphi,acphi,1)
 
 	latdist = gc_latlon(lat(40),0,lat(41),0,1,3) ; in m
-	print(latdist) 
 
 	EPdiv1xy = center_finite_diff_n(Fx(lev_p|:,lat|:),latdist,False,0,1)
 
@@ -214,7 +223,13 @@ do exps = 0,nexps-1
 
 ; Put onto equally space log-pressure levels
 
-	level_int = 10^fspan(1,3,15)   ; interpolation targets
+	if logp .EQ. 1 then
+		level_int = 10^fspan(1,3.1,16)   ; interpolation targets
+	else
+		level_int = fspan(1000,10,16)
+	end if
+
+	print(level_int)
 	level_int!0 = "lev_int"
 
 	nlev_int = dimsizes(level_int)
@@ -267,7 +282,12 @@ do exps = 0,nexps-1
 	
 ;-----------------------------------------------------------------------
 
-	filo = "EPfluxes_" + timespan + tostring(startyr) + "_" + tostring(nyears) + "_" + tostring(lonstart) + "E-" + tostring(lonend) + "E_" + Experiment + ".cam2.h0.nc"
+	if logp .EQ. 1 then
+		filo = "EPfluxesNEW_" + timespan + tostring(startyr) + "_" + tostring(nyears) + "_" + tostring(lonstart) + "E-" + tostring(lonend) + "E_" + Experiment + ".cam2.h0.nc"
+	else
+		filo = "EPfluxesPr_" + timespan + tostring(startyr) + "_" + tostring(nyears) + "_" + tostring(lonstart) + "E-" + tostring(lonend) + "E_" + Experiment + ".cam2.h0.nc"
+	end if
+
 	system("/bin/rm -f " + Dir + filo)
 	fout_std = addfile(Dir + filo, "c")
 

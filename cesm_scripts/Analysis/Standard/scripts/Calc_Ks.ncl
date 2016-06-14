@@ -30,7 +30,7 @@ secs = getenv("NCL_ARG_" + tostring(5+nexps))
 
 nyears = endyr-startyr+1
 
-timespan = "DJF"
+timespan = getenv("NCL_season")
 
 a = 6.37122e06	; radius of Earth
 PI = 3.14159265358979
@@ -71,14 +71,8 @@ do exps = 0,nexps-1
 	lon!0="lon"
 
 	Umd = cdf_file->U(:,:,:,:)
-	Zmd = cdf_file->Z3(:,:,:,:)
 
 	U = cdf_filepl->U(:,:,:,:)
-	V = cdf_filepl->V(:,:,:,:)
-	T = cdf_filepl->T(:,:,:,:)
-	Z = cdf_filepl->Z3(:,:,:,:)
-	QV = cdf_filepl->Q(:,:,:,:)
-	PS = cdf_file->PS(:,:,:)
 
 ; Set up some constants
         phi = lat*PI/180.0      ; Get latitude in radians

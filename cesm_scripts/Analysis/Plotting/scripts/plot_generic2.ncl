@@ -9,15 +9,15 @@ diffdiffs = "false" ;;!!!!!! diffdiffs=.true. no longer an option!
 linear = "false"
 nonlinplot = 1.0 ; factor for colorbar for non-linear plot
 varswitch = 0
-papertitles = 1
+papertitles = getenv("NCLplottitles")
 LineColors = (/"blue","red","green","cyan","black","yellow"/)
 overplot = 1
-justblue = 0
-
+justblue = getenv("NCLallblue")
+print(justblue)
 vmagnitude = 5
 vmax = 2
 vspacing = 0.2
-minmag = 0.2
+minmag = 1.0
 
 
 Rair = 287.0
@@ -33,17 +33,23 @@ dir = getenv("NCLdir1")
 
 if nexps .EQ. 1 .AND. numvars .GT. 1 then
 	varswitch = 1
+else if difexps .EQ. 1 then
+	varswitch = 1
+end if
 end if
 
 ; find number of columns:
 if (difexps .EQ. 0) then
 	numcols = numvars
+	numrows = nexps
 else if (difexps .EQ. 1) then
 	if (numvars .EQ. 1) then
 		numcols = 2
+		numrows = nexps
 	else
-		print("different experiments AND variables? Really?!")
-		exit
+		numcols = numvars
+		numrows = 1
+		nexps = 1	; shift back to printing one experiment per variable
 	end if
 else
 	print("difexps should be 0 or 1")
@@ -51,22 +57,17 @@ else
 end if
 end if
 
-;print(numcols + " columns")
+; Allow difexps to plto one column, but with different experiments for different variables - specifically for figure 4 for Mongolia paper
 
-; find number of rows
-numrows = nexps
+nrows = nexps
 
-;print("numcols " + tostring(numcols))
-;print("numrows " + tostring(numrows))
-
-
-Experiments = new((/numcols,nexps/),"string")
-Titles = new((/numcols,nexps/),"string")
-ExpCTLs = new((/numcols,nexps/),"integer")
-startyrs = new((/numcols,nexps/),"integer")
-nyears = new((/numcols,nexps/),"integer")
-timespans = new((/numcols,nexps/),"string")
-reverses = new((/numcols,nexps/),"string")
+Experiments = new((/numcols,nrows/),"string")
+Titles = new((/numcols,nrows/),"string")
+ExpCTLs = new((/numcols,nrows/),"integer")
+startyrs = new((/numcols,nrows/),"integer")
+nyears = new((/numcols,nrows/),"integer")
+timespans = new((/numcols,nrows/),"string")
+reverses = new((/numcols,nrows/),"string")
 plotERA = new((/numcols/),"integer")
 
 
@@ -97,20 +98,20 @@ if (numcols .GT. 1) then
 			reverses(ncol,:) = reverses(0,:)
 		end do
 	else
-		plotERA(1) = toint(getenv("NCLplotERA2"))
+		index = 1
+		do ne = 0,numvars-1
 
-		index = 1 
-		do ne = 0,nexps-1
-			Experiments(1,ne) = getenv("NCLexps2_" + tostring(index))
-			Titles(1,ne) = getenv("NCLtitles2_" + tostring(index))
-			ExpCTLs(1,ne) = toint(getenv("NCLCTLs2_" + tostring(index)))
-			startyrs(1,ne) = toint(getenv("NCLstarts2_" + tostring(index)))
-			nyears(1,ne) = toint(getenv("NCLnyears2_" + tostring(index)))
-			timespans(1,ne) = (getenv("NCLtimespans2_" + tostring(index)))
-			reverses(1,ne) = (getenv("NCLreverses2_" + tostring(index)))
-			
+                        plotERA(ne) = plotERA(0)
+			Experiments(ne,:) = getenv("NCLexps1_" + tostring(index))
+			Titles(ne,:) = getenv("NCLtitles1_" + tostring(index))
+			ExpCTLs(ne,:) = toint(getenv("NCLCTLs1_" + tostring(index)))
+			startyrs(ne,:) = toint(getenv("NCLstarts1_" + tostring(index)))
+			nyears(ne,:) = toint(getenv("NCLnyears1_" + tostring(index)))
+			timespans(ne,:) = (getenv("NCLtimespans1_" + tostring(index)))
+			reverses(ne,:) = (getenv("NCLreverses1_" + tostring(index)))
+
 			index = index+ 1
-		end do  
+		end do 
 
 	end if
 end if
@@ -463,6 +464,8 @@ delete(cdf_file)
 
 do iexp = 0,numrows-1
 	do ic = 0,numcols-1
+		print(iexp)
+		print(ic)
 		if (Experiments(ic,iexp) .EQ. "0") then
 			PS(ic,iexp,:,:) = 10000.0
 			PHIS(ic,iexp,:,:) = 10000.0
@@ -641,7 +644,7 @@ do es = 0,numcols-1
 						else
 							if reverses(es,iexp) .EQ. "false" then
 	
-								filein2 = Experiments(es,0) + "/atm/hist/TakNak01_fluxes_" + Experiments(es,0) + "-" + Experiments(es,iexp) + ".nc"
+								filein2 = Experiments(es,0) + "/atm/hist/TakNak01_fluxes_" + timespans(es,iexp) + "_" + Experiments(es,0) + "-" + Experiments(es,iexp) + ".nc"
 								
 								cdf_file2 = addfile(dir + filein2,"r")
 							else
@@ -987,10 +990,12 @@ do es = 0,numcols-1
 
 			else if (variable .EQ. "PV" .OR. variable .EQ. "dPVdy") then
 				lat_dist = tofloat(gc_latlon(lats(0),lons(0),lats(1),lons(0),2,3))
-				filo = Experiments(es,iexp) + "/atm/hist/PV_" + timespans(es,iexp) + tostring(startyrs(es,iexp)) + "_" + tostring(nyears(es,iexp)) + "_ts_" + Experiments(es,iexp) + ".cam2.h0.nc"
+				filo = Experiments(es,iexp) + "/atm/hist/" + timespans(es,iexp) + tostring(startyrs(es,iexp)) + "_" + tostring(nyears(es,iexp)) + "_mean_Xpl_" + Experiments(es,iexp) + ".cam2.h0.nc"
+
+				;filo = Experiments(es,iexp) + "/atm/hist/PV_" + timespans(es,iexp) + tostring(startyrs(es,iexp)) + "_" + tostring(nyears(es,iexp)) + "_ts_" + Experiments(es,iexp) + ".cam2.h0.nc"
 				cdf_file = addfile(dir + filo, "r")
 
-				levs_PV = cdf_file->plevs
+				levs_PV = cdf_file->lev_p
 				nPVlevs = dimsizes(levs_PV)
 				; Find levs
 		                if (ilev .NE. 0) then
@@ -1009,7 +1014,7 @@ do es = 0,numcols-1
 					end if
 				end if
 
-				PVall = cdf_file->PVp(:,plev,:,:)
+				PVall = cdf_file->PV(:,plev,:,:)
 				PVtm = dim_avg_n(PVall,0)
 				dPVdy = PVtm(:,:)
 				dPVdx = PVtm(:,:)
@@ -1548,7 +1553,7 @@ end if
 ; plot
 
 if (ilevs(0,0) .EQ. 0)
-	all_vars = vars(0) + "_SFC_"
+	all_vars = vars(0,0) + "_SFC_"
 else if (ilevs(0,0) .EQ. -1)     ; vertical cross-section
 	all_vars = vars(0,0) + "_"
 else

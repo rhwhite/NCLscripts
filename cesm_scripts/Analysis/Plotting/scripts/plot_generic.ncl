@@ -1042,7 +1042,7 @@ end do
 panelsize = pwidths * countplots
 singlesize = nexps
 if (linear .EQ. "true") then
-	panelsize = panelwize + pwidths
+	panelsize = panelsize + pwidths
 	singlesize= singlesize + 1
 end if
 if (plotERA .GE. 1) then

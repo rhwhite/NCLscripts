@@ -7,12 +7,14 @@ begin
 startlat = 39.0 ;
 startlon = 74.0 ; IT5;74.0 IT3/4 ;74.0 IT2
 
-Tibet_max = 2000.0 * 9.8 ; m
-gpt_min = 490 ;50m
-sgh_max = 400.0 ; half roughness of large Tibet
-sgh30_max = 150.0; half roughness of large Tibet
+factor = 3.0
 
-newfile = "IdealGauss_39N_USGS-gtopo30_1.9x2.5_remap_c050602.nc"
+Tibet_max = 2000.0 * 9.8 * factor ; m
+gpt_min = 490 ;50m
+sgh_max = 400.0 * factor ; half roughness of large Tibet
+sgh30_max = 150.0 * factor; half roughness of large Tibet
+
+newfile = "IG_39N_6km_USGS-gtopo30_1.9x2.5_remap_c050602.nc"
 diro = "/home/disk/eos4/rachel/inputdata/topo/"
 
 system("cp " + diro +  "NoTopo_USGS-gtopo30_1.9x2.5_remap_c050602.nc " + diro + newfile)

@@ -34,7 +34,7 @@ nyears = endyr-startyr+1
 
 dirstr = getenv("NCL_dirstr")
 
-timespan = "DJF"
+timespan = getenv("NCL_season")
 
 a = 6.37122e06	; radius of Earth
 PI = 3.14159265358979
@@ -139,7 +139,7 @@ do exps = 0,nexps-1
 ;set dimensions of output file
 	dimNames = (/"time","lat","lon","lev_p","lev_m"/)
 	dimSizes = (/ntimes,nlat,nlon,nplevels,nmlevels/)
-	dimUnlim = (/False,False,False,False,False/)
+	dimUnlim = (/True,False,False,False,False/)
 	filedimdef(fout_std,dimNames,dimSizes,dimUnlim)
 
 	filevardef(fout_std,"lat",typeof(lat),getvardims(lat))

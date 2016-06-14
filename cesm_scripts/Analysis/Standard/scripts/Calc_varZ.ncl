@@ -4,6 +4,7 @@
 
 begin
 
+print("here!!")
 Direc = getenv("NCL_ARG_1")
 nexps = toint(getenv("NCL_ARG_2"))
 print(nexps)
@@ -13,6 +14,8 @@ do ne = 0,nexps-1
         Experiments(ne) = getenv("NCL_ARG_" + tostring(3+ne))
 end do
 
+plev = toint(getenv("NCL_plev"))
+
 print(Direc)
 print(nexps)
 print(Experiments)
@@ -20,8 +23,6 @@ print(Experiments)
 startyr = toint(getenv("NCL_ARG_" + tostring(3+nexps)))
 endyr = toint(getenv("NCL_ARG_" + tostring(4+nexps)))
 secs = getenv("NCL_ARG_" + tostring(5+nexps))
-
-plev = toint(getenv("NCL_plev"))
 
 print(startyr)
 print(endyr)
@@ -35,6 +36,8 @@ print(Experiments)
 
 dimsexps = dimsizes(Experiments)
 nexps = dimsexps(0)
+print(nexps)
+
 
 do exps = 0,nexps-1
 

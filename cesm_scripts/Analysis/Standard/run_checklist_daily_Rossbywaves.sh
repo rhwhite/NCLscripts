@@ -2,17 +2,17 @@
 cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis/Standard/scripts/
 #dir="/home/disk/eos4/rachel/CESM_outfiles/"
 dir="/home/disk/eos4/rachel/CESM_outfiles/"
-numexps="5"
+numexps="4"
 #exps=("CESM_onlyIT") # "CESM_IG39_West" "CESM_IG49N_West")
 #exps=("CESM_Topo_R_2km_40_0" "CESM_Topo_R_2km_50_0" "CESM_Topo_R_2km_60_0")
-exps=("CESMnoT2f19" "CESMtopof19" "CESMnotopof19" "CESMnoT4f19" "CESMnoTf19")
+exps=("CESMnoT4f19" "CESMnoTf19" "CESMnoT2f19" "CESMtopof19")
 start="2"
 end="41"
 nsecs="00000"
 
 
-export NCL_ARG_lonstart=60
-export NCL_ARG_lonend=240
+export NCL_ARG_lonstart=0
+export NCL_ARG_lonend=360
 
 export NCL_dirstr="/atm/hist/"
 export NCL_Mtrans=0
@@ -38,10 +38,10 @@ echo $index
 eval export NCL_ARG_$index=$nsecs
 
 echo NCL_N_ARGS 
-ncl Create_all_means.ncl
-echo 'Create_all_means.ncl'
-ncl Calc_VertGrad.ncl
-echo 'Calc_VertGrad.ncl'
+#ncl Create_all_means.ncl
+#echo 'Create_all_means.ncl'
+#ncl Calc_VertGrad.ncl
+#echo 'Calc_VertGrad.ncl'
 ncl hybrid2pres_morelev.ncl
 echo 'hybrid2pres_morelev.ncl'
 ncl Create_all_means.ncl

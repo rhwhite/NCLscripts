@@ -11,6 +11,7 @@ begin
 
 ; Get experiment names
 
+logp = 0 
 numk = 8 ; number of zonal wavenumbers, starting from 1
 its = 1 ; climatology for 0, monthly timeseries for its = 1
 
@@ -33,7 +34,7 @@ lonend = toint(getenv("NCL_ARG_lonend"))
 
 nyears = endyr-startyr+1
 
-timespan = "DJF"
+timespan = getenv("NCL_season") 
 
 a = 6.37122e06	; radius of Earth
 PI = 3.14159265358979
@@ -240,9 +241,13 @@ do exps = 0,nexps-1
 	zwn@k = zwn
 
 ; Put onto equally space log-pressure levels
+        if logp .EQ. 1 then
+                level_int = 10^fspan(1,3.1,16)   ; interpolation targets
+        else
+                level_int = fspan(1000,10,16)
+        end if
 
-	level_int = 10^fspan(1,3,15)   ; interpolation targets
-	level_int!0 = "lev_int"
+	print(level_int)
 
 	nlev_int = dimsizes(level_int)
 	linlog=2                       ; Option to int2p that gives log-interpolation with no extrapolation
@@ -275,7 +280,6 @@ do exps = 0,nexps-1
 	filevardef(fout_std,"lat",typeof(lat),getvardims(lat))
 	filevardef(fout_std,"level",typeof(level),getvardims(level))
 	filevardef(fout_std,"k",typeof(zwn),getvardims(zwn))
-	filevardef(fout_std,"level_int",typeof(level_int),getvardims(level_int))
 
 	filevardef(fout_std,"qphi",typeof(qphi),getvardims(qphi))
 	filevardef(fout_std,"nk2",typeof(nk2),getvardims(nk2))

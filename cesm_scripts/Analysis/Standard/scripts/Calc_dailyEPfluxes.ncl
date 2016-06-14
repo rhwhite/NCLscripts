@@ -35,7 +35,6 @@ lonend = toint(getenv("NCL_ARG_lonend"))
 timespan = "DJF"
 
 a = 6.37122e06	; radius of Earth
-print(a)
 PI = 3.14159265358979
 
 cp = 1.00464e3
@@ -69,13 +68,10 @@ do exps = 0,nexps-1
 	lon!0="lon"
 
 	; find lonstart and lonend
-	print(lon)
 	idxlonstart = 0
 	idxlonend = nlon-1
 
 	do ilon = 0,nlon-2
-		print(lon(ilon))
-		print(lonstart)
 		if (lon(ilon) .LE. lonstart .AND. lon(ilon+1) .GT. lonstart) then
 			idxlonstart = ilon
 			break
@@ -87,11 +83,6 @@ do exps = 0,nexps-1
 			break
 		end if
 	end do
-
-	print(lonstart)
-	print(idxlonstart)
-	print(lonend)
-	print(idxlonend)
 
 	T = fileCLIM->T(:,:,:,idxlonstart:idxlonend)
 
@@ -113,7 +104,6 @@ do exps = 0,nexps-1
         THETAptm = dim_avg_n_Wrap(THETAp(time|:,lev_p|:,lat|:),0)       ; time mean of THETAp
 
 	ndims = dimsizes(THETAp)
-	print(ndims)
 
 	UVzmDJF = new((/90*nyears,ndims(1),ndims(2)/),typeof(THETAptm))
 	VTHETAzmDJF = new((/90*nyears,ndims(1),ndims(2)/),typeof(THETAptm))
@@ -189,7 +179,6 @@ do exps = 0,nexps-1
 
 	end do
 
-	print(countidx)
 	if(countidx .NE. 90*nyears) then
 		print(90*nyears)
 		print(countidx)
@@ -213,9 +202,6 @@ do exps = 0,nexps-1
         Fp = conform(VTHETAzmtm,f*acphi,1) * VTHETAzmtm/THETAptm
 	Fpxy = conform(VTHETAzmtm,f,1) * VTHETAzmtm/THETAptm
 
-	
-	print(level)
-	print(P0)
 	Fphi = (1.0 / P0) * conform(Fphi,level,0) * Fphi
 	Fp = (1.0/P0) * conform(Fphi,level,0) * Fp
 

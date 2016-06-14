@@ -1,76 +1,191 @@
 #!/bin/sh
-cd /home/disk/eos4/rachel/NCL/cesm_scripts/Analysis/Plotting/scripts/
-export NCLnumvars="2"
-export NCLdifexps="0"
+cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis/Plotting/scripts/
+plotvars="STD"
+export NCLnumvars="3"
+export NCLdifexps="1"
 export NCLexpdif="0"
 export NCLfigtit="Mongolia/newPaper"
 export NCLdir1="/home/disk/rachel/CESM_outfiles/"
-export NCLnumexps="2"
+export NCLnumexps="3"
 export NCLlinear="false"
 export NCLclon="180.0"
 export NCLslon="30.0"
-export NCLelon="300."
-export NCLslat="-30.0"
-export NCLelat="90.0"
+export NCLelon="240."
+export NCLslat="0.0"
+export NCLelat="80.0"
 export NCLplottype="map"
 export NCLplotctl=0
 export NCLplotERA1=0
-export NCLtitleprefix="CTLs2_"
+export NCLtitleprefix="CTLs_topo_"
 
-exps1=("CESMnotopof19" "CESMnoT2f19" "CESMnoT2f19" "CESMnoT4f19")
-titles1=("CTL" "noMT" "CESM\_no\_MorT" "CESM\_no\_M")
+export NCLallblue=1
+export NCLplottitles=0
+exps1=("CESMtopof19" "CESMtopof19" "CESMtopof19" "CESMtopof19" "CESMnoT2f19" "CESMnoT4f19")
+#exps1=("CESMnoT2f19" "CESMnoT2f19" "CESMnoT2f19" "CESMnoT2f19" "CESMnoT4f19")
+
+titles1=("" "" "" "CESM\_no\_M")
 CTLS=("100" "100" "100" "100" "0" "0" "0" "2")
 starts=("2" "2" "2" "2" "2" "2" "2" "11")
-nyears=("30" "30" "30" "30" "30" "30" "30" "30")
+nyears=("40" "40" "40" "40" "40" "40" "40" "40")
+#timespan=("SON" "SON" "SON" "SON" "SON" "SON")
+#timespan=("SON" "DJF" "MAM" "MAM" "MAM" "MAM")
+#timespan=("JJA" "JJA" "JJA" "JJA" "JJA" "JJA")
 timespan=("DJF" "DJF" "DJF" "DJF" "DJF" "DJF" "DJF" "DJF")
 reverse=("true" "true" "true" "true" "true" "true" "true" "true")
 
-
-
+if test "$plotvars" == "STD"; then
 export NCLplotvar_2="dPVdy"
 export NCLilev_2="925"
 export NCLvartitle_2="dPVdy"
 export NCLmin1_2="0"
-export NCLmax1_2="0.9e-12"
-export NCLdiffs1_2="0.1e-12"
+export NCLmax1_2="0.8e-12"
+export NCLdiffs1_2="0.08e-12"
 export NCLmin2_2="-7"
 export NCLmax2_2="20"
 export NCLdiffs2_2="3.0"
-export NCLunits_2="1E-6 PVU/m"
+export NCLunits_2="1E-12 PVU/m"
 
-#export NCLplotvar_2="dPVdy"
-#export NCLilev_2="850"
-#export NCLvartitle_2="dPVdy"
-#export NCLmin1_2="0"
-#export NCLmax1_2="0.45e-12"
-#export NCLdiffs1_2="0.05e-12"
-#export NCLmin2_2="-7"
-#export NCLmax2_2="20"
-#export NCLdiffs2_2="3.0"
-#export NCLunits_2="1E-12 PVU/m"
-#
 
 export NCLplotvar_1="U"
 export NCLilev_1="925"
 export NCLvartitle_1="U"
-export NCLmin1_1="-7"
-export NCLmax1_1="20"
-export NCLdiffs1_1="3.0"
+export NCLmin1_1="0"
+export NCLmax1_1="10"
+export NCLdiffs1_1="1.0"
+export NCLmin2_1="-7"
+export NCLmax2_1="10"
+export NCLdiffs2_1="2.0"
+export NCLunits_1="m/s"
+
+export NCLplotvar_3="Ks"
+export NCLilev_3="250"
+export NCLvartitle_3="K~B~s~N~"
+export NCLmin1_3="0"
+export NCLmax1_3="7.5"
+export NCLdiffs1_3="0.75"
+export NCLmin2_3="-7"
+export NCLmax2_3="20"
+export NCLdiffs2_3="3.0"
+export NCLunits_3="m~S~-1~N~"
+
+elif test "$plotvars" == "STDhigh"; then
+export NCLplotvar_2="dPVdy"
+export NCLilev_2="850"
+export NCLvartitle_2="dPVdy"
+export NCLmin1_2="0"
+export NCLmax1_2="0.8e-12"
+export NCLdiffs1_2="0.08e-12"
+export NCLmin2_2="-7"
+export NCLmax2_2="20"
+export NCLdiffs2_2="3.0"
+export NCLunits_2="1E-12 PVU/m"
+
+
+export NCLplotvar_1="U"
+export NCLilev_1="850"
+export NCLvartitle_1="U"
+export NCLmin1_1="0"
+export NCLmax1_1="10"
+export NCLdiffs1_1="1.0"
+export NCLmin2_1="-7"
+export NCLmax2_1="10"
+export NCLdiffs2_1="2.0"
+export NCLunits_1="m/s"
+
+export NCLplotvar_3="Ks"
+export NCLilev_3="250"
+export NCLvartitle_3="K~B~s~N~"
+export NCLmin1_3="0"
+export NCLmax1_3="7.5"
+export NCLdiffs1_3="0.75"
+export NCLmin2_3="-7"
+export NCLmax2_3="20"
+export NCLdiffs2_3="3.0"
+export NCLunits_3="m~S~-1~N~"
+
+else
+
+
+export NCLplotvar_1="Ks"
+export NCLilev_1="850"
+export NCLvartitle_1="K~B~s~N~"
+export NCLmin1_1="0"
+export NCLmax1_1="7.5"
+export NCLdiffs1_1="0.75"
 export NCLmin2_1="-7"
 export NCLmax2_1="20"
 export NCLdiffs2_1="3.0"
-export NCLunits_1="m/s"
+export NCLunits_1="m~S~-1~N~"
+
+
+export NCLplotvar_2="Ks"
+export NCLilev_2="700"
+export NCLvartitle_2="K~B~s~N~"
+export NCLmin1_2="0"
+export NCLmax1_2="7.5"
+export NCLdiffs1_2="0.75"
+export NCLmin2_2="-7"
+export NCLmax2_2="20"
+export NCLdiffs2_2="3.0"
+export NCLunits_2="m~S~-1~N~"
+
+export NCLplotvar_3="Ks"
+export NCLilev_3="500"
+export NCLvartitle_3="K~B~s~N~"
+export NCLmin1_3="0"
+export NCLmax1_3="7.5"
+export NCLdiffs1_3="0.75"
+export NCLmin2_3="-7"
+export NCLmax2_3="20"
+export NCLdiffs2_3="3.0"
+export NCLunits_3="m~S~-1~N~"
+
+export NCLplotvar_4="Ks"
+export NCLilev_4="500"
+export NCLvartitle_4="K~B~s~N~"
+export NCLmin1_4="0"
+export NCLmax1_4="7.5"
+export NCLdiffs1_4="0.75"
+export NCLmin2_4="-7"
+export NCLmax2_4="20"
+export NCLdiffs2_4="3.0"
+export NCLunits_4="m~S~-1~N~"
+
+
 #
-#export NCLplotvar_2="U"
-#export NCLilev_2="850"
-#export NCLvartitle_2="U"
-#export NCLmin1_2="-7"
-#export NCLmax1_2="20"
-#export NCLdiffs1_2="3.0"
+#export NCLplotvar_2="dPVdy"
+#export NCLilev_2="250"
+#export NCLvartitle_2="~F18~s~F21~PV/~F18~s~F21~y"
+#export NCLmin1_2="0"
+#export NCLmax1_2="0.9e-12"
+#export NCLdiffs1_2="0.1e-12"
 #export NCLmin2_2="-7"
 #export NCLmax2_2="20"
 #export NCLdiffs2_2="3.0"
-#export NCLunits_2="m/s"
+#export NCLunits_2="1E-6 PVU/m"
+#
+#export NCLplotvar_1="PV"
+#export NCLilev_1="850"
+#export NCLvartitle_1="~F10~PV~F21~"
+#export NCLmin1_1="0.0"
+#export NCLmax1_1="3.0e-6"
+#export NCLdiffs1_1="0.3e-6"
+#export NCLmin2_1="-0.9e-6"
+#export NCLmax2_1="0.9e-6"
+#export NCLdiffs2_1="0.2e-6"
+#export NCLunits_1="PVU"
+#
+
+#export NCLplotvar_1="U"
+#export NCLilev_1="850"
+#export NCLvartitle_1="U"
+#export NCLmin1_1="-7"
+#export NCLmax1_1="20"
+#export NCLdiffs1_1="3.0"
+#export NCLmin2_1="-7"
+#export NCLmax2_1="20"
+#export NCLdiffs2_1="3.0"
+#export NCLunits_1="m/s"
 #
 #
 #export NCLplotvar_2="dTHdzdTHdy"
@@ -86,7 +201,7 @@ export NCLunits_1="m/s"
 #
 
 #export NCLplotvar_1="dTHdy"
-#export NCLilev_1="775"
+#export NCLilev_1="925"
 #export NCLvartitle_1="dTH/dy"
 #export NCLmin1_1="-0.00001"
 #export NCLmax1_1="0.00001"
@@ -97,7 +212,7 @@ export NCLunits_1="m/s"
 #export NCLunits_1="K/m"
 #
 #export NCLplotvar_2="dTHdz"
-#export NCLilev_2="775"
+#export NCLilev_2="925"
 #export NCLvartitle_2="dTH/dz"
 #export NCLmin1_2="0.002"
 #export NCLmax1_2="0.012"
@@ -107,7 +222,7 @@ export NCLunits_1="m/s"
 #export NCLdiffs2_2="0.001"
 #export NCLunits_2="K/m"
 #
-
+#
 #export NCLplotvar_1="TdiaSRF"
 #export NCLilev_1="0"
 #export NCLvartitle_1="DJF\ LH\ +\ SH\ +\ LW\ +\ SW"
@@ -219,7 +334,7 @@ export NCLunits_1="m/s"
 #export NCLdiffs2_2="20"
 #export NCLunits_2="W/m~S~2~N~"
 
-
+fi
 
 # save command line arguments to environment variable NCL_ARG_#
 count=0

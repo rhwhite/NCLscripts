@@ -15,11 +15,11 @@ export NCLelat="90.0"
 export NCLplottype="map"
 export NCLplotctl=0
 export NCLplotERA1=0
-export NCLtitleprefix="I3abs_"
+export NCLtitleprefix="I3_"
 
-exps1=("CESMnotopof19" "CESM_IG54" "CESM_IG49" "CESM_IG44" "CESM_IG34" "CESM_IG29")
+exps1=("CESMnotopof19" "CESM_onlyIT2" "CESM_onlyITSh" "CESM_onlyITVS" "CESM_IG34" "CESM_IG29")
 titles1=("I\_CTL" "I\_63N\_2km" "I\_58N\_2km" "I\_53N\_2km" "I\_43N\_2km" "I\_38N\_2km")
-CTLS=("100" "100" "100" "100" "100" "100" "100" "2")
+CTLS=("-1" "0" "0" "0" "100" "100" "100" "2")
 starts=("2" "2" "2" "2" "2" "2" "2" "11")
 nyears=("30" "30" "30" "30" "30" "30" "30" "30")
 timespan=("DJF" "DJF" "DJF" "DJF" "DJF" "DJF" "DJF" "DJF")

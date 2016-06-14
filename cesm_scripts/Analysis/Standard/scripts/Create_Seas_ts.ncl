@@ -125,11 +125,11 @@ do exps = 0,nexps-1
 
 	system("ncrcat -h -O -v U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + ".cam2.h0.*-12.nc " + Dir + Experiment + ".cam2.h0.*-01.nc " + Dir + Experiment + ".cam2.h0.*-02.nc " + Dir + "DJF" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")
 	
-;	system("ncrcat -h -O -v U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + ".cam2.h0.*-03.nc " + Dir + Experiment + ".cam2.h0.*-04.nc " + Dir + Experiment + ".cam2.h0.*-05.nc " + Dir + "MAM" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")
+	system("ncrcat -h -O -v U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + ".cam2.h0.*-03.nc " + Dir + Experiment + ".cam2.h0.*-04.nc " + Dir + Experiment + ".cam2.h0.*-05.nc " + Dir + "MAM" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")
 	
-       ; system("ncrcat -h -O -v U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + ".cam2.h0.*-06.nc " + Dir + Experiment + ".cam2.h0.*-07.nc " + Dir + Experiment + ".cam2.h0.*-08.nc " + Dir + "JJA" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")
+        system("ncrcat -h -O -v U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + ".cam2.h0.*-06.nc " + Dir + Experiment + ".cam2.h0.*-07.nc " + Dir + Experiment + ".cam2.h0.*-08.nc " + Dir + "JJA" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")
 
-       ; system("ncrcat -h -O -v U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + ".cam2.h0.*-09.nc " + Dir + Experiment + ".cam2.h0.*-10.nc " + Dir + Experiment + ".cam2.h0.*-11.nc " + Dir + "SON" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")
+        system("ncrcat -h -O -v U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + ".cam2.h0.*-09.nc " + Dir + Experiment + ".cam2.h0.*-10.nc " + Dir + Experiment + ".cam2.h0.*-11.nc " + Dir + "SON" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")
 	
 	system("mv " + Dir + "TempDir/*.nc " + Dir + "/")
 

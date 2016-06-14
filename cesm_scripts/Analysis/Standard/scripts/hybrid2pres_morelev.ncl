@@ -24,9 +24,10 @@ dirstr = getenv("NCL_dirstr")
 Mtrans = getenv("NCL_Mtrans")
 
 ;timespans = (/"Annual","DJF","JJA","MAM","SON"/)
-timespans = (/"Annual","DJF"/)
-dimtimes = dimsizes(timespans)
-nts = dimtimes(0)
+timespan = getenv("NCL_season")
+print(timespan)
+;dimtimes = dimsizes(timespans)
+nts = 1
 
 ; Set some constants
 PI = 3.14159265358979
@@ -37,12 +38,12 @@ g = 9.81
 
 do ts = 0,nts - 1
 
-	timespan = timespans(ts)
+	;timespan = timespans(ts)
 	dimsexps = dimsizes(Experiments)
 	nexps = dimsexps(0)
 
-	pnew = (/ 10, 20,30,50,70,90,120,150,200,250 \
-                     , 300,400,500,600,700,750,775,850,925,1000 /)
+	pnew = (/ 10.0, 20.0,30.0,50.0,70.0,90.0,120.0,150.0,200.0,250.0 \
+                     , 300.0,400.0,500.0,600.0,700.0,750.0,775.0,850.0,925.0,1000.0 /)
 
 	p_int = 10^fspan(1,3,15)   ; interpolation targets
         p_int!0 = "lev_int" 
@@ -86,7 +87,6 @@ do ts = 0,nts - 1
 
 		levs = cdf_file->lev
 		nlevs = dimsizes(levs)
-		print(nlevs)
 
 		if levs(0) .GT. levs(nlevs-1) then
 			TBOT = T(:,0,:,:)
@@ -116,11 +116,17 @@ do ts = 0,nts - 1
                 ; Calculate d(TH)/dp from vertical finite differences in log-pressure coordinates
                 ; noting that dTH/dp = (1/p) * dTH/d(lnp)
                 loglevel = log(pnew)
-		printVarSummary(TH)
                 THp = center_finite_diff_n(TH(time|:,lev_p|:,lat|:,lon|:),loglevel,False,0,1) ; derivative in log coords doesn't care whether in Pa or in mb.
                 THp = THp / conform(THp,100.0 * pnew,1) ; converts "level" to pascals from millibars while dividing by pressure.
                 copy_VarMeta(TH,THp)
 
+                Up = center_finite_diff_n(Upres(time|:,lev_p|:,lat|:,lon|:),loglevel,False,0,1) ; derivative in log coords doesn't care whether in Pa or in mb.
+                Up = Up / conform(Up,100.0 * pnew,1) ; converts "level" to pascals from millibars while dividing by pressure.
+                copy_VarMeta(Upres,Up)
+
+                Vp = center_finite_diff_n(Vpres(time|:,lev_p|:,lat|:,lon|:),loglevel,False,0,1) ; derivative in log coords doesn't care whether in Pa or in mb.
+                Vp = Vp / conform(Vp,100.0 * pnew,1) ; converts "level" to pascals from millibars while dividing by pressure.
+                copy_VarMeta(Vpres,Vp)
 
 		; Calculate OMEGAp
 		OMEGAp = center_finite_diff_n(Omegapres(time|:,lev_p|:,lat|:,lon|:),loglevel,False,0,1) ; derivative in log coords doesn't care whether in Pa or in mb.
@@ -202,6 +208,27 @@ do ts = 0,nts - 1
                 PSIx@units = "m/s2"
                 PSIy@units = "m/s2"
 
+		PVdtdx = Tpres
+		PVdtdy = Tpres
+		PVdtdx@long_name = "longitudinal gradient (derivative)"
+		PVdtdy@long_name = "latitudinal gradient (derivative)"
+		PVdtdx@units     = "K/m"
+		PVdtdy@units     = "K/m"
+
+		PVvr = uv2vrF_Wrap(Upres,Vpres)
+		gradsf(Tpres,PVdtdx,PVdtdy)
+
+		PVdudp = center_finite_diff_n (    Upres,pnew*100.0,False,0,1)
+                PVdvdp = center_finite_diff_n (    Vpres,pnew*100.0,False,0,1)
+		PVdTHdp = center_finite_diff_n (TH,pnew*100.0,False,0, 1)
+		PVs = -(Tpres/TH) * PVdTHdp
+		
+		PV = pot_vort_isobaric(pnew * 100.0,Upres,Vpres,Tpres,lat,1,0)	
+
+		copy_VarCoords(PVvr,PVdudp)
+                copy_VarCoords(PVvr,PVdvdp)
+                copy_VarCoords(PVvr,PVdTHdp)
+                copy_VarCoords(PVvr,PVs)
 
                 if (Mtrans .EQ. 1) then
  	               VVpres = vinth2p_ecmwf(VV,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS)
@@ -249,6 +276,9 @@ do ts = 0,nts - 1
 		filevardef(fout,"T",typeof(Tpres),getvardims(Tpres))
                 filevardef(fout,"TH",typeof(TH),getvardims(TH))
                 filevardef(fout,"THp",typeof(THp),getvardims(THp))
+                filevardef(fout,"Up",typeof(Up),getvardims(Up))
+                filevardef(fout,"Vp",typeof(Vp),getvardims(Vp))
+
 		filevardef(fout,"Z3",typeof(Z3pres),getvardims(Z3pres))
                 filevardef(fout,"PSI",typeof(PSI),getvardims(PSI))
 		filevardef(fout,"Q",typeof(Qpres),getvardims(Qpres))
@@ -267,6 +297,16 @@ do ts = 0,nts - 1
                 filevardef(fout,"THy",typeof(THy),getvardims(THy))
                 filevardef(fout,"PSIx",typeof(PSIx),getvardims(PSIx))
                 filevardef(fout,"PSIy",typeof(PSIy),getvardims(PSIy))
+
+                filevardef(fout,"PVvr",typeof(PVvr),getvardims(PVvr))
+                filevardef(fout,"PVdtdx",typeof(PVdtdx),getvardims(PVdtdx))
+                filevardef(fout,"PVdtdy",typeof(PVdtdy),getvardims(PVdtdy))
+                filevardef(fout,"PVdudp",typeof(PVdudp),getvardims(PVdudp))
+                filevardef(fout,"PVdvdp",typeof(PVdvdp),getvardims(PVdvdp))
+                filevardef(fout,"PVdTHdp",typeof(PVdTHdp),getvardims(PVdTHdp))
+                filevardef(fout,"PVs",typeof(PVs),getvardims(PVs))
+                filevardef(fout,"PV",typeof(PV),getvardims(PV))
+
 
                 if (Mtrans .EQ. 1) then
 	               filevardef(fout,"VV",typeof(VVpres),getvardims(VVpres))
@@ -293,6 +333,9 @@ do ts = 0,nts - 1
 		fout ->T      = Tpres
                 fout ->TH      = TH
                 fout ->THp      = THp
+                fout ->Up      = Up
+                fout ->Vp      = Vp
+
 		fout ->Z3      = Z3pres
 		fout ->PSI	= PSI
 		fout ->Q      = Qpres
@@ -312,6 +355,15 @@ do ts = 0,nts - 1
                 fout ->THx      = THx
                 fout ->THy      = THy
 
+		fout ->PVvr 	= PVvr
+		fout ->PVdtdx 	= PVdtdx
+		fout ->PVdtdy 	= PVdtdy
+
+		fout ->PVdudp = PVdudp
+                fout ->PVdvdp = PVdvdp
+                fout ->PVdTHdp = PVdTHdp
+               	fout ->PVs	= PVs 
+                fout ->PV      = PV
 
 
                 if (Mtrans .EQ. 1) then
