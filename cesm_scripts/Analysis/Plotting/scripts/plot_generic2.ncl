@@ -23,6 +23,9 @@ minmag = 1.0
 Rair = 287.0
 pi = 3.14159
 
+rho = 1.000e3	; from CAM shr model, density in kg/m3 
+LHev = 2.501e6 	; from CAM shr model, in J/kg
+
 index = 1
 numvars = toint(getenv("NCLnumvars"))
 difexps = toint(getenv("NCLdifexps"))
@@ -782,7 +785,7 @@ do es = 0,numcols-1
 				delete(cdf_file)
 				delete(levs_mean2)
 
-			else if (variable .EQ. "THS" .OR. variable .EQ. "TS" .OR. variable .EQ. "PREC" .OR. variable .EQ. "Topo" .OR. variable .EQ. "TdiaSRF" .OR. variable .EQ. "TradSRF" .OR. variable .EQ. "SHFLX" .OR. variable .EQ. "LHFLX" .OR. variable .EQ. "U10") then
+			else if (variable .EQ. "THS" .OR. variable .EQ. "TS" .OR. variable .EQ. "PREC" .OR. variable .EQ. "PmE" .OR. variable .EQ. "Topo" .OR. variable .EQ. "TdiaSRF" .OR. variable .EQ. "TradSRF" .OR. variable .EQ. "SHFLX" .OR. variable .EQ. "LHFLX" .OR. variable .EQ. "U10" .OR. variable .EQ. "EVAP" .OR. variable .EQ. "WScurl") then
 			
 				filo = Experiments(es,iexp) + "/atm/hist/" + timespans(es,iexp) + tostring(startyrs(es,iexp)) + "_" + tostring(nyears(es,iexp)) + "_mean_" + Experiments(es,iexp) + ".cam2.h0.nc"
 				cdf_file = addfile(dir + filo, "r")
@@ -792,6 +795,12 @@ do es = 0,numcols-1
 				else if (variable .EQ. "PREC") then
 					; change from m/sec to mm/day
 					plotvar(es,iexp,:,:) = cdf_file->PRECT(0,:,:) * secdays * 1000.0
+				else if (variable .EQ. "PmE") then
+					EVAP = cdf_file->QFLX(0,:,:) / rho	; convert to m/s
+					plotvar(es,iexp,:,:) = (cdf_file->PRECT(0,:,:) - EVAP) * secdays * 1000.0   ; convert to mm/day
+				else if (variable .EQ. "EVAP") then
+					plotvar(es,iexp,:,:) = cdf_file->QFLX(0,:,:) *secdays * 1000.0 / rho 	; convert to mm/day
+
 				else if (variable .EQ. "TS") then
 					plotvar(es,iexp,:,:) = cdf_file->TS(0,:,:)
 				else if (variable .EQ. "TdiaSRF") then
@@ -806,6 +815,14 @@ do es = 0,numcols-1
 					plotvar(es,iexp,:,:) = cdf_file->U10(0,:,:)
 				else if (variable .EQ. "Topo") then
 					plotvar(es,iexp,:,:) = cdf_file->PHIS/9.8
+				else if (variable .EQ. "WScurl") then
+                                        ; Add conversion of -1 to match observations: taux is stress on atmosphere, not stress on ocean
+					taux = cdf_file->TAUX(0,:,:) * -1.0
+					tauy = cdf_file->TAUY(0,:,:) * -1.0
+					plotvar(es,iexp,:,:) = uv2vr_cfd(taux,tauy,cdf_file->lat,cdf_file->lon,3)
+				end if
+				end if
+				end if
 				end if
 				end if
 				end if

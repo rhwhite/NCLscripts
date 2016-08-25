@@ -1,207 +1,440 @@
 #!/bin/sh
-cd /home/disk/eos4/rachel/NCL/cesm_scripts/Analysis/Plotting/scripts/
-difvars="1"
-difexps="1"
-expdif="0"
-figtit="Paper"
-numexps="4"
-dir1="/home/disk/rachel/CESM_outfiles/"
-exps1=("CESMtopof19" "CESMnoT2f19" "CESMnoTf19" "CESMnoT4f19")
-titles1=("R\_CTL" "R\_noTM" "R\_noT" "R\_noM")
-exps2=("CAM4SOM4topo" "CAM4SOM4_noMT" "CAM4SOM4_noT" "CAM4SOM4_noM")
-titles2=("RSOM\_CTL" "RSOM\_noTM" "RSOM\_noT" "RSOM\_noM")
-CTLS=("100" "0" "0" "0" "0" "0" "2" "2")
-starts1=("2" "2" "2" "2" "2" "11" "11" "11")
-starts2=("11" "11" "11" "11" "11" "11" "11" "11")
-nyears=("30" "30" "30" "30" "30" "30" "30" "30")
-timespan=("DJF" "DJF" "DJF" "DJF" "DJF" "DJF" "DJF" "DJF")
-reverse=("true" "false" "false" "false" "false" "false" "true" "true")
-linear="false"
-clon="180.0"
-slon="0.0"
-elon="360."
-slat="-30.0"
-elat="90.0"
-plottype="map"
-plotctl=0
-plotERA=0
-titleprefix=""
+cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis/Plotting/scripts/
+plotvars="WScurl"
+export NCLnumvars="1"
+export NCLdifexps="0"
+export NCLexpdif="0"
+export NCLfigtit="Mongolia/"
+export NCLdir1="/home/disk/rachel/CESM_outfiles/"
+export NCLnumexps="5"
+export NCLlinear="false"
+export NCLclon="180.0"
+export NCLslon="60.0"
+export NCLelon="360."
+export NCLslat="-10.0"
+export NCLelat="90.0"
+export NCLplottype="map"
+export NCLplotctl=0
+export NCLplotERA1=0
+export NCLtitleprefix="RealX_"
+
+exps1=("CESMtopof19" "CESMnotopof19" "CESMnoRf19" "CESMnotopof19" "CESMnoRf19" "CESMnoT2f19" "CESMnoTf19" "CESMnoT4f19")
+titles1=("\ \ CTL" "Flat\ CTL" "No\ Rockies" "All\ topography~C~effect" "Rockies\ effect" "Tibet\ and~C~Mongolia" "\ Tibet" "Mongolia")
+CTLS=("100" "100" "100" "0" "0" "0" "2" "2")
+starts=("2" "2" "2" "2" "2" "2" "2" "2")
+nyears=("40" "40" "40" "40" "40" "40" "40" "40")
+#timespan=("SON" "SON" "SON" "SON" "SON" "SON" "SON" "SON")
+#timespan=("MAM" "MAM" "MAM" "MAM" "MAM" "MAM" "MAM" "MAM")
+#timespan=("JJA" "JJA" "JJA" "JJA" "JJA" "JJA" "JJA" "JJA")
+#timespan=("DJF" "DJF" "DJF" "DJF" "DJF" "DJF" "DJF" "DJF")
+
+timespan=("Annual" "Annual" "Annual" "Annual" "Annual" "Annual" "Annual" "Annual")
+reverse=("false" "false" "false" "false" "false" "false" "true" "true")
+
+export NCLallblue=0
+export NCLplottitles=1
+
+if test "$plotvars" == "SFZA"; then
+	export NCLallblue=0
+	export NCLplotvar_1="SFZA"
+	export NCLilev_1="850"
+	export NCLvartitle_1="~F8~y'~F21~"
+	export NCLmin1_1="-0.75e7"
+	export NCLmax1_1="0.75e7"
+	export NCLdiffs1_1="0.15e7"
+	export NCLmin2_1="-7.5e6"
+	export NCLmax2_1="7.5e6"
+	export NCLdiffs2_1="1.5e6"
+	export NCLunits_1="m~S~2~N~s~S~-1~N~"
+
+	export NCLplotvar_2="SFZA"
+	export NCLilev_2="250"
+	export NCLvartitle_2="~F8~y'~F21~"
+	export NCLmin1_2="-2.0e7"
+	export NCLmax1_2="2.0e7"
+	export NCLdiffs1_2="4.0e6"
+	export NCLmin2_2="-10.0e6"
+	export NCLmax2_2="10.0e6"
+	export NCLdiffs2_2="2.0e6"
+	export NCLunits_2="m~S~2~N~s~S~-1~N~"
+
+elif test "$plotvars" == "THU"; then
+	export NCLplotvar_1="TH"
+	export NCLilev_1="850.0"
+	export NCLvartitle_1="~F8~q~F21~"
+	export NCLmin1_1="265.0"
+	export NCLmax1_1="310.0"
+	export NCLdiffs1_1="5.0"
+	export NCLmin2_1="-5.0"
+	export NCLmax2_1="5.0"
+	export NCLdiffs2_1="1.0"
+	export NCLunits_1="K"
+
+	export NCLplotvar_2="U"
+	export NCLilev_2="250"
+	export NCLvartitle_2="~F10~U~F21~"
+	export NCLmin1_2="-8.0"
+	export NCLmax1_2="64.0"
+	export NCLdiffs1_2="8.0"
+	export NCLmin2_2="-10.0"
+	export NCLmax2_2="10.0"
+	export NCLdiffs2_2="2.0"
+	export NCLunits_2="ms~S~-1~N~"
+elif test "$plotvars" == "Zvar"; then
+        export NCLplotvar_1="Zvar"
+        export NCLilev_1="250.0"
+        export NCLvartitle_1="~F10~Z~F21~'~S~2~N~~F21~"
+        export NCLmin1_1="0"
+        export NCLmax1_1="8000"
+        export NCLdiffs1_1="800"
+        export NCLmin2_1="-2400"
+        export NCLmax2_1="2400"
+        export NCLdiffs2_1="400"
+        export NCLunits_1="m~S~2~N~"
+
+        export NCLplotvar_2="Zvar"
+        export NCLilev_2="850.0"
+        export NCLvartitle_2="~F10~Z~F21~'~S~2~N~~F21~"
+        export NCLmin1_2="250"
+        export NCLmax1_2="2500"
+        export NCLdiffs1_2="250"
+        export NCLmin2_2="-450"
+        export NCLmax2_2="450"
+        export NCLdiffs2_2="100"
+        export NCLunits_2="m~S~2~N~"
+elif test "$plotvars" == "UV"; then
+        export NCLplotvar_1="V"
+        export NCLilev_1="250.0"
+        export NCLvartitle_1="~F10~V~F21~"
+        export NCLmin1_1="-8.0"
+        export NCLmax1_1="64.0"
+        export NCLdiffs1_1="8.0"
+        export NCLmin2_1="-10.0"
+        export NCLmax2_1="10.0"
+        export NCLdiffs2_1="2.0"
+        export NCLunits_1="ms~S~-1~N~"
+
+        export NCLplotvar_2="U"
+        export NCLilev_2="250"
+        export NCLvartitle_2="~F10~U~F21~"
+        export NCLmin1_2="-8.0"
+        export NCLmax1_2="64.0"
+        export NCLdiffs1_2="8.0"
+        export NCLmin2_2="-10.0"
+        export NCLmax2_2="10.0"
+        export NCLdiffs2_2="2.0"
+        export NCLunits_2="ms~S~-1~N~"
+elif test "$plotvars" == "PREC"; then
+	export NCLplotvar_1="PREC"
+	export NCLilev_1="0"
+	export NCLvartitle_1="Precip"
+	export NCLmin1_1="0"
+	export NCLmax1_1="9.0"
+	export NCLdiffs1_1="1.0"
+	export NCLmin2_1="-0.9"
+	export NCLmax2_1="0.9"
+	export NCLdiffs2_1="0.2"
+	export NCLunits_1="mm/day"
+elif test "$plotvars" == "EVAP"; then
+        export NCLplotvar_1="EVAP"
+        export NCLilev_1="0"
+        export NCLvartitle_1="Evap"
+        export NCLmin1_1="0"
+        export NCLmax1_1="9.0"
+        export NCLdiffs1_1="1.0"
+        export NCLmin2_1="-0.9"
+        export NCLmax2_1="0.9"
+        export NCLdiffs2_1="0.2"
+        export NCLunits_1="mm/day"
+elif test "$plotvars" == "PmE"; then
+	export NCLplotvar_1="PmE"
+	export NCLilev_1="0"
+	export NCLvartitle_1="P-E"
+	export NCLmin1_1="-2.5"
+	export NCLmax1_1="2.5"
+	export NCLdiffs1_1="0.5"
+	export NCLmin2_1="-1.0"
+	export NCLmax2_1="1.0"
+	export NCLdiffs2_1="0.2"
+	export NCLunits_1="mm/day"
+elif test "$plotvars" == "WScurl"; then
+        export NCLplotvar_1="WScurl"
+        export NCLilev_1="0"
+        export NCLvartitle_1="WindStressCurl"
+        export NCLmin1_1="-2E-7"
+        export NCLmax1_1="2E-7"
+        export NCLdiffs1_1="4E-8"
+        export NCLmin2_1="-5E-8"
+        export NCLmax2_1="5E-8"
+        export NCLdiffs2_1="1E-8"
+        export NCLunits_1="N/m3"
+else
+
+#export NCLplotvar_1="Z"
+#export NCLilev_1="850"
+#export NCLvartitle_1="~F8~Z~F21~"
+#export NCLmin1_1="1275"
+#export NCLmax1_1="1550"
+#export NCLdiffs1_1="25"
+#export NCLmin2_1="-100"
+#export NCLmax2_1="100"
+#export NCLdiffs2_1="20"
+#export NCLunits_1="m"
+#
+#export NCLplotvar_2="Z"
+#export NCLilev_2="250"
+#export NCLvartitle_2="~F8~Z~F21~"
+#export NCLmin1_2="9400"
+#export NCLmax1_2="11050"
+#export NCLdiffs1_2="150"
+#export NCLmin2_2="-100"
+#export NCLmax2_2="100"
+#export NCLdiffs2_2="20"
+#export NCLunits_2="m"
+#
+#export NCLplotvar_2="SF"
+#export NCLilev_2="250"
+#export NCLvartitle_2="~F8~y'~F21~"
+#export NCLmin1_2="-10.0e7"
+#export NCLmax1_2="10.0e7"
+#export NCLdiffs1_2="2.0e7"
+#export NCLmin2_2="-1.0e7"
+#export NCLmax2_2="1.0e7"
+#export NCLdiffs2_2="2.0e6"
+#export NCLunits_2="m~S~2~N~s~S~-1~N~"
+
+#export NCLplotvar_2="PV"
+#export NCLilev_2="300"
+#export NCLvartitle_2="~F10~PV~F21~"
+#export NCLmin1_2="0.0"
+#export NCLmax1_2="3.6e-6"
+#export NCLdiffs1_2="0.4e-6"
+#export NCLmin2_2="-0.9e-6"
+#export NCLmax2_2="0.9e-6"
+#export NCLdiffs2_2="0.2e-6"
+#export NCLunits_2="PVU"
+#
+#export NCLplotvar_1="SFZA"
+#export NCLilev_1="750"
+#export NCLvartitle_1="~F8~y'~F21~"
+#export NCLmin1_1="-0.75e7"
+#export NCLmax1_1="0.75e7"
+#export NCLdiffs1_1="0.15e7"
+#export NCLmin2_1="-7.5e6"
+#export NCLmax2_1="7.5e6"
+#export NCLdiffs2_1="1.5e6"
+#export NCLunits_1="m~S~2~N~s~S~-1~N~"
+#
+#export NCLplotvar_1="SF"
+#export NCLilev_1="850"
+#export NCLvartitle_1="~F8~y'~F21~"
+#export NCLmin1_1="-0.9e7"
+#export NCLmax1_1="0.9e7"
+#export NCLdiffs1_1="2.0e6"
+#export NCLmin2_1="-0.675e7"
+#export NCLmax2_1="0.675e7"
+#export NCLdiffs2_1="1.5e6"
+#export NCLunits_1="m~S~2~N~s~S~-1~N~"
+#
+#
+#export NCLplotvar_1="TWcalc"
+#export NCLilev_1="850.0"
+#export NCLvartitle_1="ThermalWindCalc"
+#export NCLmin1_1="0.0"
+#export NCLmax1_1="60.0"
+#export NCLdiffs1_1="6.0"
+#export NCLmin2_1="-18.0"
+#export NCLmax2_1="18.0"
+#export NCLdiffs2_1="3.0"
+#export NCLunits_1="m/s"
+#
+#export NCLplotvar_2="WindShear"
+#export NCLilev_2="850.0"
+#export NCLvartitle_2="ThermalWind"
+#export NCLmin1_2="0"
+#export NCLmax1_2="60.0"
+#export NCLdiffs1_2="6.0"
+#export NCLmin2_2="-18.0"
+#export NCLmax2_2="18.0"
+#export NCLdiffs2_2="3.0"
+#export NCLunits_2="m/s"
+
+#export NCLplotvar_1="dTHdy"
+#export NCLilev_1="850.0"
+#export NCLvartitle_1="~F8~q~F21~"
+#export NCLmin1_1="265.0"
+#export NCLmax1_1="310.0"
+#export NCLdiffs1_1="5.0"
+#export NCLmin2_1="-0.000005"
+#export NCLmax2_1="0.000005"
+#export NCLdiffs2_1="0.000001"
+#export NCLunits_1="K"
+#
+#
+#export NCLplotvar_2="dTHdy"
+#export NCLilev_2="400.0"
+#export NCLvartitle_2="~F8~q~F21~"
+#export NCLmin1_2="265.0"
+#export NCLmax1_2="310.0"
+#export NCLdiffs1_2="5.0"
+#export NCLmin2_2="-0.000005"
+#export NCLmax2_2="0.000005"
+#export NCLdiffs2_2="0.000001"
+#export NCLunits_2="K"
+#
+#export NCLplotvar_1="TH"
+#export NCLilev_1="300.0"
+#export NCLvartitle_1="~F8~q~F21~"
+#export NCLmin1_1="265.0"
+#export NCLmax1_1="310.0"
+#export NCLdiffs1_1="5.0"
+#export NCLmin2_1="-3.6"
+#export NCLmax2_1="3.6"
+#export NCLdiffs2_1="0.8"
+#export NCLunits_1="K"
+#
+#export NCLplotvar_2="TH"
+#export NCLilev_2="250.0"
+#export NCLvartitle_2="~F8~q~F21~"
+#export NCLmin1_2="265.0"
+#export NCLmax1_2="310.0"
+#export NCLdiffs1_2="5.0"
+#export NCLmin2_2="-3.6"
+#export NCLmax2_2="3.6"
+#export NCLdiffs2_2="0.8"
+#export NCLunits_2="K"
+#
+#export NCLplotvar_1="U"
+#export NCLilev_1="850"
+#export NCLvartitle_1="~F10~u~F21~"
+#export NCLmin1_1="-7.0"
+#export NCLmax1_1="11.0"
+#export NCLdiffs1_1="2.0"
+#export NCLmin2_1="-9.0"
+#export NCLmax2_1="9.0"
+#export NCLdiffs2_1="2.0"
+#export NCLunits_1="m~S~-1~N~"
+#
+#export NCLplotvar_2="PV"
+#export NCLilev_2="850"
+#export NCLvartitle_2="~F10~PV~F21~"
+#export NCLmin1_2="0.0"
+#export NCLmax1_2="3.6e-6"
+#export NCLdiffs1_2="0.4e-6"
+#export NCLmin2_2="-0.9e-6"
+#export NCLmax2_2="0.9e-6"
+#export NCLdiffs2_2="0.2e-6"
+#export NCLunits_2="PVU"
+#
+#export NCLplotvar_1="U"
+#export NCLilev_1="850"
+#export NCLvartitle_1="~F10~u~F21~"
+#export NCLmin1_1="-7.0"
+#export NCLmax1_1="11.0"
+#export NCLdiffs1_1="2.0"
+#export NCLmin2_1="-9.0"
+#export NCLmax2_1="9.0"
+#export NCLdiffs2_1="2.0"
+#export NCLunits_1="m~S~-1~N~"
+#
+
+#export NCLplotvar_1="V"
+#export NCLilev_1="850"
+#export NCLvartitle_1="~F10~v~F21~"
+#export NCLmin1_1="-1.0"
+#export NCLmax1_1="6.0"
+#export NCLdiffs1_1="0.8"
+#export NCLmin2_1="-1.8"
+#export NCLmax2_1="1.8"
+#export NCLdiffs2_1="0.4"
+#export NCLunits_1="m~S~-1~N~"
+#
+#export NCLplotvar_2="V"
+#export NCLilev_2="250"
+#export NCLvartitle_2="~F10~v~F21~"
+#export NCLmin1_2="-1.0"
+#export NCLmax1_2="6.0"
+#export NCLdiffs1_2="0.8"
+#export NCLmin2_2="-1.80"
+#export NCLmax2_2="1.80"
+#export NCLdiffs2_2="0.4"
+#export NCLunits_2="m~S~-1~N~"
+#
+
+export NCLplotvar_1="PREC"
+export NCLilev_1="0"
+export NCLvartitle_1="Precip"
+export NCLmin1_1="0"
+export NCLmax1_1="9.0"
+export NCLdiffs1_1="1.0"
+export NCLmin2_1="-0.9"
+export NCLmax2_1="0.9"
+export NCLdiffs2_1="0.2"
+export NCLunits_1="mm/day"
+
+#export NCLplotvar_1="PmE"
+#export NCLilev_1="0"
+#export NCLvartitle_1="P-E"
+#export NCLmin1_1="-5.0"
+#export NCLmax1_1="5.0"
+#export NCLdiffs1_1="1.0"
+#export NCLmin2_1="-2.0"
+#export NCLmax2_1="2.0"
+#export NCLdiffs2_1="0.4"
+#export NCLunits_1="mm/day"
+#
+#export NCLplotvar_2="TdiaSRF"
+#export NCLilev_2="0"
+#export NCLvartitle_2="DJF LH + SH + LW + SW"
+#export NCLmin1_2="-200"
+#export NCLmax1_2="200"
+#export NCLdiffs1_2="40"
+#export NCLmin2_2="-90"
+#export NCLmax2_2="90"
+#export NCLdiffs2_2="20"
+#export NCLunits_2="W/m~S~2~N~"
+
+#export NCLplotvar_1="TradSRF"
+#export NCLilev_1="0"
+#export NCLvartitle_1="DJF LW + SW"
+#export NCLmin1_1="-100"
+#export NCLmax1_1="100"
+#export NCLdiffs1_1="20"
+#export NCLmin2_1="-50"
+#export NCLmax2_1="50"
+#export NCLdiffs2_1="10"
+#export NCLunits_1="W/m~S~2~N~"
+#
+#export NCLplotvar_2="SHFLX"
+#export NCLilev_2="0"
+#export NCLvartitle_2="DJF SH"
+#export NCLmin1_2="-200"
+#export NCLmax1_2="200"
+#export NCLdiffs1_2="40"
+#export NCLmin2_2="-50"
+#export NCLmax2_2="50"
+#export NCLdiffs2_2="10"
+#export NCLunits_2="W/m~S~2~N~"
+#
+fi
 
 
 # save command line arguments to environment variable NCL_ARG_#
-index=1
-export NCL_ARG2_$index=$difvars
-((index++))
-export NCL_ARG2_$index=$difexps
-((index++))
-export NCL_ARG2_$index=$expdif
-((index++))
-export NCL_ARG2_$index=$figtit
-((index++))
-export NCL_ARG2_$index=$numexps
-((index++))
-eval export NCL_ARG2_$index=$dir1
-((index++))
-# save command line arguments to environment variable NCL_ARG_#
 count=0
-limit=$((index+numexps-1))
-for ((index=$index; index<=$limit; index++))
+for ((index=1; index<=$NCLnumexps; index++))
 do
-  eval export NCL_ARG2_$index=${exps1[count]}
-  ((count++))
-done
-count=0
-limit=$((index+numexps-1))
-for ((index=$index; index<=$limit; index++))
-do
-  eval export NCL_ARG2_$index=${titles1[count]}
-  ((count++))
-done
-count=0
-limit=$((index+numexps-1))
-for ((index=$index; index<=$limit; index++))
-do
-  eval export NCL_ARG2_$index=${exps2[count]}
-  ((count++))
-done
-count=0
-limit=$((index+numexps-1))
-for ((index=$index; index<=$limit; index++))
-do
-  eval export NCL_ARG2_$index=${titles2[count]}
-  ((count++))
+	eval export NCLexps1_$index=${exps1[count]}
+	eval export NCLtitles1_$index=${titles1[count]}
+	eval export NCLCTLs1_$index=${CTLS[count]}
+	eval export NCLstarts1_$index=${starts[count]}
+	eval export NCLnyears1_$index=${nyears[count]}
+  	eval export NCLtimespans1_$index=${timespan[count]}
+  	eval export NCLreverses1_$index=${reverse[count]}
+
+ 	((count++))
 done
 
 
-count=0
-limit=$((index+numexps-1))
-for ((index=$index; index<=$limit; index++))
-do
-  eval export NCL_ARG2_$index=${CTLS[count]}
-  ((count++))
-done
-count=0
-limit=$((index+numexps-1))
-for ((index=$index; index<=$limit; index++))
-do
-  eval export NCL_ARG2_$index=${starts1[count]}
-  ((count++))
-done
-count=0
-limit=$((index+numexps-1))
-for ((index=$index; index<=$limit; index++))
-do
-  eval export NCL_ARG2_$index=${starts2[count]}
-  ((count++))
-done
-count=0
-limit=$((index+numexps-1))
-for ((index=$index; index<=$limit; index++))
-do
-  eval export NCL_ARG2_$index=${nyears[count]}
-  ((count++))
-done
-count=0
-limit=$((index+numexps-1))
-for ((index=$index; index<=$limit; index++))
-do
-  eval export NCL_ARG2_$index=${timespan[count]}
-  ((count++))
-done
-count=0
-limit=$((index+numexps-1))
-for ((index=$index; index<=$limit; index++))
-do
-  eval export NCL_ARG2_$index=${reverse[count]}
-  ((count++))
-done
-eval export NCL_ARG2_$index=$linear
-((index++))
-eval export NCL_ARG2_$index=$clon
-((index++))
-eval export NCL_ARG2_$index=$slon
-((index++))
-eval export NCL_ARG2_$index=$elon
-((index++))
-eval export NCL_ARG2_$index=$slat
-((index++))
-eval export NCL_ARG2_$index=$elat
-((index++))
-eval export NCL_ARG2_$index=$plottype
-((index++))
-eval export NCL_ARG2_$index=$plotctl
-((index++))
-eval export NCL_ARG2_$index=$plotERA
-((index++))
-eval export NCL_ARG2_$index=$titleprefix
-
-plotvar="PREC"
-ilev="0"
-vartitle="DJF\ Precip\,\ fixed\ SSTs"
-min1="0"
-max1="13.5"
-diffs1="1.5"
-min2="-1.8"
-max2="1.8"
-diffs2="0.4"
-units="mm/day"
-
-index=1
-eval export NCL_ARG_$index=$plotvar
-((index++))
-eval export NCL_ARG_$index=$ilev
-((index++))
-eval export NCL_ARG_$index=$vartitle
-((index++))
-eval export NCL_ARG_$index=$min1
-((index++))
-eval export NCL_ARG_$index=$max1
-((index++))
-eval export NCL_ARG_$index=$diffs1
-((index++))
-eval export NCL_ARG_$index=$min2
-((index++))
-eval export NCL_ARG_$index=$max2
-((index++))
-eval export NCL_ARG_$index=$diffs2
-((index++))
-eval export NCL_ARG_$index=$units
-((index++))
-
-
-plotvar="PREC"
-ilev="0"
-vartitle="DJF\ Precip\,\ Slab\ Ocean\,"
-min1="0"
-max1="13.5"
-diffs1="1.5"
-min2="-1.8"
-max2="1.8"
-diffs2="0.4"
-units="mm/day"
-
-# save command line arguments to environment variable NCL_ARG_#
-eval export NCL_ARG_$index=$plotvar
-((index++))
-eval export NCL_ARG_$index=$ilev
-((index++))
-eval export NCL_ARG_$index=$vartitle
-((index++))
-eval export NCL_ARG_$index=$min1
-((index++))
-eval export NCL_ARG_$index=$max1
-((index++))
-eval export NCL_ARG_$index=$diffs1
-((index++))
-eval export NCL_ARG_$index=$min2
-((index++))
-eval export NCL_ARG_$index=$max2
-((index++))
-eval export NCL_ARG_$index=$diffs2
-((index++))
-eval export NCL_ARG_$index=$units
-
-
-ncl plot_generic.ncl
+ncl plot_generic2.ncl
 
 
