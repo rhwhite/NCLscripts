@@ -18,7 +18,7 @@ endday = "5"
 if (Data .EQ. "TRMM") then
         inputdir = "/home/disk/eos4/rachel/EventTracking/FiT_RW/TRMM_output/Standard/Precip/"
 	if (test .EQ. 1) then
-		inputfilename = "TRMM_1998_test.nc"
+		inputfilename = "/weights/TRMM_1998_test.nc"
 	else
 		inputfilename = "DenDirSpd_Map_Sizes_" + startday + "-" + endday + "day_centre_TRMM_1998-2014_Standard_regrid_1lons_1lats.nc"
 	end if
@@ -26,14 +26,14 @@ if (Data .EQ. "TRMM") then
 else if (Data .EQ. "ERAI") then
         inputdir = "/home/disk/eos4/rachel/EventTracking/FiT_RW_ERA/ERAI_output/Standard1980/Precip/"
 	if (test .EQ. 1) then
-		inputfilename = "ERAI_1980_test.nc"
+		inputfilename = "/weights/ERAI_1980_test.nc"
 	else
 		inputfilename = "DenDirSpd_Map_Sizes_" + startday + "-" + endday + "day_centre_ERAI_1980-2014_Standard_regrid_1lons_1lats.nc"
 	end if
 else if (Data .EQ. "CESM") then
         inputdir = "/home/disk/eos4/rachel/EventTracking/FiT_RW_ERA/CESM_output/Standard1990-2014/Precip/"
         if (test .EQ. 1) then
-                inputfilename = "CESM_1980_test.nc"
+                inputfilename = "/weights/CESM_1980_test.nc"
         else
                 inputfilename = "DenDirSpd_Map_Sizes_" + startday + "-" + endday + "day_centre_CESM_1990-2014_Standard_regrid_1lons_1lats.nc"
         end if
@@ -75,11 +75,11 @@ nolon = dimsizes(outlons)
 Opt = True
 Opt@SrcFileName = inputfilename
 if (Data .EQ. "TRMM") then
-	Opt@WgtFileName = "TRMM_2_OLR_wgts.nc"
+	Opt@WgtFileName = "/weights/TRMM_2_OLR_wgts.nc"
 else if (Data .EQ. "ERAI") then
-	Opt@WgtFileName = "ERAI_2_OLR_wgts.nc"
+	Opt@WgtFileName = "/weights/ERAI_2_OLR_wgts.nc"
 else if (Data .EQ. "CESM") then
-	Opt@WgtFileName = "CESM_2_OLR_wgts.nc"
+	Opt@WgtFileName = "/weights/CESM_2_OLR_wgts.nc"
 end if
 end if
 end if
@@ -140,12 +140,12 @@ fout_std->lon = (/outlons/)
 delete(infield)
 
 ;infield  = inputfile->TPrecipSeas
-;ofield = ESMF_regrid_with_weights(infield,"TRMM_2_OLR_wgts.nc",False)
+;ofield = ESMF_regrid_with_weights(infield,"/weights/TRMM_2_OLR_wgts.nc",False)
 ;fout_std->TPrecipSeas = ofield
 ;delete(ofield)
 
 ;infieldA  = inputfile->TPrecipAnn
-;ofieldA = ESMF_regrid_with_weights(infieldA,"TRMM_2_OLR_wgts.nc",False)
+;ofieldA = ESMF_regrid_with_weights(infieldA,"/weights/TRMM_2_OLR_wgts.nc",False)
 ;fout_std->TPrecipAnn = ofieldA
 
 print("now writing")
@@ -154,15 +154,15 @@ do iyear = 0,nyears-1
 	infieldA  = inputfile->TPrecipAnn(iyear,:,:)
 	infieldAD = inputfile->TDensityAnn(iyear,:,:)
 	if (Data .EQ. "TRMM") then
-		ofieldA = ESMF_regrid_with_weights(infieldA,"TRMM_2_OLR_wgts.nc",False)
-                ofieldAD = ESMF_regrid_with_weights(infieldAD,"TRMM_2_OLR_wgts.nc",False)
+		ofieldA = ESMF_regrid_with_weights(infieldA,"/weights/TRMM_2_OLR_wgts.nc",False)
+                ofieldAD = ESMF_regrid_with_weights(infieldAD,"/weights/TRMM_2_OLR_wgts.nc",False)
 
 	else if (Data .EQ. "ERAI") then
-                ofieldA = ESMF_regrid_with_weights(infieldA,"ERAI_2_OLR_wgts.nc",False)
-                ofieldAD = ESMF_regrid_with_weights(infieldAD,"ERAI_2_OLR_wgts.nc",False)
+                ofieldA = ESMF_regrid_with_weights(infieldA,"/weights/ERAI_2_OLR_wgts.nc",False)
+                ofieldAD = ESMF_regrid_with_weights(infieldAD,"/weights/ERAI_2_OLR_wgts.nc",False)
 	else if (Data .EQ. "CESM") then
-                ofieldA = ESMF_regrid_with_weights(infieldA,"CESM_2_OLR_wgts.nc",False)
-                ofieldAD = ESMF_regrid_with_weights(infieldAD,"CESM_2_OLR_wgts.nc",False)
+                ofieldA = ESMF_regrid_with_weights(infieldA,"/weights/CESM_2_OLR_wgts.nc",False)
+                ofieldAD = ESMF_regrid_with_weights(infieldAD,"/weights/CESM_2_OLR_wgts.nc",False)
 	end if
 	end if
 	end if
@@ -182,15 +182,15 @@ do iyear = 0,nyears-1
                 infieldD = inputfile->TDensitySeas(iyear,iseas,:,:)
 
 		if (Data .EQ. "TRMM") then
-			ofield = ESMF_regrid_with_weights(infield,"TRMM_2_OLR_wgts.nc",False)
-                        ofieldD = ESMF_regrid_with_weights(infieldD,"TRMM_2_OLR_wgts.nc",False)
+			ofield = ESMF_regrid_with_weights(infield,"/weights/TRMM_2_OLR_wgts.nc",False)
+                        ofieldD = ESMF_regrid_with_weights(infieldD,"/weights/TRMM_2_OLR_wgts.nc",False)
 
 		else if (Data .EQ. "ERAI") then
-                        ofield = ESMF_regrid_with_weights(infield,"ERAI_2_OLR_wgts.nc",False)
-                        ofieldD = ESMF_regrid_with_weights(infieldD,"ERAI_2_OLR_wgts.nc",False)
+                        ofield = ESMF_regrid_with_weights(infield,"/weights/ERAI_2_OLR_wgts.nc",False)
+                        ofieldD = ESMF_regrid_with_weights(infieldD,"/weights/ERAI_2_OLR_wgts.nc",False)
 		else if (Data .EQ. "CESM") then
-                        ofield = ESMF_regrid_with_weights(infield,"CESM_2_OLR_wgts.nc",False)
-                        ofieldD = ESMF_regrid_with_weights(infieldD,"CESM_2_OLR_wgts.nc",False)
+                        ofield = ESMF_regrid_with_weights(infield,"/weights/CESM_2_OLR_wgts.nc",False)
+                        ofieldD = ESMF_regrid_with_weights(infieldD,"/weights/CESM_2_OLR_wgts.nc",False)
 		end if
 		end if
 		end if

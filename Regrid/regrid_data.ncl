@@ -52,7 +52,7 @@ print(numchunks)
 
 Opt = True
 Opt@SrcFileName = inputfilename
-Opt@WgtFileName = "TRMM_2_ERAI_wgts.nc"
+Opt@WgtFileName = "/weights/TRMM_2_ERAI_wgts.nc"
 Opt@InterpMethod = "conserve"
 Opt@SrcRegional = True
 Opt@DstGridLat = outlats
@@ -62,7 +62,7 @@ Opt@SrcGridLon = inlons
 Opt@Overwrite = True
 
 ;Since weights have already been calculated now...
-;ofield = ESMF_regrid_with_weights(infield,"TRMM_2_ERAI_wgts.nc",False)
+;ofield = ESMF_regrid_with_weights(infield,"/weights/TRMM_2_ERAI_wgts.nc",False)
 ;If weights have not already been calculated:
 ;ofield = ESMF_regrid(infield,Opt)
 ;ofield = area_conserve_remap_Wrap(inlons,inlats,infield(0,:,:),outlons,outlats,False)
@@ -80,7 +80,7 @@ do ichunk = 0,numchunks
 
 	infield = inputfile->pcp(ichunk*chunksize:min(tarray),:,:)
 
-	ofield = ESMF_regrid_with_weights(infield,"TRMM_2_ERAI_wgts.nc",False)
+	ofield = ESMF_regrid_with_weights(infield,"/weights/TRMM_2_ERAI_wgts.nc",False)
 
 	if ichunk .LT. 10 then
 		stringchunk = "0" + tostring(ichunk)
