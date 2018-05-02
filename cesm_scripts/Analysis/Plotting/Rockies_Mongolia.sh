@@ -5,11 +5,11 @@ export NCLdifexps="0"
 export NCLexpdif="0"
 export NCLfigtit="RvsT"
 export NCLdir1="/home/disk/rachel/CESM_outfiles/"
-export NCLnumexps="3"
+export NCLnumexps="2"
 export NCLlinear="false"
 export NCLclon="0.0"
 export NCLslon="-180.0"
-export NCLelon="180."
+export NCLelon="0."
 export NCLslat="0.0"
 export NCLelat="90.0"
 export NCLplottype="map"
@@ -18,23 +18,38 @@ export NCLplotERA1="0"
 export NCLplotERA2="0"
 export NCLtitleprefix="Rockies_"
 
-exps1=("CESMtopof19" "CESMnoRT2f19" "CESMnoRf19")
-titles1=("R_CTL" "R_noRockiesTibet" "R_noRockies")
+exps1=("CESMtopof19" "CESMnoRf19" "CESMnoRT2f19")
+titles1=("R_CTL" "R_noRockies" "R_noRockiesTibet")
 CTLS=("100" "0" "0" "0" "0" "0" "2" "2")
 starts=("2" "2" "2" "2" "2" "11" "11" "11")
 nyears=("40" "40" "40" "40")
 timespan=("DJF" "DJF" "DJF" "DJF" "DJF" "DJF" "DJF" "DJF")
 reverse=("true" "false" "false" "false" "false" "false" "true" "true")
 
+export NCLallblue=0
+export NCLplottitles=1
+export NCLblock=0
+
+#export NCLplotvar_1="Topo"
+#export NCLilev_1="0"
+#export NCLvartitle_1="Topo"
+#export NCLmin1_1="0"
+#export NCLmax1_1="2000"
+#export NCLdiffs1_1="200"
+#export NCLmin2_1="-5.5"
+#export NCLmax2_1="5.5"
+#export NCLdiffs2_1="1.0"
+#export NCLunits_1="m"
+#
 export NCLplotvar_1="TS"
 export NCLilev_1="0"
 export NCLvartitle_1="Surface\ Temp"
 export NCLmin1_1="250"
 export NCLmax1_1="305"
 export NCLdiffs1_1="5"
-export NCLmin2_1="-5.5"
-export NCLmax2_1="5.5"
-export NCLdiffs2_1="1.0"
+export NCLmin2_1="-2.5"
+export NCLmax2_1="2.5"
+export NCLdiffs2_1="0.5"
 export NCLunits_1="K"
 
 export NCLplotvar_2="PREC"
@@ -43,8 +58,8 @@ export NCLvartitle_2="DJF Precip"
 export NCLmin1_2="0"
 export NCLmax1_2="8.0"
 export NCLdiffs1_2="1.0"
-export NCLmin2_2="-2.2"
-export NCLmax2_2="2.2"
+export NCLmin2_2="-2."
+export NCLmax2_2="2."
 export NCLdiffs2_2="0.4"
 export NCLunits_2="mm/day"
 
@@ -147,6 +162,6 @@ done
 
 
 
-ncl plot_generic2.ncl
+ncl scripts/plot_generic2.ncl
 
 

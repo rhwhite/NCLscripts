@@ -1,7 +1,7 @@
 #!/bin/sh
 cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis/Plotting/scripts/
-plotvars="THU"
-export NCLnumvars="2"
+plotvars="STD"
+export NCLnumvars="3"
 export NCLdifexps="0"
 export NCLexpdif="0"
 export NCLfigtit="Mongolia/newPaper"
@@ -10,7 +10,7 @@ export NCLnumexps="3"
 export NCLlinear="false"
 export NCLclon="180.0"
 export NCLslon="30.0"
-export NCLelon="300."
+export NCLelon="270."
 export NCLslat="0.0"
 export NCLelat="90.0"
 export NCLplottype="map"
@@ -18,8 +18,8 @@ export NCLplotctl=0
 export NCLplotERA1=0
 export NCLtitleprefix="I1_"
 
-exps1=("CESMnotopof19" "CESM_onlyIT" "CESM_onlyITSh")
-titles1=("CTL" "Ideal\ Tibet" "Ideal\ Mongolia")
+exps1=("CESMnotopof19" "CESM_onlyITSh" "CESM_onlyIT")
+titles1=("CTL" "Ideal\ Mongolia" "Ideal\ Tibet")
 CTLS=("-1" "0" "0" "0" "0" "0" "2" "2")
 starts=("2" "2" "2" "2" "2" "11" "11" "11")
 nyears=("30" "30" "30" "30" "30" "30" "30" "30")
@@ -28,6 +28,9 @@ reverse=("true" "true" "true" "true" "false" "false" "true" "true")
 
 export NCLallblue=0
 export NCLplottitles=1
+export NCLblock=1
+
+
 
 if test "$plotvars" == "SFZA"; then
         export NCLallblue=0
@@ -40,7 +43,7 @@ if test "$plotvars" == "SFZA"; then
         export NCLmin2_1="-7.5e6"
         export NCLmax2_1="7.5e6"
         export NCLdiffs2_1="1.5e6"
-        export NCLunits_1="m~S~2~N~s~S~-1~N~"
+	export NCLunits_1="10~S~6~N~s~S~-1~N~"
 
         export NCLplotvar_2="SFZA"
         export NCLilev_2="250"
@@ -51,7 +54,7 @@ if test "$plotvars" == "SFZA"; then
         export NCLmin2_2="-10.0e6"
         export NCLmax2_2="10.0e6"
         export NCLdiffs2_2="2.0e6"
-        export NCLunits_2="m~S~2~N~s~S~-1~N~"
+        export NCLunits_2="10~S~6~N~s~S~-1~N~"
 
 elif test "$plotvars" == "THU"; then
         export NCLplotvar_1="TH"
@@ -76,6 +79,40 @@ elif test "$plotvars" == "THU"; then
         export NCLmax2_2="20.0"
         export NCLdiffs2_2="4.0"
         export NCLunits_2="ms~S~-1~N~"
+elif test "$plotvars" == "STD"; then
+        export NCLallblue=0
+        export NCLplotvar_1="SFZA"
+        export NCLilev_1="850"
+        export NCLvartitle_1="~F8~y'~F21~"
+        export NCLmin1_1="-0.75e7"
+        export NCLmax1_1="0.75e7"
+        export NCLdiffs1_1="0.15e7"
+        export NCLmin2_1="-7.5e6"
+        export NCLmax2_1="7.5e6"
+        export NCLdiffs2_1="1.5e6"
+        export NCLunits_1="10~S~6~N~s~S~-1~N~"
+
+        export NCLplotvar_2="SFZA"
+        export NCLilev_2="250"
+        export NCLvartitle_2="~F8~y'~F21~"
+        export NCLmin1_2="-2.0e7"
+        export NCLmax1_2="2.0e7"
+        export NCLdiffs1_2="4.0e6"
+        export NCLmin2_2="-10.0e6"
+        export NCLmax2_2="10.0e6"
+        export NCLdiffs2_2="2.0e6"
+        export NCLunits_2="10~S~6~N~s~S~-1~N~"
+
+        export NCLplotvar_3="U"
+        export NCLilev_3="250"
+        export NCLvartitle_3="~F10~U~F21~"
+        export NCLmin1_3="-7.0"
+        export NCLmax1_3="77.0"
+        export NCLdiffs1_3="7.0"
+        export NCLmin2_3="-20.0"
+        export NCLmax2_3="20.0"
+        export NCLdiffs2_3="4.0"
+        export NCLunits_3="ms~S~-1~N~"
 elif test "$plotvars" == "Zvar"; then
         export NCLplotvar_1="Zvar"
         export NCLilev_1="250.0"
@@ -121,6 +158,30 @@ elif test "$plotvars" == "UV"; then
         export NCLmax2_2="10.0"
         export NCLdiffs2_2="2.0"
         export NCLunits_2="ms~S~-1~N~"
+
+elif test "$plotvars" == "WW"; then
+        export NCLplotvar_1="OMEGA"
+        export NCLilev_1="850.0"
+        export NCLvartitle_1="~F10~W~F21~"
+        export NCLmin1_1="-0.1"
+        export NCLmax1_1="0.1"
+        export NCLdiffs1_1="0.02"
+        export NCLmin2_1="-0.02"
+        export NCLmax2_1="0.02"
+        export NCLdiffs2_1="0.004"
+        export NCLunits_1="ms~S~-1~N~"
+
+        export NCLplotvar_2="OMEGA"
+        export NCLilev_2="700"
+        export NCLvartitle_2="~F10~W~F21~"
+        export NCLmin1_2="-0.1"
+        export NCLmax1_2="0.1"
+        export NCLdiffs1_2="0.02"
+        export NCLmin2_2="-0.02"
+        export NCLmax2_2="0.02"
+        export NCLdiffs2_2="0.004"
+        export NCLunits_2="ms~S~-1~N~"
+
 else
 
 

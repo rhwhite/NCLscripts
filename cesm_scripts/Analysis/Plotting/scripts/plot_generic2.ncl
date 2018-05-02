@@ -12,8 +12,9 @@ varswitch = 0
 papertitles = getenv("NCLplottitles")
 LineColors = (/"blue","red","green","cyan","black","yellow"/)
 overplot = 1
-justblue = getenv("NCLallblue")
-print(justblue)
+colormap = getenv("NCLallblue")
+
+block = 1
 vmagnitude = 5
 vmax = 2
 vspacing = 0.2
@@ -119,7 +120,6 @@ if (numcols .GT. 1) then
 	end if
 end if
 
-print(Titles)
 linear = getenv("NCLlinear")
 clon = toint(getenv("NCLclon"))
 slon = toint(getenv("NCLslon"))
@@ -233,8 +233,6 @@ if (max(plotERA) .GT. 0) then
 				latsE = latsE(::-1) ; flip latitudes
 			end if
 
-			print(fliplat)
-
 			levelsE = cdf_Obs->level
 			; Find level
 			nlevsE = dimsizes(levelsE)
@@ -264,11 +262,9 @@ if (max(plotERA) .GT. 0) then
                 if (plotERA(ic) .EQ. 1 .OR. plotERA(ic) .EQ. 2) then
 
 			variable = vars(0,ic)
-			print(variable)
 			ilev = ilevsE(ic)
 
 			if (variable .EQ. "U") then
-				print("reading ERA U")
 				E_plotvar(ic,:,:) = tofloat(cdf_Obs->u(0,Eplevs(ic),:,:))
 				if (fliplat .EQ. 1) then 
 					E_plotvar(ic,:,:) = E_plotvar(ic,::-1,:)
@@ -410,7 +406,6 @@ if (max(plotERA) .GT. 0) then
 end if
 
 ; Now go get experiment data
-print(Experiments)
 filo = Experiments(0,0) + "/atm/hist/" + timespans(0,0) + tostring(startyrs(0,0)) + "_" + tostring(nyears(0,0)) + "_mean_Xpl_" + Experiments(0,0) + ".cam2.h0.nc"
 cdf_file = addfile(dir + filo, "r")
 
@@ -436,21 +431,17 @@ if (plottype .EQ. "ZMline" .OR. plottype .EQ. "CSZ" .OR. plottype .EQ. "CSM") th
 	do nl = 0,nlons-2
 		if lons(nl) .LE. slon .AND. lons(nl+1) .GT. slon then
 			nlonstart = nl
-			print(nlonstart)
 		end if
 		if lons(nl) .LE. elon .AND. lons(nl+1) .GT. elon then
 			nlonend = nl+1
-			print(nlonend)
 		end if
 	end do
         do nl = 0,nlats-2
                 if lats(nl) .LE. slat .AND. lats(nl+1) .GT. slat then
                         nlatstart = nl
-                        print(nlatstart)
                 end if
                 if lats(nl) .LE. elat .AND. lats(nl+1) .GT. elat then
                         nlatend = nl+1
-                        print(nlatend)
                 end if
         end do
 	if slat .EQ. -90.0
@@ -467,8 +458,6 @@ delete(cdf_file)
 
 do iexp = 0,numrows-1
 	do ic = 0,numcols-1
-		print(iexp)
-		print(ic)
 		if (Experiments(ic,iexp) .EQ. "0") then
 			PS(ic,iexp,:,:) = 10000.0
 			PHIS(ic,iexp,:,:) = 10000.0
@@ -669,7 +658,6 @@ do es = 0,numcols-1
 								print("didnt find a level")
 								exit
 							end if
-							print(cdf_file2->level(plevTN))
 
 							plotvar2(es,iexp,:,:) = tofloat(cdf_file2->Fx(0,plevTN,:,:))
 							plotvar3(es,iexp,:,:) =tofloat( cdf_file2->Fy(0,plevTN,:,:))
@@ -692,8 +680,56 @@ do es = 0,numcols-1
 
 					else if (variable .EQ. "U") then
 						plotvar(es,iexp,:,:) = cdf_file->U(0,plev,:,:)
+				        ; find lats and lons
+						dlon = lons(1) - lons(0)
+						do ilon = 0,nlons-2
+							if lons(ilon) .GE. 50.0 .AND. lons(ilon) .LT. (50.0 + dlon) then
+								startlon = ilon
+							end if
+							if lons(ilon) .GE. 80.0 .AND. lons(ilon) .LT. (80.0 + dlon) then
+								endlon = ilon
+							end if
+						end do
+						Hdlat = 0.5 * (lats(1) - lats(0))
+						latvals = (/33,43,48,53,63/)
+						nlatvals = dimsizes(latvals)
+						do ilatval = 0,nlatvals-1
+							latval = latvals(ilatval)
+							do ilat = 0,nlats-2
+
+								if lats(ilat) .GE. latval - Hdlat .AND. lats(ilat) .LT. latval + Hdlat then
+									print(avg(cdf_file->U(0,plev,ilat,startlon:endlon)))
+									break
+								end if
+							end do
+						end do
 					else if (variable .EQ. "V") then
 						plotvar(es,iexp,:,:) = cdf_file->V(0,plev,:,:)
+                                        ; find lats and lons
+                                                dlon = lons(1) - lons(0)
+                                                do ilon = 0,nlons-2
+                                                        if lons(ilon) .GE. 80.0 .AND. lons(ilon) .LT. (80.0 + dlon) then
+                                                                startlon = ilon
+                                                        end if
+                                                        if lons(ilon) .GE. 110.0 .AND. lons(ilon) .LT. (110.0 + dlon) then
+                                                                endlon = ilon
+                                                        end if
+                                                end do
+                                                Hdlat = 0.5 * (lats(1) - lats(0))
+                                                latvals = (/33,43,48,53,63/)
+
+                                                ;latvals = (/35,45,50,55,65/)
+                                                nlatvals = dimsizes(latvals)
+                                                do ilatval = 0,nlatvals-1
+                                                        latval = latvals(ilatval)
+                                                        do ilat = 0,nlats-2
+
+                                                                if lats(ilat) .GE. latval - Hdlat .AND. lats(ilat) .LT. latval + Hdlat then
+                                                                        print(avg(cdf_file->V(0,plev,ilat,startlon:endlon)))
+                                                                        break
+                                                                end if
+                                                        end do
+                                                end do
 					else if (variable .EQ. "dudz") then
 						dudz = center_finite_diff_n(cdf_file->U(0,:,:,:),levs_mean,False,0,0)
 						plotvar(es,iexp,:,:) = dudz(plev,:,:)
@@ -785,7 +821,7 @@ do es = 0,numcols-1
 				delete(cdf_file)
 				delete(levs_mean2)
 
-			else if (variable .EQ. "THS" .OR. variable .EQ. "TS" .OR. variable .EQ. "PREC" .OR. variable .EQ. "PmE" .OR. variable .EQ. "Topo" .OR. variable .EQ. "TdiaSRF" .OR. variable .EQ. "TradSRF" .OR. variable .EQ. "SHFLX" .OR. variable .EQ. "LHFLX" .OR. variable .EQ. "U10" .OR. variable .EQ. "EVAP" .OR. variable .EQ. "WScurl") then
+			else if (variable .EQ. "THS" .OR. variable .EQ. "TS" .OR. variable .EQ. "PREC" .OR. variable .EQ. "PmE" .OR. variable .EQ. "Topo" .OR. variable .EQ. "TdiaSRF" .OR. variable .EQ. "TradSRF" .OR. variable .EQ. "SHFLX" .OR. variable .EQ. "LHFLX" .OR. variable .EQ. "U10" .OR. variable .EQ. "EVAP" .OR. variable .EQ. "WScurl" .OR. variable .EQ. "PSL") then
 			
 				filo = Experiments(es,iexp) + "/atm/hist/" + timespans(es,iexp) + tostring(startyrs(es,iexp)) + "_" + tostring(nyears(es,iexp)) + "_mean_" + Experiments(es,iexp) + ".cam2.h0.nc"
 				cdf_file = addfile(dir + filo, "r")
@@ -820,6 +856,9 @@ do es = 0,numcols-1
 					taux = cdf_file->TAUX(0,:,:) * -1.0
 					tauy = cdf_file->TAUY(0,:,:) * -1.0
 					plotvar(es,iexp,:,:) = uv2vr_cfd(taux,tauy,cdf_file->lat,cdf_file->lon,3)
+				else if (variable .EQ. "PSL") then
+					plotvar(es,iexp,:,:) = cdf_file->PSL(0,:,:)/ 100.0	; convert from pa to hpa or mb
+				end if
 				end if
 				end if
 				end if
@@ -912,7 +951,6 @@ do es = 0,numcols-1
 					f = tofloat(2 * 7.292e-5 * sin(lats * pi / 180.0))
 
 					dp = center_finite_diff_n(levs_mean,1,False,1,0)
-					print(dp)					
 
 				        do nl = 0,nlevs-1
                                         	if levs_mean(nl) .EQ. ilev then
@@ -1038,10 +1076,34 @@ do es = 0,numcols-1
 	; fine for no topography or hybrid levels:			gradsf(PVtm(:,:),dPVdx,dPVdy)
 				dPVdy = center_finite_diff_n(PVtm(:,:),lat_dist, False, 0, 0)
 				
+	; find lats and lons
+				dlon = lons(1) - lons(0)
+				do ilon = 0,nlons-2
+					if lons(ilon) .GE. 50.0 .AND. lons(ilon) .LT. (50.0 + dlon) then
+						startlon = ilon
+					end if
+                                        if lons(ilon) .GE. 80.0 .AND. lons(ilon) .LT. (80.0 + dlon) then
+                                                endlon = ilon
+                                        end if	
+				end do
+				Hdlat = 0.5 * (lats(1) - lats(0))
+				latvals = (/33,43,48,53,63/)
+				nlatvals = dimsizes(latvals)
+				do ilatval = 0,nlatvals-1
+					latval = latvals(ilatval)
+					do ilat = 0,nlats-2
+
+						if lats(ilat) .GE. latval - Hdlat .AND. lats(ilat) .LT. latval + Hdlat then
+							print(tostring(latval))
+							print(avg(dPVdy(ilat,startlon:endlon)))
+							break
+						end if
+					end do
+				end do
 				if variable .EQ. "PV" then
 					plotvar(es,iexp,:,:) = PVtm(:,:)
 				else if variable .EQ. "dPVdy" then
-					plotvar(es,iexp,:,:) = dPVdy
+					plotvar(es,iexp,:,:) = dPVdy(:,:)
 				end if
 				end if
 
@@ -1253,21 +1315,23 @@ do es = 0,numcols-1
 			end if
 
 
-			if (variable .EQ. "TS") then
-				do iexp = 0,nexps-1
-					do iy = 0,nlons-1
-						do ix = 0,nlats-1
-							if (ExpCTLs(es,iexp) .GE. 0 .AND. ExpCTLs(es,iexp) .LT. 50) then
-								if (PHIS(es,iexp,ix,iy) .LT. (PHIS(es,ExpCTLs(es,iexp),ix,iy) -1) .OR. PHIS(es,iexp,ix,iy) .GT. (PHIS(es,ExpCTLs(es,iexp),ix,iy) +1)) then
-									plotvar(es,iexp,ix,iy) = plotvar@_FillValue
-									if (variable .EQ. "UV") then
-										plotvar2(es,iexp,ix,iy) = plotvar2@_FillValue
+			if block .EQ. 1 then
+				if (variable .EQ. "TS") then
+					do iexp = 0,nexps-1
+						do iy = 0,nlons-1
+							do ix = 0,nlats-1
+								if (ExpCTLs(es,iexp) .GE. 0 .AND. ExpCTLs(es,iexp) .LT. 50) then
+									if (PHIS(es,iexp,ix,iy) .LT. (PHIS(es,ExpCTLs(es,iexp),ix,iy) -1) .OR. PHIS(es,iexp,ix,iy) .GT. (PHIS(es,ExpCTLs(es,iexp),ix,iy) +1)) then
+										plotvar(es,iexp,ix,iy) = plotvar@_FillValue
+										if (variable .EQ. "UV") then
+											plotvar2(es,iexp,ix,iy) = plotvar2@_FillValue
+										end if
 									end if
 								end if
-							end if
+							end do
 						end do
 					end do
-				end do
+				end if
 			end if
 		end if
 	end do
@@ -1396,7 +1460,7 @@ if (plottype .EQ. "map") then
 				toplot2(iplot,nexps,:,:) = 0.0
 				toplot3(iplot,nexps,:,:) = 0.0
 			end if
-			toplotPHIS(iplot,plotcounter,:,:) = PHIS(iplot,0,:,:) - PHIS(iplot,1,:,:) - PHIS(iplot,2,:,:) + PHIS(iplot,3,:,:)
+			toplotPHIS(iplot,plotcounter,:,:) = (PHIS(iplot,0,:,:) - PHIS(iplot,1,:,:)) - (PHIS(iplot,0,:,:) - PHIS(iplot,2,:,:)) - (PHIS(iplot,0,:,:) - PHIS(iplot,3,:,:))
 			toplottitle(iplot,plotcounter) = Titles(iplot,0) + " - " + Titles(iplot,1) + " - " + Titles(iplot,2) + " + " + Titles(iplot,3)
 		end do
 	end if
@@ -1580,19 +1644,34 @@ end if
 
 ;print(numrows)
 ;print(numcols)
-do ir = 0,numrows-1
-	do ic = 1,numcols-1
-		if (ilevs(ir,ic) .EQ. 0) 
-			all_vars = all_vars + vars(ir,ic) + "_SFC_"
-		else if (ilevs(ir,ic) .EQ. -1)
-			all_vars = all_vars + vars(ir,ic) + "_"
-		else
-			all_vars = all_vars + vars(ir,ic) + tostring(ilevs(ir,ic)) + "_"
-		end if
-		end if
-	end do
-end do
 
+if numvars .GT. 1 then
+	if (vars(0,0) .EQ. vars(0,1) .and. ilevs(0,0) .EQ. ilevs(0,1)) then
+		ic = 0
+		do ir = 0,numrows-1
+			if (ilevs(ir,ic) .EQ. 0)
+				all_vars = all_vars + vars(ir,ic) + "_SFC_"
+			else if (ilevs(ir,ic) .EQ. -1)
+				all_vars = all_vars + vars(ir,ic) + "_"
+			else    
+				all_vars = all_vars + vars(ir,ic) + tostring(ilevs(ir,ic)) + "_"
+			end if  
+			end if
+		end do
+	else	
+		ir = 0
+		do ic = 1,numcols-1
+			if (ilevs(ir,ic) .EQ. 0) 
+				all_vars = all_vars + vars(ir,ic) + "_SFC_"
+			else if (ilevs(ir,ic) .EQ. -1)
+				all_vars = all_vars + vars(ir,ic) + "_"
+			else
+				all_vars = all_vars + vars(ir,ic) + tostring(ilevs(ir,ic)) + "_"
+			end if
+			end if
+		end do
+	end if
+end if
 
 if (variable .EQ. "Zmax" .OR. variable .EQ. "Zlen" .OR. variable .EQ. "Znum" .OR. variable .EQ. "Zmag") then
 	plotname = variable + tostring(ilev) + "_" + plottype + "_" + slon + "-" + elon
@@ -1624,17 +1703,21 @@ wks   = gsn_open_wks ("eps","/home/disk/eos4/rachel/Figures/" + figtitle + "/" +
 colorshere = (/"navy","blue3","mediumblue","dodgerblue","deepskyblue","white","white","lightgoldenrod","gold","darkorange","red","red4"/)
 
 ;gsn_define_colormap(wks,colorshere)
+
 gsn_define_colormap(wks,"MPL_GnBu") ;BlueWhiteOrangeRed")         ; choose colormap
 
 cmap = read_colormap_file("BlueWhiteOrangeRed")
 ncmap = dimsizes(cmap)
 ncolors = ncmap(0)
-if justblue .EQ. 1 then
+if colormap .EQ. 1 then
 	newcmap = cmap(10:110,:) ;(30:226:4,:)
 	newcmap = newcmap(::-1,:)
+else if colormap .EQ. 2 then
+	cmap2 = read_colormap_file("MPL_BrBG")
+	newcmap = cmap2
 else
 	newcmap = cmap(40:ncolors-40,:)
-	
+end if	
 end if
 plots = new((/numcols,singlesize/),graphic)                          ; create a plot array
 
@@ -1651,12 +1734,19 @@ resvc@vcZeroFLabelOn = False
 ;res@gsnLeftString = ""
 res@cnMissingValFillColor = "grey30"
 res@lbOrientation   = "Vertical"                ; vertical label bar
-res@lbLabelFontHeightF =.017
-
-res@tmXBLabelFontHeightF = 0.017
-res@tmYLLabelFontHeightF = 0.017
-res@gsnLeftStringFontHeightF = 0.012
-res@gsnRightStringFontHeightF = 0.012
+if numcols .GE. 3 then
+        res@lbLabelFontHeightF =.025
+else
+	res@lbLabelFontHeightF =.020
+end if
+res@tmXBLabelFontHeightF = 0.020
+res@tmYLLabelFontHeightF = 0.020
+if numcols .EQ. 1 then
+	res@gsnLeftStringFontHeightF = 0.015
+else
+        res@gsnLeftStringFontHeightF = 0.02
+end if
+res@gsnRightStringFontHeightF = 0.020
 
 res@cnFillPalette = newcmap
 
@@ -1744,7 +1834,7 @@ if (plottype .EQ. "map" .OR. plottype .EQ. "CSZ" .OR. plottype .EQ. "CSM") then
 					if numcols .GE. 3 then
 						res@tiYAxisOffsetXF = -0.01
 					else
-						res@tiYAxisOffsetXF = -0.03
+						res@tiYAxisOffsetXF = -0.04
 					end if
 					if nexps .GE. 3 then
 						res@tiYAxisOffsetYF = -0.03
@@ -1812,18 +1902,29 @@ if (plottype .EQ. "map" .OR. plottype .EQ. "CSZ" .OR. plottype .EQ. "CSM") then
 	                                res@gsnLeftString=vartitles(pp,ic) + " at " + tostring(ilevs(pp,ic)) + " mb"
 				else
 					if ic .EQ. 0 then
-                                                res@tiYAxisFontHeightF = 0.03
-                                                
-						if numcols .GE. 3 then
+						res@tiYAxisFontHeightF = 0.018
+						if numcols .GE. 3 then	
 							res@tiYAxisOffsetXF = -0.02
+						else if numcols .GE. 2 then
+                                                        res@tiYAxisOffsetXF = -0.04
 						else
-							res@tiYAxisOffsetXF = -0.03
+							if nexps .GE. 5 then
+								res@tiYAxisOffsetXF = -0.05
+							else
+                                                                res@tiYAxisOffsetXF = -0.06
+							end if
 						end if
-						if nexps .GE. 3 .AND. plotERA(ic) .GT. 0 then
-							res@tiYAxisOffsetYF = -0.04
-						else
-	                                                res@tiYAxisFontHeightF = 0.024
+						end if
+						if numcols .EQ. 1 then
+							res@tiYAxisFontHeightF = 0.020
+						else if nexps .GE. 3 then
+                                                        res@tiYAxisFontHeightF = 0.035
+							;res@tiYAxisOffsetYF = -0.04
+						else if nexps .GE. 5 then
+	                                                res@tiYAxisFontHeightF = 0.03
 							res@tiYAxisOffsetYF = 0.0
+						end if
+						end if
 						end if
 						res@tiYAxisString   = Titles(ic,pp)
 					else
@@ -1856,8 +1957,17 @@ if (plottype .EQ. "map" .OR. plottype .EQ. "CSZ" .OR. plottype .EQ. "CSM") then
 							resvc@vcLevelSelectionMode = "ManualLevels"
 							resvc@vcMinLevelValF = 0
 							resvc@vcRefLengthF = 0.03
+							resvc@vcRefMagnitudeF = 5
 							resvc@vcMaxLevelValF = vmax
-					                resvc@vcLevelSpacingF = vspacing							
+					                resvc@vcLevelSpacingF = vspacing
+							
+							resvc@vcRefAnnoOrthogonalPosF = -1.0
+							;resvc@vcRefAnnoSide = "Bottom"
+							
+							;resvc@vcRefAnnoJust = "TopRight"  
+							resvc@vcRefAnnoString1 = "  5 m~S1~2 s~S2~-2  "
+							resvc@vcRefAnnoString2On = False
+							resvc@vcRefAnnoFontHeightF = 0.017
 							resvc@vcMinDistanceF = 0.02       ; thin vectors
 					                resvc@vcMinMagnitudeF = minmag
 						
@@ -1951,7 +2061,7 @@ else if (plottype .EQ. "ZMline") then
 	res@pmLegendOrthogonalPosF = -0.4                ; move units down
 	res@pmLegendWidthF         = 0.2
 	res@lgPerimOn              = False               ; turn off box around
-	res@lgLabelFontHeightF     = .017                 ; label font height
+	res@lgLabelFontHeightF     = .020                 ; label font height
 
         res@xyExplicitLegendLabels = toplottitle(0,1:nexps-1)
 	plot(2) = gsn_csm_xy(wks,toplot&lat,toplot(0,1:nexps-1,:),res) ;
@@ -2002,9 +2112,9 @@ resP_1@gsnPanelLeft     = 0.02
 ;print(numcols)
 
 if (numcols .EQ. 1) then
-	if papertitles .EQ. 1 then
-	       resP_1@txString = vartitles(0,0) + " at " + tostring(ilevs(0,0)) + " mb"
-	end if
+	;if papertitles .EQ. 1 then
+	;       resP_1@txString = vartitles(0,0) + " at " + tostring(ilevs(0,0)) + " mb"
+	;end if
 else if (numcols .EQ. 2) then
         resP_1@gsnPanelRight     = 0.48
 
@@ -2020,33 +2130,40 @@ else if (numcols .EQ. 2) then
                 resP_1@txPosXF           = 0.25
 	else
 		resP_2@txFontHeightF     = 0.011
-		resP_2@txPosYF           = 0.83
+		resP_2@txPosYF           = 0.89
 		resP_2@txPosXF		 = 0.7
+		resP_1@txPosYF		 = 0.89
 		resP_1@txPosXF		 = 0.25
 	end if
 	if papertitles .EQ. 1 then
-                resP_1@txString = vartitles(0,0) + " at " + tostring(ilevs(0,0)) + " mb"
+        resP_1@txString = vartitles(0,0) + " at " + tostring(ilevs(0,0)) + " mb"
 		resP_2@txString = vartitles(0,1) + " at " + tostring(ilevs(0,1)) + " mb"
 	end if
 
 else if (numcols .GT. 2) then
-        resP_2                   = resP_1
+    resP_2                   = resP_1
 
-	resP_1@gsnPanelLeft	= 0.02
-        resP_1@gsnPanelRight     = 0.33
+	resP_1@gsnPanelLeft	= 0.04
+    resP_1@gsnPanelRight     = 0.34
 
-        resP_2@gsnPanelLeft     = 0.34
-        resP_2@gsnPanelRight     = 0.65
-        resP_2@gsnPanelFigureStrings=labels(numProws:numProws*2-1)
+    resP_2@gsnPanelLeft     = 0.35
+    resP_2@gsnPanelRight     = 0.65
+    resP_2@gsnPanelFigureStrings=labels(numProws:numProws*2-1)
 
-        resP_3                   = resP_2
-        resP_3@gsnPanelLeft     = 0.66
-        resP_3@gsnPanelRight     = 0.97
-       
+    resP_3                   = resP_2
+    resP_3@gsnPanelLeft     = 0.66
+    resP_3@gsnPanelRight     = 0.96
+   
+    if (nexps .GT. 3) then
         resP_1@txPosYF           = 0.73
         resP_2@txPosYF           = 0.73
         resP_3@txPosYF           = 0.73
- 
+ 	else
+        resP_1@txPosYF           = 0.65
+        resP_2@txPosYF           = 0.65
+        resP_3@txPosYF           = 0.65
+	end if
+
         resP_1@txPosXF           = 0.16
         resP_2@txPosXF           = 0.48
         resP_3@txPosXF           = 0.79
@@ -2094,10 +2211,10 @@ else if numcols .EQ. 2 then
 		  resP_2@gsnPanelYWhiteSpacePercent = 5
 		  resP_1@gsnPanelYWhiteSpacePercent = 5
 		else if (max(plotnum) .LT. 4) then
-		  resP_1@gsnPanelLeft     = 0.02
-		  resP_1@gsnPanelRight     = 0.52
-		  resP_2@gsnPanelLeft       = 0.48
-		  resP_2@gsnPanelRight       = 0.98
+		  resP_1@gsnPanelLeft     = 0.04
+		  resP_1@gsnPanelRight     = 0.53
+		  resP_2@gsnPanelLeft       = 0.49
+		  resP_2@gsnPanelRight       = 0.99
 		  resP_1@gsnPanelBottom = 0.35
 		  resP_2@gsnPanelBottom = 0.35
 		  resP_2@gsnPanelYWhiteSpacePercent = 5
@@ -2112,9 +2229,9 @@ else if numcols .EQ. 2 then
 		  resP_2@gsnPanelYWhiteSpacePercent = 5
 		  resP_1@gsnPanelYWhiteSpacePercent = 5
 		else if (max(plotnum) .LT. 6) then
-		  resP_1@gsnPanelLeft     = 0.03
-		  resP_1@gsnPanelRight     = 0.5
-		  resP_2@gsnPanelLeft       = 0.5
+		  resP_1@gsnPanelLeft     = 0.06
+		  resP_1@gsnPanelRight     = 0.53
+		  resP_2@gsnPanelLeft       = 0.53
 		  resP_2@gsnPanelRight       = 0.97
 		  resP_1@gsnPanelBottom = 0.01
 		  resP_2@gsnPanelBottom = 0.01
@@ -2154,25 +2271,24 @@ else if numcols .EQ. 2 then
                   resP_2@gsnPanelYWhiteSpacePercent = 5
                   resP_1@gsnPanelYWhiteSpacePercent = 5
                 else if (max(plotnum) .LT. 4) then
-                  resP_1@gsnPanelLeft     = 0.02
-                  resP_1@gsnPanelRight     = 0.5
-                  resP_2@gsnPanelLeft       = 0.5
+                  resP_1@gsnPanelLeft     = 0.04
+                  resP_1@gsnPanelRight     = 0.51
+                  resP_2@gsnPanelLeft       = 0.52
                   resP_2@gsnPanelRight       = 0.97
                   resP_1@gsnPanelBottom = 0.01
                   resP_2@gsnPanelBottom = 0.01
                   resP_1@gsnPanelYWhiteSpacePercent = 3
                   resP_2@gsnPanelYWhiteSpacePercent = 3
                 else if (max(plotnum) .LT. 6) then
-                  resP_1@gsnPanelLeft     = 0.01
-                  resP_1@gsnPanelRight     = 0.48
-                  resP_2@gsnPanelLeft       = 0.52
+                  resP_1@gsnPanelLeft     = 0.03
+                  resP_1@gsnPanelRight     = 0.50
+                  resP_2@gsnPanelLeft       = 0.54
                   resP_2@gsnPanelRight       = 0.99
                   resP_1@gsnPanelBottom = 0.01
                   resP_2@gsnPanelBottom = 0.01
                   resP_1@gsnPanelYWhiteSpacePercent = 3
                   resP_2@gsnPanelYWhiteSpacePercent = 3
 		else
-		  print("here")
                   resP_1@gsnPanelLeft       = 0.01
                   resP_1@gsnPanelRight     = 0.48
                   resP_2@gsnPanelLeft       = 0.53
@@ -2216,9 +2332,6 @@ end if
 
 
 ;print(npanels)
-print(numProws)
-print(varswitch)
-print(dimsizes(plots))
 if varswitch .EQ. 1 then
 	panelid_1 = gsn_panel_return(wks,plots(0:numProws-1,0),(/npanels,1/),resP_1)
 else

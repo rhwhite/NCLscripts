@@ -1,5 +1,5 @@
 #!/bin/sh
-cd /home/disk/eos4/rachel/NCL/cesm_scripts/Analysis/Plotting/scripts/
+cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis/Plotting/scripts/
 difvars="1"
 expdif="0"
 figtit="Paper"

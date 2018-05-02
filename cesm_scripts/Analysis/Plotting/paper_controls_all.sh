@@ -1,7 +1,7 @@
 #!/bin/sh
 cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis/Plotting/scripts/
-plotvars="STD"
-export NCLnumvars="3"
+plotvars="UV850"
+export NCLnumvars="2"
 export NCLdifexps="1"
 export NCLexpdif="0"
 export NCLfigtit="Mongolia/newPaper"
@@ -16,12 +16,12 @@ export NCLelat="80.0"
 export NCLplottype="map"
 export NCLplotctl=0
 export NCLplotERA1=0
-export NCLtitleprefix="CTLs_topo_"
+export NCLtitleprefix="CTLs_noMT_"
 
 export NCLallblue=1
 export NCLplottitles=0
-exps1=("CESMtopof19" "CESMtopof19" "CESMtopof19" "CESMtopof19" "CESMnoT2f19" "CESMnoT4f19")
-#exps1=("CESMnoT2f19" "CESMnoT2f19" "CESMnoT2f19" "CESMnoT2f19" "CESMnoT4f19")
+#exps1=("CESMtopof19" "CESMtopof19" "CESMtopof19" "CESMtopof19" "CESMnoT2f19" "CESMnoT4f19")
+exps1=("CESMnotopof19" "CESMnotopof19" "CESMnotopof19" "CESMnoT2f19" "CESMnoT4f19")
 
 titles1=("" "" "" "CESM\_no\_M")
 CTLS=("100" "100" "100" "100" "0" "0" "0" "2")
@@ -35,7 +35,7 @@ reverse=("true" "true" "true" "true" "true" "true" "true" "true")
 
 if test "$plotvars" == "STD"; then
 export NCLplotvar_2="dPVdy"
-export NCLilev_2="925"
+export NCLilev_2="900"
 export NCLvartitle_2="dPVdy"
 export NCLmin1_2="0"
 export NCLmax1_2="0.8e-12"
@@ -58,7 +58,7 @@ export NCLdiffs2_1="2.0"
 export NCLunits_1="m/s"
 
 export NCLplotvar_3="Ks"
-export NCLilev_3="250"
+export NCLilev_3="925"
 export NCLvartitle_3="K~B~s~N~"
 export NCLmin1_3="0"
 export NCLmax1_3="7.5"
@@ -68,13 +68,13 @@ export NCLmax2_3="20"
 export NCLdiffs2_3="3.0"
 export NCLunits_3="m~S~-1~N~"
 
-elif test "$plotvars" == "STDhigh"; then
+elif test "$plotvars" == "STD850"; then
 export NCLplotvar_2="dPVdy"
 export NCLilev_2="850"
 export NCLvartitle_2="dPVdy"
 export NCLmin1_2="0"
-export NCLmax1_2="0.8e-12"
-export NCLdiffs1_2="0.08e-12"
+export NCLmax1_2="1.0e-12"
+export NCLdiffs1_2="0.1e-12"
 export NCLmin2_2="-7"
 export NCLmax2_2="20"
 export NCLdiffs2_2="3.0"
@@ -85,7 +85,7 @@ export NCLplotvar_1="U"
 export NCLilev_1="850"
 export NCLvartitle_1="U"
 export NCLmin1_1="0"
-export NCLmax1_1="10"
+export NCLmax1_1="12"
 export NCLdiffs1_1="1.0"
 export NCLmin2_1="-7"
 export NCLmax2_1="10"
@@ -102,6 +102,102 @@ export NCLmin2_3="-7"
 export NCLmax2_3="20"
 export NCLdiffs2_3="3.0"
 export NCLunits_3="m~S~-1~N~"
+
+elif test "$plotvars" == "STDV"; then
+export NCLplotvar_2="dPVdy"
+export NCLilev_2="925"
+export NCLvartitle_2="dPVdy"
+export NCLmin1_2="0"
+export NCLmax1_2="1.0e-12"
+export NCLdiffs1_2="0.1e-12"
+export NCLmin2_2="-7"
+export NCLmax2_2="20"
+export NCLdiffs2_2="3.0"
+export NCLunits_2="1E-12 PVU/m"
+
+
+export NCLplotvar_1="V"
+export NCLilev_1="925"
+export NCLvartitle_1="V"
+export NCLmin1_1="0"
+export NCLmax1_1="2"
+export NCLdiffs1_1="0.2"
+export NCLmin2_1="-2"
+export NCLmax2_1="2"
+export NCLdiffs2_1="0.4"
+export NCLunits_1="m/s"
+
+export NCLplotvar_3="Ks"
+export NCLilev_3="925"
+export NCLvartitle_3="K~B~s~N~"
+export NCLmin1_3="0"
+export NCLmax1_3="7.5"
+export NCLdiffs1_3="0.75"
+export NCLmin2_3="-7"
+export NCLmax2_3="20"
+export NCLdiffs2_3="3.0"
+export NCLunits_3="m~S~-1~N~"
+
+
+
+elif test "$plotvars" == "STDV850"; then
+export NCLplotvar_2="dPVdy"
+export NCLilev_2="850"
+export NCLvartitle_2="dPVdy"
+export NCLmin1_2="0"
+export NCLmax1_2="1.0e-12"
+export NCLdiffs1_2="0.1e-12"
+export NCLmin2_2="-7"
+export NCLmax2_2="20"
+export NCLdiffs2_2="3.0"
+export NCLunits_2="1E-12 PVU/m"
+
+
+export NCLplotvar_1="V"
+export NCLilev_1="850"
+export NCLvartitle_1="V"
+export NCLmin1_1="0"
+export NCLmax1_1="2"
+export NCLdiffs1_1="0.2"
+export NCLmin2_1="-2"
+export NCLmax2_1="2"
+export NCLdiffs2_1="0.4"
+export NCLunits_1="m/s"
+
+export NCLplotvar_3="Ks"
+export NCLilev_3="250"
+export NCLvartitle_3="K~B~s~N~"
+export NCLmin1_3="0"
+export NCLmax1_3="7.5"
+export NCLdiffs1_3="0.75"
+export NCLmin2_3="-7"
+export NCLmax2_3="20"
+export NCLdiffs2_3="3.0"
+export NCLunits_3="m~S~-1~N~"
+
+
+elif test "$plotvars" == "UV850"; then
+export NCLplotvar_1="U"
+export NCLilev_1="850"
+export NCLvartitle_1="U"
+export NCLmin1_1="0"
+export NCLmax1_1="12"
+export NCLdiffs1_1="1.0"
+export NCLmin2_1="-7"
+export NCLmax2_1="10"
+export NCLdiffs2_1="2.0"
+export NCLunits_1="m/s"
+
+export NCLplotvar_2="V"
+export NCLilev_2="850"
+export NCLvartitle_2="V"
+export NCLmin1_2="0"
+export NCLmax1_2="2"
+export NCLdiffs1_2="0.2"
+export NCLmin2_2="-2"
+export NCLmax2_2="2"
+export NCLdiffs2_2="0.4"
+export NCLunits_2="m/s"
 
 else
 

@@ -55,7 +55,7 @@ do ts = 0,nts - 1
 			filename = (Dir + Experiment + ".cam2.h2.00" + syear + "-01-01-00000.nc")
 		
 			cdf_file = addfile(filename,"r")
-                        cdf_file_PHIS = addfile(filePHIS,"r")
+            cdf_file_PHIS = addfile(filePHIS,"r")
 
 
 			timesin = cdf_file->time

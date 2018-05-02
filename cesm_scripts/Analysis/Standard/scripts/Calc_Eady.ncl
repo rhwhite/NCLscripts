@@ -13,9 +13,9 @@ do ne = 0,nexps-1
         Experiments(ne) = getenv("NCL_ARG_" + tostring(3+ne))
 end do
 
-startyr = toint(getenv("NCL_ARG_" + tostring(3+nexps)))
-endyr = toint(getenv("NCL_ARG_" + tostring(4+nexps)))
-secs = getenv("NCL_ARG_" + tostring(5+nexps))
+startyr = toint(getenv("NCL_startyr"))
+endyr = toint(getenv("NCL_endyr"))
+secs = getenv("NCL_nsec")
 
 nyears = endyr-startyr+1
 
@@ -39,7 +39,7 @@ do exps = 0,nexps-1
 	Dir = (Direc + Experiment + "/atm/hist/")
 	print(Experiment)
 
-	filename = Dir + timespan + tostring(startyr) + "_" + tostring(nyears) + "_mean_pl_" + Experiment + ".cam2.h0.nc"
+	filename = Dir + timespan + tostring(startyr) + "_" + tostring(nyears) + "_mean_Xpl_" + Experiment + ".cam2.h0.nc"
 
 	cdf_file = addfile(filename,"r")
 

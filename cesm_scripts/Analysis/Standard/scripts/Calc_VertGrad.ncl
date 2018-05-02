@@ -2,6 +2,9 @@
 ;load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_csm.ncl"
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/contributed.ncl"
 
+; Calculate climatological mean vertical gradients of omega,
+; T, TH and omegaT NOT on pressure levels
+
 begin
 
 
@@ -43,9 +46,9 @@ do ts = 0,nts - 1
 	  	cdf_file = addfile(filename,"w")
 	
 		P0 = cdf_file->P0
-                hyam = cdf_file->hyam
-                hybm = cdf_file->hybm
-                PS = cdf_file->PS
+        hyam = cdf_file->hyam
+        hybm = cdf_file->hybm
+        PS = cdf_file->PS
 
 		T = cdf_file->T
 		OMEGAT = cdf_file->OMEGAT
@@ -70,10 +73,10 @@ do ts = 0,nts - 1
 ;-----------------------------------------------------------------------
 ;Write variables to netcdf file
 ;-----------------------------------------------------------------------
-	        setfileoption(cdf_file,"DefineMode",True)
+        setfileoption(cdf_file,"DefineMode",True)
 
-	        filevardef(cdf_file,"TH",typeof(TH),getvardims(T))
-                filevardef(cdf_file,"dTHdp",typeof(TH),getvardims(T))
+        filevardef(cdf_file,"TH",typeof(TH),getvardims(T))
+        filevardef(cdf_file,"dTHdp",typeof(TH),getvardims(T))
 		filevardef(cdf_file,"dOMEGATdp",typeof(OMEGAT),getvardims(T))
 
 		cdf_file ->TH       = (/TH/)

@@ -1,0 +1,83 @@
+20160606 171141.651 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160606 171811.105 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160606 172242.952 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160721 011033.336 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160721 011033.447 ERROR            PET0 ESMF_Grid.F90:5054 ESMF_GridCreate Wrong argument specified - - Bad corner array in SCRIP file
+20160721 011033.447 ERROR            PET0 ESMF_Grid.F90:6161 ESMF_GridCreateFrmScrip Wrong argument specified - Internal subroutine call returned Error
+20160721 011033.450 ERROR            PET0 ESMF_Grid.F90:5839 ESMF_GridCreateFrmNCFile Wrong argument specified - Internal subroutine call returned Error
+20160721 011033.450 ERROR            PET0 ESMF_RegridWeightGen.F90:901 ESMF_RegridWeightGenFile Wrong argument specified - Internal subroutine call returned Error
+20160721 011546.213 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160721 011546.281 ERROR            PET0 ESMF_Grid.F90:5054 ESMF_GridCreate Wrong argument specified - - Bad corner array in SCRIP file
+20160721 011546.281 ERROR            PET0 ESMF_Grid.F90:6161 ESMF_GridCreateFrmScrip Wrong argument specified - Internal subroutine call returned Error
+20160721 011546.285 ERROR            PET0 ESMF_Grid.F90:5839 ESMF_GridCreateFrmNCFile Wrong argument specified - Internal subroutine call returned Error
+20160721 011546.285 ERROR            PET0 ESMF_RegridWeightGen.F90:901 ESMF_RegridWeightGenFile Wrong argument specified - Internal subroutine call returned Error
+20160721 011655.822 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160721 011655.906 ERROR            PET0 ESMF_Grid.F90:5054 ESMF_GridCreate Wrong argument specified - - Bad corner array in SCRIP file
+20160721 011655.906 ERROR            PET0 ESMF_Grid.F90:6161 ESMF_GridCreateFrmScrip Wrong argument specified - Internal subroutine call returned Error
+20160721 011655.909 ERROR            PET0 ESMF_Grid.F90:5839 ESMF_GridCreateFrmNCFile Wrong argument specified - Internal subroutine call returned Error
+20160721 011655.909 ERROR            PET0 ESMF_RegridWeightGen.F90:901 ESMF_RegridWeightGenFile Wrong argument specified - Internal subroutine call returned Error
+20160721 135735.628 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160721 140209.978 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160721 140251.634 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160721 140352.195 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160721 140641.720 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160721 140840.310 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160721 140941.608 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160721 141046.854 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160721 141235.292 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160721 144806.198 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160721 145405.913 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160721 151622.156 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160721 151730.446 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160812 183713.910 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160927 105934.175 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160927 110051.054 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160927 110145.617 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160927 110218.366 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160927 110437.322 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20160927 110708.868 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 132614.951 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 132614.970 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 132614.981 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 133118.448 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 133118.460 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 133120.500 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 133146.939 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 133146.949 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 133147.487 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 133238.501 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 133238.510 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 133239.033 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 134552.115 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 134552.129 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 134552.673 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 134836.556 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 134836.565 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 134837.087 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 135937.059 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 135937.071 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 135937.763 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 140018.065 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 140018.075 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 140018.728 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 140258.478 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 140258.490 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 140259.026 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 140421.768 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 140421.779 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 140422.385 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 142818.242 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 142818.255 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 142818.797 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 143111.405 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 143111.416 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 143111.933 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 143320.412 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 143320.421 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 143320.931 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 143513.991 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 143514.006 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 143514.478 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 143704.787 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 143704.797 INFO             PET0 Running with ESMF Version 6.3.0rp1
+20170824 143705.265 INFO             PET0 Running with ESMF Version 6.3.0rp1

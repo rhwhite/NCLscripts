@@ -12,9 +12,6 @@ begin
 
 ; Get experiment names
 
-numk = 8 ; number of zonal wavenumbers, starting from 1
-
-
 print("Calc Rossby Refractive Index")
 Direc = getenv("NCL_ARG_1")
 nexps = toint(getenv("NCL_ARG_2"))
@@ -24,13 +21,10 @@ do ne = 0,nexps-1
         Experiments(ne) = getenv("NCL_ARG_" + tostring(3+ne))
 end do
 
-startyr = toint(getenv("NCL_ARG_" + tostring(3+nexps)))
-endyr = toint(getenv("NCL_ARG_" + tostring(4+nexps)))
-secs = getenv("NCL_ARG_" + tostring(5+nexps))
+startyr = toint(getenv("NCL_startyr"))
+endyr = toint(getenv("NCL_endyr"))
 
 nyears = endyr-startyr+1
-
-timespan = getenv("NCL_season")
 
 a = 6.37122e06	; radius of Earth
 PI = 3.14159265358979
@@ -44,40 +38,46 @@ g = 9.80616
 dimsexps = dimsizes(Experiments)
 nexps = dimsexps(0)
 
-do exps = 0,nexps-1
-	Experiment = Experiments(exps)
-	Dir = (Direc + Experiment + "/atm/hist/")
-	print(Experiment)
+timespans = (/"Annual","DJF","JJA","MAM","SON"/)
+;timespan = getenv("NCL_season")
+dimtimes = dimsizes(timespans)
+nts = dimtimes(0)
 
+do ts = 0,nts - 1
 
-	filenamepl = Dir + timespan + tostring(startyr) + "_" + tostring(nyears) + "_mean_Xpl_" + Experiment + ".cam2.h0.nc"
-	filename = Dir + timespan + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + ".cam2.h0.nc"
-	; open file with seasonal averages
-	cdf_filepl = addfile(filenamepl,"r")
-	cdf_file = addfile(filename,"r")
+    timespan = timespans(ts)
+    dimsexps = dimsizes(Experiments)
+    nexps = dimsexps(0)
 
-	; get pressure levels
+    do exps = 0,nexps-1
+        Experiment = Experiments(exps)
+        Dir = (Direc + Experiment + "/atm/hist/")
+        print(Experiment)
 
-	level = cdf_filepl->lev_p		; in hpa, or mb
-	level!0="lev_p"
-	levsizes = dimsizes(level)
-	nlevels = filevardimsizes(cdf_filepl,"lev_p")
-	nlat = filevardimsizes(cdf_filepl,"lat")
-	nlon = filevardimsizes(cdf_filepl,"lon")
+        filenamepl = Dir + timespan + tostring(startyr) + "_" + tostring(nyears) + "_mean_Xpl_" + Experiment + ".cam2.h0.nc"
+        ; open file with seasonal averages
+        cdf_filepl = addfile(filenamepl,"r")
 
-	lat = tofloat(cdf_filepl->lat)
-	lat!0="lat"
-	lon = tofloat(cdf_filepl->lon)
-	lon!0="lon"
+        ; get pressure levels
 
-	Umd = cdf_file->U(:,:,:,:)
+        level = cdf_filepl->lev_p		; in hpa, or mb
+        level!0="lev_p"
+        levsizes = dimsizes(level)
+        nlevels = filevardimsizes(cdf_filepl,"lev_p")
+        nlat = filevardimsizes(cdf_filepl,"lat")
+        nlon = filevardimsizes(cdf_filepl,"lon")
 
-	U = cdf_filepl->U(:,:,:,:)
+        lat = tofloat(cdf_filepl->lat)
+        lat!0="lat"
+        lon = tofloat(cdf_filepl->lon)
+        lon!0="lon"
 
-; Set up some constants
+        U = cdf_filepl->U(:,:,:,:)
+
+    ; Set up some constants
         phi = lat*PI/180.0      ; Get latitude in radians
         cphi = cos(phi)
-	c2phi = cphi * cphi
+        c2phi = cphi * cphi
         acphi = a * cos(phi)
         asphi = a * sin(phi)
         f = 2*omega*sin(phi)
@@ -85,84 +85,85 @@ do exps = 0,nexps-1
         f2 = f * f
 
 
-; Calculate Ucos(phi)
+    ; Calculate Ucos(phi)
 
-	Ucphi = U * conform(U,cphi,2)
-	copy_VarCoords(U,Ucphi)
+        Ucphi = U * conform(U,cphi,2)
+        copy_VarCoords(U,Ucphi)
 
-; Calculate d/dphi (Ucphi)
-	dUcphidphi = center_finite_diff_n(Ucphi(time|:,lev_p|:,lat|:,lon|:),phi,False,0,2)
+    ; Calculate d/dphi (Ucphi)
+        dUcphidphi = center_finite_diff_n(Ucphi(time|:,lev_p|:,lat|:,lon|:),phi,False,0,2)
 
-; Calculate 1/cphi * dUcphi/dphi
-	tempdUcphidphi = dUcphidphi / conform(dUcphidphi,cphi,2)
-; Calculate meridional gradient of this
+    ; Calculate 1/cphi * dUcphi/dphi
+        tempdUcphidphi = dUcphidphi / conform(dUcphidphi,cphi,2)
+    ; Calculate meridional gradient of this
 
-	d2Uetcdphi = center_finite_diff_n(tempdUcphidphi,phi,False,0,2)
+        d2Uetcdphi = center_finite_diff_n(tempdUcphidphi,phi,False,0,2)
 
-; Calculate BetaM
+    ; Calculate BetaM
 
-	BetaM1 = 2.0 * omega * c2phi / a
+        BetaM1 = 2.0 * omega * c2phi / a
 
-	BetaM2 = d2Uetcdphi * conform(d2Uetcdphi,c2phi,2) / a2
+        BetaM2 = d2Uetcdphi * conform(d2Uetcdphi,c2phi,2) / a2
 
-	BetaM = conform(BetaM2,BetaM1,2) - BetaM2
+        BetaM = conform(BetaM2,BetaM1,2) - BetaM2
 
-; Calculate Ks = (a^2 cos(phi) * BetaM / U)^0.5
+    ; Calculate Ks = (a^2 cos(phi) * BetaM / U)^0.5
 
-	Ks = sqrt(conform(BetaM,a2,-1) * conform(BetaM,cphi,2) * BetaM / U)
+        Ks = sqrt(conform(BetaM,a2,-1) * conform(BetaM,cphi,2) * BetaM / U)
 
         Ks!0 = "time"
         Ks!1 = "lev_p"
         Ks!2 = "lat"
-	Ks!3 = "lon"
+        Ks!3 = "lon"
 
         Ks@lev_p = level
         Ks@lat = lat
-	Ks@lon = lon	
+        Ks@lon = lon	
 
 
-	copy_VarCoords(Ks,BetaM)
+        copy_VarCoords(Ks,BetaM)
 
 
-;----------------------------------------------------------------------
-; Write out results to a new netcdf file
-;-----------------------------------------------------------------------
+    ;----------------------------------------------------------------------
+    ; Write out results to a new netcdf file
+    ;-----------------------------------------------------------------------
 
-        filo = "Ks_" + timespan + tostring(startyr) + "_" + tostring(nyears) + "_" + Experiment + ".cam2.h0.nc"
-        system("/bin/rm -f " + Dir + filo)
-        fout_std = addfile(Dir + filo, "c")
+            filo = "Ks_" + timespan + tostring(startyr) + "_" + tostring(nyears) + "_" + Experiment + ".cam2.h0.nc"
+            system("/bin/rm -f " + Dir + filo)
+            fout_std = addfile(Dir + filo, "c")
 
-        setfileoption(fout_std,"DefineMode",True)
+            setfileoption(fout_std,"DefineMode",True)
 
-;set attributes of output file
-        fAtt = True
-        fAtt@creation_date = systemfunc("date")
-        fileattdef(fout_std,fAtt)
+    ;set attributes of output file
+            fAtt = True
+            fAtt@creation_date = systemfunc("date")
+            fileattdef(fout_std,fAtt)
 
-;set dimensions of output file
-        dimNames = (/"time","lat","lon","lev_p"/)
-        dimSizes = (/1,nlat,nlon,nlevels/)
-        dimUnlim = (/False,False,False,False/)
-        filedimdef(fout_std,dimNames,dimSizes,dimUnlim)
+    ;set dimensions of output file
+            dimNames = (/"time","lat","lon","lev_p"/)
+            dimSizes = (/1,nlat,nlon,nlevels/)
+            dimUnlim = (/False,False,False,False/)
+            filedimdef(fout_std,dimNames,dimSizes,dimUnlim)
 
-        filevardef(fout_std,"lat",typeof(lat),getvardims(lat))
-        filevardef(fout_std,"level",typeof(level),getvardims(level))
-        filevardef(fout_std,"lon",typeof(lon),getvardims(lon))
+            filevardef(fout_std,"lat",typeof(lat),getvardims(lat))
+            filevardef(fout_std,"level",typeof(level),getvardims(level))
+            filevardef(fout_std,"lon",typeof(lon),getvardims(lon))
 
-        filevardef(fout_std,"Ks",typeof(Ks),getvardims(Ks))
-        filevardef(fout_std,"BetaM",typeof(Ks),getvardims(Ks))
+            filevardef(fout_std,"Ks",typeof(Ks),getvardims(Ks))
+            filevardef(fout_std,"BetaM",typeof(Ks),getvardims(Ks))
 
-	filevardef(fout_std,"U",typeof(U),getvardims(U))
-	fout_std->U = U
-	fout_std->Ks = Ks
-	fout_std->BetaM = BetaM
-        fout_std->lat = lat
-        fout_std->level = level
-        fout_std->lon = lon
+        filevardef(fout_std,"U",typeof(U),getvardims(U))
+        fout_std->U = U
+        fout_std->Ks = Ks
+        fout_std->BetaM = BetaM
+            fout_std->lat = lat
+            fout_std->level = level
+            fout_std->lon = lon
 
-        print("printed it")
+            print("printed it")
 
 
+    end do
 end do
 
 end

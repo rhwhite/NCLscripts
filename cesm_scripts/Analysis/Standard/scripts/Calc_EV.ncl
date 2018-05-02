@@ -10,19 +10,16 @@ nexps = toint(getenv("NCL_ARG_2"))
 Experiments = new(nexps,"string")
 
 do ne = 0,nexps-1
-        Experiments(ne) = getenv("NCL_ARG_" + tostring(3+ne))
+    Experiments(ne) = getenv("NCL_ARG_" + tostring(3+ne))
 end do
 
-startyr = toint(getenv("NCL_ARG_" + tostring(3+nexps)))
-endyr = toint(getenv("NCL_ARG_" + tostring(4+nexps)))
-secs = getenv("NCL_ARG_" + tostring(5+nexps))
-
-print(startyr*1)
-print(endyr*1)
+startyr = toint(getenv("NCL_startyr))
+endyr = toint(getenv("NCL_endyr))
+secs = getenv("NCL_nsecs")
 
 nyears = endyr-startyr+1
 
-timespans = (/"DJF"/)
+timespans = (/"DJF","JJA","MAM","SON"/)
 ntdims = dimsizes(timespans)
 nts = ntdims(0)
 
@@ -42,7 +39,7 @@ pi = 3.14159
 
 do ts = 0,nts-1
 
-        timespan = timespans(ts)
+    timespan = timespans(ts)
 
 	;get dims
 	fili = "EKE_VT_EV_bpf_" + timespan + tostring(startyr) + "_" + tostring(nyears) + "_" + Experiments(0) + ".cam2.h1.nc"
@@ -82,15 +79,14 @@ do ts = 0,nts-1
 		fc(ilat,:) = tofloat(2 * omega * sin(lats(ilat)*pi/180.0))
 	end do
 
-        delete([/cdf_EV,temp/])
+    delete([/cdf_EV,temp/])
 	
 	do exps = 0,nexps-1
 
 		Experiment = Experiments(exps)
-		print(Experiment)
-	        Dir = (Direc + Experiment + "/atm/hist/")
+        Dir = (Direc + Experiment + "/atm/hist/")
 
-;Read in EKE values
+        ;Read in EKE values
 		fili = "EKE_VT_EV_bpf_" + timespan + tostring(startyr) + "_" + tostring(nyears) + "_" + Experiment + ".cam2.h1.nc"
 		filename1 = Dir + fili
 
@@ -101,9 +97,9 @@ do ts = 0,nts-1
 		
                 vth = cdf_EV->V850tdash_bpf * cdf_EV->TH850tdash_bpf
 
-; calculate time mean
-; timespan is already dealt with in incoming file
-; Just need to average over all time
+        ; calculate time mean
+        ; timespan is already dealt with in incoming file
+        ; Just need to average over all time
 
 		Ex = dim_avg_n(v2u2,0)
 		Ey = -1.0 * dim_avg_n(uv,0)
@@ -111,54 +107,54 @@ do ts = 0,nts-1
 
 		delete([/uv,v2u2/])
 
-; calculate divergence for U_H	
+        ; calculate divergence for U_H	
 		divEV_bpf250 = uv2dvF(Ex,Ey)
 
-; multiple by deltap1/deltap2 and corresponding lambda.
+        ; multiple by deltap1/deltap2 and corresponding lambda.
 
 		u_H_bpf250 = daysecs * (deltap1/deltap2) * divEV_bpf250 * lambda_f19
 
-; Read in and calculate dTH/dp from mean values
+        ; Read in and calculate dTH/dp from mean values
 
-                fili = timespan + tostring(startyr) + "_" + tostring(nyears) + "_mean_pl_" + Experiment + ".cam2.h0.nc"
-                cdf_file = addfile(Dir + fili, "r")
+        fili = timespan + tostring(startyr) + "_" + tostring(nyears) + "_mean_pl_" + Experiment + ".cam2.h0.nc"
+        cdf_file = addfile(Dir + fili, "r")
 
-                levs_mean = cdf_file->lev_p
+        levs_mean = cdf_file->lev_p
 
-                levsizes = dimsizes(levs_mean)
-                nlevs = levsizes(0)
+        levsizes = dimsizes(levs_mean)
+        nlevs = levsizes(0)
 
-; Find 925 and 775 pressure levels
+        ; Find 925 and 775 pressure levels
 
-                nlev_775 = -1
-                nlev_925 = -1
+        nlev_775 = -1
+        nlev_925 = -1
 
-                do nl = 0,nlevs-1
-                        if levs_mean(nl) .eq. 775 then
-                                nlev_775 = nl
-                        end if
-                        if levs_mean(nl) .eq. 925 then
-                                nlev_925 = nl
-                        end if
-                end do
-
-                if (nlev_775 .lt. 0 .or. nlev_925 .lt. 0) then
-                        print("didnt find a level")
-                        exit
+        do nl = 0,nlevs-1
+                if levs_mean(nl) .eq. 775 then
+                        nlev_775 = nl
                 end if
+                if levs_mean(nl) .eq. 925 then
+                        nlev_925 = nl
+                end if
+        end do
 
-                T925 = cdf_file->T(0,nlev_925,:,:)
-                T775 = cdf_file->T(0,nlev_775,:,:)
-                TH925 = T925 * ((1013.0/925.0)^(kappa))
-                TH775 = T775 * ((1013.0/775.0)^(kappa))
+        if (nlev_775 .lt. 0 .or. nlev_925 .lt. 0) then
+                print("didnt find a level")
+                exit
+        end if
 
-                delete([/T925,T775/])
-                dTHdp = (TH925 - TH775)/(925.0 - 775.0)
+        T925 = cdf_file->T(0,nlev_925,:,:)
+        T775 = cdf_file->T(0,nlev_775,:,:)
+        TH925 = T925 * ((1013.0/925.0)^(kappa))
+        TH775 = T775 * ((1013.0/775.0)^(kappa))
 
-                Ep =  fc * Ep_tmp / ( dTHdp)
-                u_P_bpf850 = daysecs * lambda_f19 * Ep / deltap2
+        delete([/T925,T775/])
+        dTHdp = (TH925 - TH775)/(925.0 - 775.0)
 
-                delete([/dTHdp, Ep_tmp/])
+        Ep =  fc * Ep_tmp / ( dTHdp)
+        u_P_bpf850 = daysecs * lambda_f19 * Ep / deltap2
+
+        delete([/dTHdp, Ep_tmp/])
 
 ;-----------------------------------------------------------------------
 ;Write variables to a new netcdf file

@@ -1,6 +1,6 @@
 #!/bin/sh
 cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis/Plotting/scripts/
-plotvars="WScurl"
+plotvars="U10"
 export NCLnumvars="1"
 export NCLdifexps="0"
 export NCLexpdif="0"
@@ -11,8 +11,8 @@ export NCLlinear="false"
 export NCLclon="180.0"
 export NCLslon="60.0"
 export NCLelon="360."
-export NCLslat="-10.0"
-export NCLelat="90.0"
+export NCLslat="-80.0"
+export NCLelat="80.0"
 export NCLplottype="map"
 export NCLplotctl=0
 export NCLplotERA1=0
@@ -31,7 +31,7 @@ nyears=("40" "40" "40" "40" "40" "40" "40" "40")
 timespan=("Annual" "Annual" "Annual" "Annual" "Annual" "Annual" "Annual" "Annual")
 reverse=("false" "false" "false" "false" "false" "false" "true" "true")
 
-export NCLallblue=0
+export NCLallblue=2
 export NCLplottitles=1
 
 if test "$plotvars" == "SFZA"; then
@@ -131,10 +131,11 @@ elif test "$plotvars" == "PREC"; then
 	export NCLmin1_1="0"
 	export NCLmax1_1="9.0"
 	export NCLdiffs1_1="1.0"
-	export NCLmin2_1="-0.9"
-	export NCLmax2_1="0.9"
+	export NCLmin2_1="-1.0"
+	export NCLmax2_1="1.0"
 	export NCLdiffs2_1="0.2"
 	export NCLunits_1="mm/day"
+
 elif test "$plotvars" == "EVAP"; then
         export NCLplotvar_1="EVAP"
         export NCLilev_1="0"
@@ -142,8 +143,8 @@ elif test "$plotvars" == "EVAP"; then
         export NCLmin1_1="0"
         export NCLmax1_1="9.0"
         export NCLdiffs1_1="1.0"
-        export NCLmin2_1="-0.9"
-        export NCLmax2_1="0.9"
+        export NCLmin2_1="-1.0"
+        export NCLmax2_1="1.0"
         export NCLdiffs2_1="0.2"
         export NCLunits_1="mm/day"
 elif test "$plotvars" == "PmE"; then
@@ -157,6 +158,18 @@ elif test "$plotvars" == "PmE"; then
 	export NCLmax2_1="1.0"
 	export NCLdiffs2_1="0.2"
 	export NCLunits_1="mm/day"
+elif test "$plotvars" == "U10"; then
+        export NCLplotvar_1="U10"
+        export NCLilev_1="0"
+        export NCLvartitle_1="U/ 10m"
+        export NCLmin1_1="0"
+        export NCLmax1_1="10.0"
+        export NCLdiffs1_1="1.0"
+        export NCLmin2_1="-1.0"
+        export NCLmax2_1="1.0"
+        export NCLdiffs2_1="0.2"
+        export NCLunits_1="m/s"
+
 elif test "$plotvars" == "WScurl"; then
         export NCLplotvar_1="WScurl"
         export NCLilev_1="0"

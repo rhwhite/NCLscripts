@@ -13,11 +13,15 @@ do ne = 0,nexps-1
         Experiments(ne) = getenv("NCL_ARG_" + tostring(3+ne))
 end do
 
-startyr = toint(getenv("NCL_ARG_" + tostring(3+nexps)))
-endyr = toint(getenv("NCL_ARG_" + tostring(4+nexps)))
-secs = getenv("NCL_ARG_" + tostring(5+nexps))
+startyr = toint(getenv("NCL_startyr"))
+endyr = toint(getenv("NCL_endyr"))
 
 nyears = endyr-startyr+1
+
+dirstr = getenv("NCL_dirstr")
+
+Mtrans = getenv("NCL_Mtrans")
+GW = getenv("NCL_GW")
 
 timespans = (/"Annual","DJF","JJA","MAM","SON"/)
 dimtimes = dimsizes(timespans)
