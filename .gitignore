@@ -8,3 +8,4 @@
 /cesm_scripts/Analysis/Standard/Realistic/
 /cesm_scripts/Analysis/Standard/Rockies/
 /cesm_scripts/Analysis/Standard/SOM/
+/Regrid/*.nc
