@@ -18,6 +18,13 @@ OZONE = getenv("NCL_Ozone") ; Flag to output ozone or not (only for WACCM)
 Direc = getenv("NCL_ARG_1")
 nexps = toint(getenv("NCL_ARG_2"))
 Experiments = new(nexps,"string")
+version=getenv("NCL_CESMversion")
+
+if version .EQ. "122" then
+    camversion="cam"
+else
+    camversion="cam2"
+end if
 
 g = 9.80665
 cp = 1004.0
@@ -53,7 +60,7 @@ do exps = 0,nexps-1
 	Dir = (Direc + Experiment + dirstr)
 
     system("mkdir " + Dir + "raw")
-    system("mv " + Dir + Experiment + ".cam2.h* " + Dir + "/raw/")
+    system("mv " + Dir + Experiment + "." + camversion + ".h* " + Dir + "/raw/")
 
     Dirraw = Dir + "/raw/"
     ; make new temporary directories
@@ -61,14 +68,14 @@ do exps = 0,nexps-1
 	system("mkdir " + Dirraw + "Extra")
 
     ; move everything out of Extra
-	system("mv " + Dirraw + "/Extra/" + Experiment + ".cam2.h0.0* " + Dirraw + "/")
+	system("mv " + Dirraw + "/Extra/" + Experiment + "." + camversion + ".h0.0* " + Dirraw + "/")
 
     ; move everything into TempDir
-	system("mv " + Dirraw + Experiment + ".cam2.h0.*" + ".nc " + Dirraw + "TempDir/")
+	system("mv " + Dirraw + Experiment + "." + camversion + ".h0.*" + ".nc " + Dirraw + "TempDir/")
 
     ; move selected files out of TempDir
-	if (isfilepresent(Dirraw + Experiment + ".cam2.h0." + startyr + "-01.nc")) then
-		print("file not present" + Dirraw + Experiment + ".cam2.h0." + startyr + "-01.nc")
+	if (isfilepresent(Dirraw + Experiment + "." + camversion + ".h0." + startyr + "-01.nc")) then
+		print("file not present" + Dirraw + Experiment + "." + camversion + ".h0." + startyr + "-01.nc")
 		exit
 	end if
 		
@@ -84,7 +91,7 @@ do exps = 0,nexps-1
 			end if
 		end if
 		
-		system("mv " + Dirraw + "TempDir/" + Experiment + ".cam2.h0." + stringyear + "-*" + ".nc " + Dirraw + "/")
+		system("mv " + Dirraw + "TempDir/" + Experiment + "." + camversion + ".h0." + stringyear + "-*" + ".nc " + Dirraw + "/")
         do im = 1,12
             if im .lt. 10 then
                 stringmonth = "0" + tostring(im)
@@ -92,17 +99,17 @@ do exps = 0,nexps-1
                 stringmonth = tostring(im)
             end if
 	
-            if (.not.isfilepresent(Dirraw + Experiment + ".cam2.h0."+ stringyear + "-" + stringmonth + ".nc")) then
-                print("file not present" + Dirraw + Experiment + ".cam2.h0."+ stringyear + "-" + stringmonth + ".nc")
+            if (.not.isfilepresent(Dirraw + Experiment + "." + camversion + ".h0."+ stringyear + "-" + stringmonth + ".nc")) then
+                print("file not present" + Dirraw + Experiment + "." + camversion + ".h0."+ stringyear + "-" + stringmonth + ".nc")
                 exit
             end if
 
 			;   Now for each month calculate Streamfunction, PV, theta
 
 	
-            filename = (Dirraw + Experiment + ".cam2.h0."+ stringyear + "-" + stringmonth + ".nc")
+            filename = (Dirraw + Experiment + "." + camversion + ".h0."+ stringyear + "-" + stringmonth + ".nc")
 
-            system("ncrename -v .TH,THilev " + Dirraw + Experiment + ".cam2.h0." + stringyear + "-" + stringmonth + ".nc")
+            system("ncrename -v .TH,THilev " + Dirraw + Experiment + "." + camversion + ".h0." + stringyear + "-" + stringmonth + ".nc")
 
         
             cdf_file = addfile(filename,"w")
@@ -229,13 +236,13 @@ do exps = 0,nexps-1
         end do
 	end do
 	
-	system("ncra -O -x -v THilev " + Dirraw + Experiment + ".cam2.h0.*-12.nc " + Dirraw + Experiment + ".cam2.h0.*-01.nc " + Dirraw + Experiment + ".cam2.h0.*-02.nc " + Dir + "DJF" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + ".cam2.h0.nc")	
-	system("ncra -O -x -v THilev " + Dirraw + Experiment + ".cam2.h0.*-03.nc " + Dirraw + Experiment + ".cam2.h0.*-04.nc " + Dirraw + Experiment + ".cam2.h0.*-05.nc " + Dir + "MAM" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + ".cam2.h0.nc")
-	system("ncra -O -x -v THilev " + Dirraw + Experiment + ".cam2.h0.*-06.nc " + Dirraw + Experiment + ".cam2.h0.*-07.nc " + Dirraw + Experiment + ".cam2.h0.*-08.nc " + Dir + "JJA" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + ".cam2.h0.nc")
-	system("ncra -O -x -v THilev " + Dirraw + Experiment + ".cam2.h0.*-09.nc " + Dirraw + Experiment + ".cam2.h0.*-10.nc " + Dirraw + Experiment + ".cam2.h0.*-11.nc " + Dir + "SON" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + ".cam2.h0.nc")
-    system("ncra -O -x -v THilev " + Dirraw + Experiment + ".cam2.h0.*-07.nc " + Dirraw + Experiment + ".cam2.h0.*-08.nc " + Dirraw + Experiment + ".cam2.h0.*-09.nc " + Dir + "JAS" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + ".cam2.h0.nc")
+	system("ncra -O -x -v THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-12.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-01.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-02.nc " + Dir + "DJF" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")	
+	system("ncra -O -x -v THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-03.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-04.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-05.nc " + Dir + "MAM" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+	system("ncra -O -x -v THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-06.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-07.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-08.nc " + Dir + "JJA" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+	system("ncra -O -x -v THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-09.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-10.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-11.nc " + Dir + "SON" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+    system("ncra -O -x -v THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-07.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-08.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-09.nc " + Dir + "JAS" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
 
-	system("ncra -O -x -v THilev " + Dirraw + Experiment + ".cam2.h0.*.nc " + Dir + "Annual" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + ".cam2.h0.nc")
+	system("ncra -O -x -v THilev " + Dirraw + Experiment + "." + camversion + ".h0.*.nc " + Dir + "Annual" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
 
 	system("mv " + Dirraw + "TempDir/*.nc " + Dirraw + "/")
 
