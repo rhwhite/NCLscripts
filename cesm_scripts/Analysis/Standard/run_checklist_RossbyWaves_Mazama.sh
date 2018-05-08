@@ -6,14 +6,14 @@ cd /home/rhwhite/NCLscripts/cesm_scripts/Analysis/Standard/scripts/
 dir="/data/ESS/rhwhite/cesm_archive/"
 
 numexps="1"
-exps=("WACCMSC_CTL_122")
+exps=("WACCMSC_f19_2000_CESMSSTs")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
 #exps=("WACCM_f19_highR")
 dirbase="/data/ESS/rhwhite/cesm_archive/"
 expsctl=("CAM4SOM4_noMT") 
 start="2"
-end="12"
+end="10"
 version="122"
 
 # For Tak-Nak fluxes:
