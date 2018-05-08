@@ -28,7 +28,7 @@ kappa = (Rd/cp)
 dimsexps = dimsizes(Experiments)
 nexps = dimsexps(0)
 
-pnew  = (/ 2, 5,10,30,50,100,200,250,500,850/)
+pnew  = (/ 2, 5,10,30,50,100,200,250,300,500,700,850,975/)
 
 do exps = 0,nexps-1
     Experiment = Experiments(exps)
@@ -67,6 +67,7 @@ do exps = 0,nexps-1
         T = cdf_file->T
         Z3 = cdf_file->Z3
         TBOT = cdf_file->TBOT
+        Q = cdf_file->Q
 
         PHIS = cdf_file_PHIS->PHIS(0,:,:)
         PS = cdf_file->PS
@@ -78,23 +79,23 @@ do exps = 0,nexps-1
         hybm = cdf_file->hybm
         
         p0 = tofloat(cdf_file->P0)
-        ;p = pres_hybrid_ccm(PS,p0,hyam,hybm)
+        p = pres_hybrid_ccm(PS,p0,hyam,hybm)
 
         dims1 = dimsizes(U)
         dimslev = dimsizes(pnew)
 
         ; Calculate PV
-        ;gridtype = 1    ; normal grid
-        ;PV = pot_vort_hybrid(p,U,V,T,lat,gridtype,0)
-        ;copy_VarCoords(U,PV)
+        gridtype = 1    ; normal grid
+        PV = pot_vort_hybrid(p,U,V,T,lat,gridtype,0)
+        copy_VarCoords(U,PV)
 
 
         Tpres = vinth2p_ecmwf(T,hyam,hybm,pnew,PS,1,P0mb,1,True,1,TBOT,conform(PS,PHIS,(/1,2/)))
         Upres = vinth2p_ecmwf(U,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/))) 
         Vpres = vinth2p_ecmwf(V,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/))) 
-        ;PVpres = vinth2p_ecmwf(PV,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/)))
+        PVpres = vinth2p_ecmwf(PV,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/)))
         Z3pres = vinth2p_ecmwf(Z3,hyam,hybm,pnew,PS,1,P0mb,1,True,-1,TBOT,conform(PS,PHIS,(/1,2/))) 
-        ;Qpres = vinth2p_ecmwf(Q,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/))) 
+        Qpres = vinth2p_ecmwf(Q,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/))) 
 
 ;-----------------------------------------------------------------------
 ;Write variables to a new netcdf file, for stat fits in matlab
@@ -116,7 +117,8 @@ do exps = 0,nexps-1
         fout ->V = Vpres
         fout->Z3 = Z3pres
         fout ->T = Tpres
-        
+        fout ->Q = Qpres
+        fout ->PV = PVpres
     end do	
 
     system("ncrcat -O " + DirO + "/U_V_T_Z3_pl" + Experiment + "_??"  + ".cam2.h2.nc " + Dir + "/U_V_T_Z3_pl" + Experiment + ".cam2.h2." + sprinti("%0.4i",startyr) + "-00" + tostring(endyr) + ".nc")
