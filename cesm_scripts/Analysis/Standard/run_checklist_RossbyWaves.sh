@@ -3,19 +3,19 @@
 # behaviour
 
 cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis/Standard/scripts/
-#dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
-dir="/home/disk/eos4/rachel/CESM_outfiles/"
+dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
+#dir="/home/disk/eos4/rachel/CESM_outfiles/"
 #dir="/home/disk/rachel/CESM_outfiles/"
 
 numexps="1"
-exps=("WACCM_f19_NoG")
+exps=("WACCM_f19_Flat_CTLsgh")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
 #exps=("WACCM_f19_highR")
 dirbase="/home/disk/rachel/CESM_outfiles/"
 expsctl=("CAM4SOM4_noMT") 
 start="2"
-end="21"
+end="31"
 
 # For Tak-Nak fluxes:
 export NCL_startyrC=11
@@ -62,8 +62,8 @@ eval export NCL_ARG_$index=$nsecs
 
 echo NCL_N_ARGS 
 
-echo 'Initial_analysis_means.ncl'
-ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
+#echo 'Initial_analysis_means.ncl'
+#ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
                                 # including PV, SF, divergences MSE, etc
                                 # then calculate climatological means
                                 # on monthly and annual time resolution
@@ -74,8 +74,8 @@ ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
 #echo 'hybrid2pres.ncl'
 #ncl hybrid2pres.ncl
 
-echo 'hybrid2pres_morelev.ncl'
-ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
+#echo 'hybrid2pres_morelev.ncl'
+#ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
                             # monthly resolution data including caluclation of
                             # potential temperaturei, PV, etc and vertical
                             # gradients etc
@@ -127,17 +127,20 @@ ncl hybrid2pres_daily_limlev.ncl
 #ncl Calc_QGKS_test.ncl
 
 # Calculate EP fluxes on daily data
-#echo Calc_EPfluxes_daily.ncl
-#ncl Calc_EPfluxes_daily.ncl
+echo Calc_EPfluxes_daily.ncl
+ncl Calc_EPfluxes_daily.ncl
 
 # Calculate wavenumber 1 and 2 EP fluxes on daily data
 #ncl Calc_EPfluxes_wave12_daily.ncl
 
 #ncl Calc_EPfluxes_wave2_daily.ncl
 
-##### Not used anymore - done in python Calculate FFT on geopotential heights
-#####ncl Calc_Z_FFT.ncl
-
+eval export NCL_seas="DJF"
+ncl Calc_TEMcirc_daily.ncl
+eval export NCL_seas="Annual"
+ncl Calc_TEMcirc_daily.ncl
+eval export NCL_seas="JJA"
+ncl Calc_TEMcirc_daily.ncl
 
 #echo 'Calc_TakNak_fluxes.ncl'
 #export NCL_season="DJF"
