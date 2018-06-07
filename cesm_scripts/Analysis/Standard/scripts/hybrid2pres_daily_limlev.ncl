@@ -17,6 +17,14 @@ print(Experiments)
 startyr = toint(getenv("NCL_startyr"))
 endyr = toint(getenv("NCL_endyr"))
 
+version=getenv("NCL_CESMversion")
+
+if version .EQ. "122" then
+    camversion="cam"
+else
+    camversion="cam2"
+end if
+
 nsecs = getenv("NCL_nsecs")
 
 nyears = endyr-startyr+1
@@ -41,7 +49,7 @@ do exps = 0,nexps-1
 
 
     print(Experiment)
-    filePHIS = (Dir + Experiment + ".cam2.h0.0002-01.nc")
+    filePHIS = (Dir + Experiment + "." + camversion + ".h0.0002-01.nc")
 
     do iyear = startyr,endyr
         print(tostring(iyear))
@@ -51,7 +59,7 @@ do exps = 0,nexps-1
             syear = tostring(iyear)
         end if
 
-        filename = (Dir + Experiment + ".cam2.h2.00" + syear + "-01-01-00000.nc")
+        filename = (Dir + Experiment + "." + camversion + ".h2.00" + syear + "-01-01-00000.nc")
     
         cdf_file = addfile(filename,"r")
         cdf_file_PHIS = addfile(filePHIS,"r")
@@ -100,7 +108,7 @@ do exps = 0,nexps-1
 ;-----------------------------------------------------------------------
 ;Write variables to a new netcdf file, for stat fits in matlab
 ;-----------------------------------------------------------------------
-        filo = "U_V_T_Z3_pl" + Experiment + "_" + syear + ".cam2.h2.nc"
+        filo = "U_V_T_Z3_pl" + Experiment + "_" + syear + "." + camversion + ".h2.nc"
         system("/bin/rm -f " + DirO + filo)
         fout = addfile(DirO + filo, "c")
     
@@ -121,7 +129,7 @@ do exps = 0,nexps-1
         fout ->PV = PVpres
     end do	
 
-    system("ncrcat -O " + DirO + "/U_V_T_Z3_pl" + Experiment + "_??"  + ".cam2.h2.nc " + Dir + "/U_V_T_Z3_pl" + Experiment + ".cam2.h2." + sprinti("%0.4i",startyr) + "-00" + tostring(endyr) + ".nc")
+    system("ncrcat -O " + DirO + "/U_V_T_Z3_pl" + Experiment + "_??"  + "." + camversion + ".h2.nc " + Dir + "/U_V_T_Z3_pl" + Experiment + "." + camversion + ".h2." + sprinti("%0.4i",startyr) + "-00" + tostring(endyr) + ".nc")
 
 
 end do

@@ -13,6 +13,14 @@ Direc = getenv("NCL_ARG_1")
 nexps = toint(getenv("NCL_ARG_2"))
 Experiments = new(nexps,"string")
 
+version=getenv("NCL_CESMversion")
+
+if version .EQ. "122" then
+    camversion="cam"
+else
+    camversion="cam2"
+end if
+
 do ne = 0,nexps-1
         Experiments(ne) = getenv("NCL_ARG_" + tostring(3+ne))
 end do
@@ -68,7 +76,7 @@ do ts = 0,nts - 1
 	
 		print(Experiment)
 
-		filename = (Dir + timespan + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + ".cam2.h0.nc")
+		filename = (Dir + timespan + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
 	
 	  	cdf_file = addfile(filename,"r")
 	
@@ -277,7 +285,7 @@ do ts = 0,nts - 1
 ;-----------------------------------------------------------------------
 ;Write variables to a new netcdf file, for stat fits in matlab
 ;-----------------------------------------------------------------------
-		filo = timespan + tostring(startyr) + "_" + tostring(nyears) + "_mean_Xpl_" + Experiment + ".cam2.h0.nc"
+		filo = timespan + tostring(startyr) + "_" + tostring(nyears) + "_mean_Xpl_" + Experiment + "." + camversion + ".h0.nc"
 		system("/bin/rm -f " + Dir + filo)
 		fout = addfile(Dir + filo, "c")
 	

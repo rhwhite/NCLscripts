@@ -3,12 +3,12 @@
 # behaviour
 
 cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis/Standard/scripts/
-dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
+#dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
 #dir="/home/disk/eos4/rachel/CESM_outfiles/"
-#dir="/home/disk/rachel/CESM_outfiles/"
+dir="/home/disk/rachel/CESM_outfiles/"
 
 numexps="1"
-exps=("WACCM_f19_Flat_CTLsgh")
+exps=("CESMtopof19_daily")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
 #exps=("WACCM_f19_highR")
