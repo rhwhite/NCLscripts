@@ -16,6 +16,7 @@ dirbase="/home/disk/rachel/CESM_outfiles/"
 expsctl=("CAM4SOM4_noMT") 
 start="2"
 end="31"
+version="122"
 
 # For Tak-Nak fluxes:
 export NCL_startyrC=11
@@ -33,6 +34,7 @@ export NCL_Mtrans=0
 export NCL_GW=0
 export NCL_xrad=0
 export NCL_N_ARGS=$#
+export NCL_CESMversion=122
 
 export NCL_nsecs=$nsecs
 export NCL_h2start=$h2start
@@ -62,8 +64,8 @@ eval export NCL_ARG_$index=$nsecs
 
 echo NCL_N_ARGS 
 
-#echo 'Initial_analysis_means.ncl'
-#ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
+echo 'Initial_analysis_means.ncl'
+ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
                                 # including PV, SF, divergences MSE, etc
                                 # then calculate climatological means
                                 # on monthly and annual time resolution
@@ -74,8 +76,8 @@ echo NCL_N_ARGS
 #echo 'hybrid2pres.ncl'
 #ncl hybrid2pres.ncl
 
-#echo 'hybrid2pres_morelev.ncl'
-#ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
+echo 'hybrid2pres_morelev.ncl'
+ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
                             # monthly resolution data including caluclation of
                             # potential temperaturei, PV, etc and vertical
                             # gradients etc
@@ -83,8 +85,8 @@ echo NCL_N_ARGS
                             # calculating them on hybrid and then converting
 
 # Use to get U, V, TH  on limited pressure levels
-echo 'hybrid2pres_daily_limlev.ncl'
-ncl hybrid2pres_daily_limlev.ncl
+#echo 'hybrid2pres_daily_limlev.ncl'
+#ncl hybrid2pres_daily_limlev.ncl
 
 #echo 'Create_Seas_ts.ncl'
 #ncl Create_Seas_ts.ncl  # create timeseries of all years of monthly data for
