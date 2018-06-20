@@ -2,27 +2,26 @@
 # Script to calculate variables that are useful for analysing Rossby wave
 # behaviour
 
-cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis/Standard/scripts/
-dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
-#dir="/home/disk/eos4/rachel/CESM_outfiles/"
-#dir="/home/disk/rachel/CESM_outfiles/"
+cd /home/rhwhite/NCLscripts/cesm_scripts/Analysis/Standard/scripts/
+dir="/data/ESS/rhwhite/cesm_archive/"
 
 numexps="1"
-exps=("WACCM_f19_LGM")
+exps=("WACCMSC_f19_2000_CESMSSTs")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
-dirbase="/home/disk/rachel/CESM_outfiles/"
+#exps=("WACCM_f19_highR")
+dirbase="/data/ESS/rhwhite/cesm_archive/"
 expsctl=("CAM4SOM4_noMT") 
-start="16"
-end="55"
-version="106"
+start="2"
+end="10"
+version="122"
 
 # For Tak-Nak fluxes:
 export NCL_startyrC=11
 export NCL_nyearsC=20
 
-nsecs="21600"   # default = 00000, when running hybrid will be 21600
-h2start="02"    # default = 01, when running hybrid this will be 02
+nsecs="00000"   # default = 00000, when running hybrid will be 21600
+h2start="01"    # default = 01, when running hybrid this will be 02
 
 export NCL_ARG_lonstart=0
 export NCL_ARG_lonend=360
@@ -33,7 +32,7 @@ export NCL_Mtrans=0
 export NCL_GW=0
 export NCL_xrad=0
 export NCL_N_ARGS=$#
-export NCL_CESMversion=$version
+export NCL_CESMversion=122
 
 export NCL_nsecs=$nsecs
 export NCL_h2start=$h2start
@@ -95,8 +94,8 @@ ncl hybrid2pres_daily_limlev.ncl
                             # onto pressure levels specified in this file
 ## Refractive index
 
-echo CalcZMKs.ncl
-ncl Calc_ZMKs.ncl
+#echo CalcZMKs.ncl
+#ncl Calc_ZMKs.ncl
 
 #echo Calc_ZMKa_monthly.ncl
 #ncl Calc_ZMKs_monthly.ncl
@@ -128,20 +127,17 @@ ncl Calc_ZMKs.ncl
 #ncl Calc_QGKS_test.ncl
 
 # Calculate EP fluxes on daily data
-echo Calc_EPfluxes_daily.ncl
-ncl Calc_EPfluxes_daily.ncl
+#echo Calc_EPfluxes_daily.ncl
+#ncl Calc_EPfluxes_daily.ncl
 
 # Calculate wavenumber 1 and 2 EP fluxes on daily data
 #ncl Calc_EPfluxes_wave12_daily.ncl
 
 #ncl Calc_EPfluxes_wave2_daily.ncl
 
-eval export NCL_seas="DJF"
-ncl Calc_TEMcirc_daily.ncl
-eval export NCL_seas="Annual"
-ncl Calc_TEMcirc_daily.ncl
-eval export NCL_seas="JJA"
-ncl Calc_TEMcirc_daily.ncl
+##### Not used anymore - done in python Calculate FFT on geopotential heights
+#####ncl Calc_Z_FFT.ncl
+
 
 #echo 'Calc_TakNak_fluxes.ncl'
 #export NCL_season="DJF"
