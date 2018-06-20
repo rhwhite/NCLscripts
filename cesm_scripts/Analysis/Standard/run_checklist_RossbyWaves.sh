@@ -3,26 +3,25 @@
 # behaviour
 
 cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis/Standard/scripts/
-#dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
+dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
 #dir="/home/disk/eos4/rachel/CESM_outfiles/"
-dir="/home/disk/rachel/CESM_outfiles/"
+#dir="/home/disk/rachel/CESM_outfiles/"
 
 numexps="1"
-exps=("CESMtopof19_daily")
+exps=("WACCM_f19_LGM")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
-#exps=("WACCM_f19_highR")
 dirbase="/home/disk/rachel/CESM_outfiles/"
 expsctl=("CAM4SOM4_noMT") 
-start="2"
-end="51"
+start="16"
+end="55"
 
 # For Tak-Nak fluxes:
 export NCL_startyrC=11
 export NCL_nyearsC=20
 
-nsecs="00000"   # default = 00000, when running hybrid will be 21600
-h2start="01"    # default = 01, when running hybrid this will be 02
+nsecs="21600"   # default = 00000, when running hybrid will be 21600
+h2start="02"    # default = 01, when running hybrid this will be 02
 
 export NCL_ARG_lonstart=0
 export NCL_ARG_lonend=360
@@ -62,8 +61,8 @@ eval export NCL_ARG_$index=$nsecs
 
 echo NCL_N_ARGS 
 
-#echo 'Initial_analysis_means.ncl'
-#ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
+echo 'Initial_analysis_means.ncl'
+ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
                                 # including PV, SF, divergences MSE, etc
                                 # then calculate climatological means
                                 # on monthly and annual time resolution
@@ -83,8 +82,8 @@ ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
                             # calculating them on hybrid and then converting
 
 # Use to get U, V, TH  on limited pressure levels
-#echo 'hybrid2pres_daily_limlev.ncl'
-#ncl hybrid2pres_daily_limlev.ncl
+echo 'hybrid2pres_daily_limlev.ncl'
+ncl hybrid2pres_daily_limlev.ncl
 
 #echo 'Create_Seas_ts.ncl'
 #ncl Create_Seas_ts.ncl  # create timeseries of all years of monthly data for
@@ -94,8 +93,8 @@ ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
                             # onto pressure levels specified in this file
 ## Refractive index
 
-#echo CalcZMKs.ncl
-#ncl Calc_ZMKs.ncl
+echo CalcZMKs.ncl
+ncl Calc_ZMKs.ncl
 
 #echo Calc_ZMKa_monthly.ncl
 #ncl Calc_ZMKs_monthly.ncl
