@@ -47,19 +47,15 @@ do exps = 0,nexps-1
     DirO = Dir + "/Temp_pl/"
     ;system("rm " + Dir + "Temp_pl/*")
 
-
     print(Experiment)
-    filePHIS = (Dir + Experiment + "." + camversion + ".h0.0002-01.nc")
+    sstartyr = sprinti("%0.4i",startyr)
+    filePHIS = (Dir + Experiment + "." + camversion + ".h0." + sstartyr + "-01.nc")
 
     do iyear = startyr,endyr
         print(tostring(iyear))
-        if iyear .LT. 10
-            syear = "0" + tostring(iyear)
-        else
-            syear = tostring(iyear)
-        end if
+	syear = sprinti("%0.4i",iyear)
 
-        filename = (Dir + Experiment + "." + camversion + ".h2.00" + syear + "-01-01-00000.nc")
+        filename = (Dir + Experiment + "." + camversion + ".h2." + syear + "-01-01-00000.nc")
     
         cdf_file = addfile(filename,"r")
         cdf_file_PHIS = addfile(filePHIS,"r")
@@ -129,7 +125,7 @@ do exps = 0,nexps-1
         fout ->PV = PVpres
     end do	
 
-    system("ncrcat -O " + DirO + "/U_V_T_Z3_pl" + Experiment + "_??"  + "." + camversion + ".h2.nc " + Dir + "/U_V_T_Z3_pl" + Experiment + "." + camversion + ".h2." + sprinti("%0.4i",startyr) + "-00" + tostring(endyr) + ".nc")
+    system("ncrcat -O " + DirO + "/U_V_T_Z3_pl" + Experiment + "_*"  + "." + camversion + ".h2.nc " + Dir + "/U_V_T_Z3_pl" + Experiment + "." + camversion + ".h2." + sprinti("%0.4i",startyr) + "-00" + tostring(endyr) + ".nc")
 
 
 end do
