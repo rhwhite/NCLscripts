@@ -126,7 +126,7 @@ do exps = 0,nexps-1
         fout ->PV = PVpres
     end do	
 
-    system("ncrcat -O " + DirO + "/U_V_T_Z3_pl" + Experiment + "_*"  + "." + camversion + ".h2.nc " + DirFinal + "/U_V_T_Z3_pl" + Experiment + "." + camversion + ".h2." + sprinti("%0.4i",startyr) + "-00" + tostring(endyr) + ".nc")
+    system("ncrcat -O " + DirO + "/U_V_T_Z3_pl" + Experiment + "_*"  + "." + camversion + ".h2.nc " + DirFinal + "/U_V_T_Z3_pl" + Experiment + "." + camversion + ".h2." + sprinti("%0.4i",startyr) + "-" + sprinti("%0.4i",endyr) + ".nc")
 
 
 end do
