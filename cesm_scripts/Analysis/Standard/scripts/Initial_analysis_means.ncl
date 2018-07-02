@@ -87,7 +87,11 @@ do exps = 0,nexps-1
 			if iy .lt. 100 then
 				stringyear = "00" + tostring(iy)
 			else
-				stringyear = "0" + tostring(iy)
+				if iy .lt. 1000 then
+					stringyear = "0" + tostring(iy)
+				else
+					stringyear = tostring(iy)
+				end if
 			end if
 		end if
 		
