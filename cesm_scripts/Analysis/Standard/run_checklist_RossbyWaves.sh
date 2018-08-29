@@ -2,21 +2,20 @@
 # Script to calculate variables that are useful for analysing Rossby wave
 # behaviour
 
-cd /glade/u/home/rachelwh/scripts/NCLscripts/cesm_scripts/Analysis/Standard/scripts/
-#dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
+cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis/Standard/scripts/
+dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
 #dir="/home/disk/eos4/rachel/CESM_outfiles/"
-dir="/glade/scratch/rachelwh/archive/"
+#dir="/home/disk/rachel/CESM_outfiles/"
 
 numexps="1"
-exps=("WACCMSC_SSTvary_NoMT")
+exps=("WACCM_f19_CTL")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
-#exps=("WACCM_f19_highR")
 dirbase="/home/disk/rachel/CESM_outfiles/"
 expsctl=("CAM4SOM4_noMT") 
-start="1970"
-end="2010"
-version="122"
+start="2"
+end="51"
+version="106"
 
 # For Tak-Nak fluxes:
 export NCL_startyrC=11
