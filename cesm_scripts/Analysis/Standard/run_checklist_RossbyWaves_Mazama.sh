@@ -6,14 +6,14 @@ cd /home/rhwhite/NCLscripts/cesm_scripts/Analysis/Standard/scripts/
 dir="/data/ESS/rhwhite/cesm_archive/"
 
 numexps="1"
-exps=("WACCMSC_f19_2000_CESMSSTs")
+exps=("WACCMSC_CTL_122")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
 #exps=("WACCM_f19_highR")
 dirbase="/data/ESS/rhwhite/cesm_archive/"
 expsctl=("CAM4SOM4_noMT") 
 start="2"
-end="10"
+end="31"
 version="122"
 
 # For Tak-Nak fluxes:
@@ -62,6 +62,10 @@ eval export NCL_ARG_$index=$nsecs
 
 echo NCL_N_ARGS 
 
+
+#echo Initial_analysis_addvars.ncl
+#ncl Initial_analysis_addvars.ncl
+
 echo 'Initial_analysis_means.ncl'
 ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
                                 # including PV, SF, divergences MSE, etc
@@ -70,9 +74,6 @@ ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
 ###NOT CURRENTLY USED echo 'Calc_VertGrad.ncl'    
 ###ncl Calc_VertGrad.ncl   # Calculate climatological mean vertical gradients
                         # of omega and T, TH, and omegaT NOT on pressure levels
-
-#echo 'hybrid2pres.ncl'
-#ncl hybrid2pres.ncl
 
 echo 'hybrid2pres_morelev.ncl'
 ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
@@ -83,8 +84,8 @@ ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
                             # calculating them on hybrid and then converting
 
 # Use to get U, V, TH  on limited pressure levels
-echo 'hybrid2pres_daily_limlev.ncl'
-ncl hybrid2pres_daily_limlev.ncl
+#echo 'hybrid2pres_daily_limlev.ncl'
+#ncl hybrid2pres_daily_limlev.ncl
 
 #echo 'Create_Seas_ts.ncl'
 #ncl Create_Seas_ts.ncl  # create timeseries of all years of monthly data for
