@@ -4,8 +4,7 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/contributed.ncl"
 
 begin
 
-print("doing this")
-
+print("hybrid2pres")
 Direc = getenv("NCL_ARG_1")
 nexps = toint(getenv("NCL_ARG_2"))
 Experiments = new(nexps,"string")
@@ -13,10 +12,6 @@ Experiments = new(nexps,"string")
 do ne = 0,nexps-1
     Experiments(ne) = getenv("NCL_Exp2_" + tostring(ne))
 end do
-
-print(Experiments)
-startyr = toint(getenv("NCL_startyr"))
-endyr = toint(getenv("NCL_endyr"))
 
 version=getenv("NCL_CESMversion")
 
@@ -28,7 +23,12 @@ end if
 
 nsecs = getenv("NCL_nsecs")
 
+startyr = toint(getenv("NCL_startyr"))
+endyr = toint(getenv("NCL_endyr"))
+
 nyears = endyr-startyr+1
+
+timespan = "DJF"
 
 cp = 1.00464e3
 Rd = 287.0
@@ -49,19 +49,18 @@ do exps = 0,nexps-1
     DirO = Dir + "/Temp_pl/"
     ;system("rm " + Dir + "Temp_pl/*")
 
-    print(Experiment)
+    print(tostring(Experiment))
     sstartyr = sprinti("%0.4i",startyr)
     filePHIS = (Dir + Experiment + "." + camversion + ".h0." + sstartyr + "-01.nc")
 
     do iyear = startyr,endyr
         print(tostring(iyear))
-	    syear = sprinti("%0.4i",iyear)
+        syear = sprinti("%0.4i",iyear)
 
         filename = (Dir + Experiment + "." + camversion + ".h2." + syear + "-01-01-00000.nc")
-    
+
         cdf_file = addfile(filename,"r")
         cdf_file_PHIS = addfile(filePHIS,"r")
-
 
         timesin = cdf_file->time
         datesin = cdf_file->date
@@ -83,7 +82,7 @@ do exps = 0,nexps-1
 
         hyam = cdf_file->hyam
         hybm = cdf_file->hybm
-        
+
         p0 = tofloat(cdf_file->P0)
         p = pres_hybrid_ccm(PS,p0,hyam,hybm)
 
@@ -96,40 +95,17 @@ do exps = 0,nexps-1
         ;copy_VarCoords(U,PV)
 
 
-        Tpres = vinth2p_ecmwf(T,hyam,hybm,pnew,PS,1,P0mb,1,True,1,TBOT,conform(PS,PHIS,(/1,2/)))
-        Upres = vinth2p_ecmwf(U,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/))) 
-        Vpres = vinth2p_ecmwf(V,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/))) 
+        ;Tpres = vinth2p_ecmwf(T,hyam,hybm,pnew,PS,1,P0mb,1,True,1,TBOT,conform(PS,PHIS,(/1,2/)))
+        ;Upres = vinth2p_ecmwf(U,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/)))
+        ;Vpres = vinth2p_ecmwf(V,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/)))
         ;PVpres = vinth2p_ecmwf(PV,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/)))
-        Z3pres = vinth2p_ecmwf(Z3,hyam,hybm,pnew,PS,1,P0mb,1,True,-1,TBOT,conform(PS,PHIS,(/1,2/))) 
-        ;Qpres = vinth2p_ecmwf(Q,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/))) 
+        ;Z3pres = vinth2p_ecmwf(Z3,hyam,hybm,pnew,PS,1,P0mb,1,True,-1,TBOT,conform(PS,PHIS,(/1,2/)))
+        ;Qpres = vinth2p_ecmwf(Q,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/)))
 
-;-----------------------------------------------------------------------
-;Write variables to a new netcdf file, for stat fits in matlab
-;-----------------------------------------------------------------------
-        filo = "U_V_T_Z3_pl" + Experiment + "_" + syear + "." + camversion + ".h2.nc"
-        system("/bin/rm -f " + DirO + filo)
-        fout = addfile(DirO + filo, "c")
-    
-        setfileoption(fout,"DefineMode",True)
-
-    
-; set attributes of output file
-        fAtt = True
-        fAtt@creation_date = systemfunc("date")
-        fileattdef(fout,fAtt)
-        filedimdef(fout,"time",-1,True)   
- 
-        fout ->U = Upres
-        fout ->V = Vpres
-        fout->Z3 = Z3pres
-        fout ->T = Tpres
-        ;fout ->Q = Qpres
-        ;fout ->PV = PVpres
-    end do	
-
-    system("ncrcat -O " + DirO + "/U_V_T_Z3_pl" + Experiment + "_*"  + "." + camversion + ".h2.nc " + DirFinal + "/U_V_T_Z3_pl" + Experiment + "." + camversion + ".h2." + sprinti("%0.4i",startyr) + "-" + sprinti("%0.4i",endyr) + ".nc")
-
+    end do
 
 end do
+
+print("finished")
 
 end

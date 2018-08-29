@@ -1,21 +1,31 @@
-#!/bin/sh
+#!/bin/bash -l
+#SBATCH -J basanalysis
+#SBATCH -n 1
+#SBATCH --ntasks-per-node=1
+#SBATCH --mem=100G
+#SBATCH -t 23:59:00
+#SBATCH -A UWAS0064
+#SBATCH -p dav
+#SBATCH -e basanalysis.err.%J
+#SBATCH -o basanalysis.out.%J
+
 # Script to calculate variables that are useful for analysing Rossby wave
 # behaviour
 
 cd /glade/u/home/rachelwh/scripts/NCLscripts/cesm_scripts/Analysis/Standard/scripts/
 #dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
 #dir="/home/disk/eos4/rachel/CESM_outfiles/"
-dir="/glade/scratch/rachelwh/archive/"
+dir="/glade/scratch_new/rachelwh/archive/"
 
 numexps="1"
-exps=("WACCMSC_SSTvary_NoMT")
+exps=("CAM4POP_NoR_f09")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
 #exps=("WACCM_f19_highR")
 dirbase="/home/disk/rachel/CESM_outfiles/"
 expsctl=("CAM4SOM4_noMT") 
-start="1970"
-end="2010"
+start="251"
+end="300"
 version="122"
 
 # For Tak-Nak fluxes:
@@ -59,13 +69,18 @@ eval export NCL_startyr=$start
 eval export NCL_endyr=$end
 
 ((index++))
-echo $index
+#echo $index
 eval export NCL_ARG_$index=$nsecs
 
-echo NCL_N_ARGS 
+#echo NCL_N_ARGS 
 
-#echo 'Initial_analysis_means.ncl'
-#ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
+
+#echo Initial_analysis_addvars.ncl
+#ncl Initial_analysis_addvars.ncl
+
+
+echo 'Initial_analysis_means.ncl'
+ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
                                 # including PV, SF, divergences MSE, etc
                                 # then calculate climatological means
                                 # on monthly and annual time resolution
@@ -76,8 +91,8 @@ echo NCL_N_ARGS
 #echo 'hybrid2pres.ncl'
 #ncl hybrid2pres.ncl
 
-#echo 'hybrid2pres_morelev.ncl'
-#ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
+echo 'hybrid2pres_morelev.ncl'
+ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
                             # monthly resolution data including caluclation of
                             # potential temperaturei, PV, etc and vertical
                             # gradients etc
@@ -86,6 +101,8 @@ echo NCL_N_ARGS
 
 # Use to get U, V, TH  on limited pressure levels
 echo 'hybrid2pres_daily_limlev.ncl'
+
+#ncl hybrid2pres_daily_Caldera.ncl
 ncl hybrid2pres_daily_limlev.ncl
 
 #echo 'Create_Seas_ts.ncl'
@@ -103,14 +120,14 @@ ncl hybrid2pres_daily_limlev.ncl
 #ncl Calc_ZMKs_monthly.ncl
 
 ## Eddy characteristics
-echo 'Calc_Eady.ncl'
-ncl Calc_Eady.ncl
-echo 'LanczosF_Z850_250.ncl'
-ncl LanczosF_Z850_250.ncl
+#echo 'Calc_Eady.ncl'
+#ncl Calc_Eady.ncl
+#echo 'LanczosF_Z850_250.ncl'
+#ncl LanczosF_Z850_250.ncl
 #echo 'Calc_varZ850.ncl'
 #ncl Calc_varZ850.ncl
-echo 'LanczosF_UVT_EKE_EV.ncl'
-ncl LanczosF_UVT_EKE_EV.ncl
+#echo 'LanczosF_UVT_EKE_EV.ncl'
+#ncl LanczosF_UVT_EKE_EV.ncl
 #echo 'Calc_EKE_VT.ncl'
 #ncl Calc_EKE_VT.ncl
 ##########
@@ -137,12 +154,12 @@ ncl LanczosF_UVT_EKE_EV.ncl
 
 #ncl Calc_EPfluxes_wave2_daily.ncl
 
-#eval export NCL_seas="DJF"
-#ncl Calc_TEMcirc_daily.ncl
-#eval export NCL_seas="Annual"
-#ncl Calc_TEMcirc_daily.ncl
-#eval export NCL_seas="JJA"
-#ncl Calc_TEMcirc_daily.ncl
+eval export NCL_seas="DJF"
+ncl Calc_TEMcirc_daily.ncl
+eval export NCL_seas="Annual"
+ncl Calc_TEMcirc_daily.ncl
+eval export NCL_seas="JJA"
+ncl Calc_TEMcirc_daily.ncl
 
 #echo 'Calc_TakNak_fluxes.ncl'
 #export NCL_season="DJF"
