@@ -18,6 +18,7 @@ startyr = toint(getenv("NCL_startyr"))
 endyr = toint(getenv("NCL_endyr"))
 
 version=getenv("NCL_CESMversion")
+h2startday = getenv("NCL_h2start")
 
 if version .EQ. "122" then
     camversion="cam"
@@ -59,7 +60,7 @@ do exps = 0,nexps-1
             syear = tostring(iyear)
         end if
 
-        filename = (Dir + Experiment + "." + camversion + ".h2.00" + syear + "-01-01-00000.nc")
+        filename = (Dir + Experiment + "." + camversion + ".h2.00" + syear + "-01-" + h2startday + "-00000.nc")
     
         cdf_file = addfile(filename,"r")
         cdf_file_PHIS = addfile(filePHIS,"r")
