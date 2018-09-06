@@ -6,14 +6,14 @@ cd /home/rhwhite/NCLscripts/cesm_scripts/Analysis/Standard/scripts/
 dir="/data/ESS/rhwhite/cesm_archive/"
 
 numexps="1"
-exps=("WACCMSC_CTL_122")
+exps=("WACCMSC_f19_1978-2010")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
 #exps=("WACCM_f19_highR")
 dirbase="/data/ESS/rhwhite/cesm_archive/"
 expsctl=("CAM4SOM4_noMT") 
-start="2"
-end="31"
+start="1980"
+end="2009"
 version="122"
 
 # For Tak-Nak fluxes:
@@ -33,6 +33,7 @@ export NCL_GW=0
 export NCL_xrad=0
 export NCL_N_ARGS=$#
 export NCL_CESMversion=122
+export NCL_h2mon="02"
 
 export NCL_nsecs=$nsecs
 export NCL_h2start=$h2start
@@ -84,8 +85,8 @@ ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
                             # calculating them on hybrid and then converting
 
 # Use to get U, V, TH  on limited pressure levels
-#echo 'hybrid2pres_daily_limlev.ncl'
-#ncl hybrid2pres_daily_limlev.ncl
+echo 'hybrid2pres_daily_limlev.ncl'
+ncl hybrid2pres_daily_limlev.ncl
 
 #echo 'Create_Seas_ts.ncl'
 #ncl Create_Seas_ts.ncl  # create timeseries of all years of monthly data for

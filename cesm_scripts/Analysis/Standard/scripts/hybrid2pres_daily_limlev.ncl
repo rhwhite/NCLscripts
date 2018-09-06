@@ -16,7 +16,7 @@ end do
 print(Experiments)
 startyr = toint(getenv("NCL_startyr"))
 endyr = toint(getenv("NCL_endyr"))
-
+h2mon = getenv("NCL_h2mon")
 version=getenv("NCL_CESMversion")
 
 if version .EQ. "122" then
@@ -54,9 +54,9 @@ do exps = 0,nexps-1
 
     do iyear = startyr,endyr
         print(tostring(iyear))
-	syear = sprinti("%0.4i",iyear)
+	    syear = sprinti("%0.4i",iyear)
 
-        filename = (Dir + Experiment + "." + camversion + ".h2." + syear + "-01-01-00000.nc")
+        filename = (Dir + Experiment + "." + camversion + ".h2." + syear + "-" + h2mon + "-01-00000.nc")
     
         cdf_file = addfile(filename,"r")
         cdf_file_PHIS = addfile(filePHIS,"r")
@@ -126,7 +126,10 @@ do exps = 0,nexps-1
         fout ->PV = PVpres
     end do	
 
-    system("ncrcat -O " + DirO + "/U_V_T_Z3_pl" + Experiment + "_*"  + "." + camversion + ".h2.nc " + DirFinal + "/U_V_T_Z3_pl" + Experiment + "." + camversion + ".h2." + sprinti("%0.4i",startyr) + "-" + sprinti("%0.4i",endyr) + ".nc")
+    if h2mon .eq. "01" then
+        system("ncrcat -O " + DirO + "/U_V_T_Z3_pl" + Experiment + "_*"  + "." + camversion + ".h2.nc " + DirFinal + "/U_V_T_Z3_pl" + Experiment + "." + camversion + ".h2." + sprinti("%0.4i",startyr) + "-" + sprinti("%0.4i",endyr) + ".nc")
+    else
+        system("ncrcat -O " + DirO + "/U_V_T_Z3_pl" + Experiment + "_*"  + "." + camversion + ".h2.nc " + DirFinal + "/U_V_T_Z3_pl" + Experiment + "." + camversion + ".h2." + sprinti("%0.4i",startyr) + "-" + h2mon + "-" + sprinti("%0.4i",endyr) + h2mon + ".nc")
 
 
 end do

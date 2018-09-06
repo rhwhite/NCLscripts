@@ -35,6 +35,8 @@ export NCL_GW=0
 export NCL_xrad=0
 export NCL_N_ARGS=$#
 export NCL_CESMversion=122
+export NCL_h2mon="02"
+
 
 export NCL_nsecs=$nsecs
 export NCL_h2start=$h2start
