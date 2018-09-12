@@ -18,6 +18,7 @@ startyr = toint(getenv("NCL_startyr"))
 endyr = toint(getenv("NCL_endyr"))
 h2mon = getenv("NCL_h2mon")
 version=getenv("NCL_CESMversion")
+omega=getenv("NCL_omega")
 
 if version .EQ. "122" then
     camversion="cam"
@@ -50,7 +51,7 @@ do exps = 0,nexps-1
 
     print(Experiment)
     sstartyr = sprinti("%0.4i",startyr)
-    filePHIS = (Dir + Experiment + "." + camversion + ".h0." + sstartyr + "-01.nc")
+    filePHIS = (Dir + Experiment + "." + camversion + ".h0." + sstartyr + "-" + h2mon + ".nc")
 
     do iyear = startyr,endyr
         print(tostring(iyear))
@@ -73,6 +74,9 @@ do exps = 0,nexps-1
         Z3 = cdf_file->Z3
         TBOT = cdf_file->TBOT
         Q = cdf_file->Q
+        if omega .eq. 1 then
+            OMEGA = cdf_file->OMEGA
+        end if
 
         PHIS = cdf_file_PHIS->PHIS(0,:,:)
         PS = cdf_file->PS
@@ -101,7 +105,9 @@ do exps = 0,nexps-1
         PVpres = vinth2p_ecmwf(PV,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/)))
         Z3pres = vinth2p_ecmwf(Z3,hyam,hybm,pnew,PS,1,P0mb,1,True,-1,TBOT,conform(PS,PHIS,(/1,2/))) 
         Qpres = vinth2p_ecmwf(Q,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/))) 
-
+        if omega .eq. 1 then
+            OMEGApres = vinth2p_ecmwf(OMEGA,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/)))
+        end if
 ;-----------------------------------------------------------------------
 ;Write variables to a new netcdf file, for stat fits in matlab
 ;-----------------------------------------------------------------------
@@ -124,13 +130,16 @@ do exps = 0,nexps-1
         fout ->T = Tpres
         fout ->Q = Qpres
         fout ->PV = PVpres
+        if omega .eq. 1 then
+            fout ->OMEGA = OMEGApres
+        end if
     end do	
 
     if h2mon .eq. "01" then
         system("ncrcat -O " + DirO + "/U_V_T_Z3_pl" + Experiment + "_*"  + "." + camversion + ".h2.nc " + DirFinal + "/U_V_T_Z3_pl" + Experiment + "." + camversion + ".h2." + sprinti("%0.4i",startyr) + "-" + sprinti("%0.4i",endyr) + ".nc")
     else
         system("ncrcat -O " + DirO + "/U_V_T_Z3_pl" + Experiment + "_*"  + "." + camversion + ".h2.nc " + DirFinal + "/U_V_T_Z3_pl" + Experiment + "." + camversion + ".h2." + sprinti("%0.4i",startyr) + "-" + h2mon + "-" + sprinti("%0.4i",endyr) + h2mon + ".nc")
-
+    end if
 
 end do
 
