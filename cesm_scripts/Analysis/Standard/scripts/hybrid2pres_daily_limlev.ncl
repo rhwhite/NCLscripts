@@ -93,21 +93,28 @@ do exps = 0,nexps-1
         dims1 = dimsizes(U)
         dimslev = dimsizes(pnew)
 
-        ; Calculate PV
-        gridtype = 1    ; normal grid
-        PV = pot_vort_hybrid(p,U,V,T,lat,gridtype,0)
-        copy_VarCoords(U,PV)
+        ; Calculate PV - now we do this on isobaric levels - pot_vort_hybrid
+        ; can give division by zero errors which are reportedly fixed in 
+        ; pot_vort_isobaric
+        ;gridtype = 1    ; normal grid
+        ;PV = pot_vort_hybrid(p,U,V,T,lat,gridtype,0)
+        ;copy_VarCoords(U,PV)
 
 
         Tpres = vinth2p_ecmwf(T,hyam,hybm,pnew,PS,1,P0mb,1,True,1,TBOT,conform(PS,PHIS,(/1,2/)))
         Upres = vinth2p_ecmwf(U,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/))) 
         Vpres = vinth2p_ecmwf(V,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/))) 
-        PVpres = vinth2p_ecmwf(PV,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/)))
+        ;PVpres = vinth2p_ecmwf(PV,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/)))
         Z3pres = vinth2p_ecmwf(Z3,hyam,hybm,pnew,PS,1,P0mb,1,True,-1,TBOT,conform(PS,PHIS,(/1,2/))) 
         Qpres = vinth2p_ecmwf(Q,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/))) 
         if omega .eq. 1 then
             OMEGApres = vinth2p_ecmwf(OMEGA,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/)))
         end if
+
+        ; Calculate PV on pressure levels
+        gridtype = 1    ; normal grid
+        PVpres = potvort_isobaric(pnew,Upres,Vpres,Tpres,lat,gridtype,0)
+        copy_VarCoords(Upres,PVpres)
 ;-----------------------------------------------------------------------
 ;Write variables to a new netcdf file, for stat fits in matlab
 ;-----------------------------------------------------------------------
