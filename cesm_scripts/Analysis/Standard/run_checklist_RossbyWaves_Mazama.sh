@@ -6,14 +6,14 @@ cd /home/rhwhite/NCLscripts/cesm_scripts/Analysis/Standard/scripts/
 dir="/data/ESS/rhwhite/cesm_archive/"
 
 numexps="1"
-exps=("WACCMSC_f19_1978-2010")
+exps=("WACCMSC_f19_ShiftGLND" "WACCMSC_CTL_122" "WACCMSC_f19_1979-2010_4" "WACCMSC_f19_1979-2010_5")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
 #exps=("WACCM_f19_highR")
 dirbase="/data/ESS/rhwhite/cesm_archive/"
 expsctl=("CAM4SOM4_noMT") 
-start="1980"
-end="2009"
+start="31"
+end="61"
 version="122"
 
 # For Tak-Nak fluxes:
@@ -33,8 +33,8 @@ export NCL_GW=0
 export NCL_xrad=0
 export NCL_N_ARGS=$#
 export NCL_CESMversion=122
-export NCL_h2mon="02"
-
+export NCL_h2mon="01"
+export NCL_omega=0
 export NCL_nsecs=$nsecs
 export NCL_h2start=$h2start
 # save command line arguments to environment variable NCL_ARG_#
@@ -64,11 +64,11 @@ eval export NCL_ARG_$index=$nsecs
 echo NCL_N_ARGS 
 
 
-#echo Initial_analysis_addvars.ncl
-#ncl Initial_analysis_addvars.ncl
+echo Initial_analysis_addvars.ncl
+ncl Initial_analysis_addvars.ncl
 
-echo 'Initial_analysis_means.ncl'
-ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
+#echo 'Initial_analysis_means.ncl'
+#ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
                                 # including PV, SF, divergences MSE, etc
                                 # then calculate climatological means
                                 # on monthly and annual time resolution
@@ -76,8 +76,8 @@ ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
 ###ncl Calc_VertGrad.ncl   # Calculate climatological mean vertical gradients
                         # of omega and T, TH, and omegaT NOT on pressure levels
 
-echo 'hybrid2pres_morelev.ncl'
-ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
+#echo 'hybrid2pres_morelev.ncl'
+#ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
                             # monthly resolution data including caluclation of
                             # potential temperaturei, PV, etc and vertical
                             # gradients etc
@@ -85,8 +85,8 @@ ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
                             # calculating them on hybrid and then converting
 
 # Use to get U, V, TH  on limited pressure levels
-echo 'hybrid2pres_daily_limlev.ncl'
-ncl hybrid2pres_daily_limlev.ncl
+#echo 'hybrid2pres_daily_limlev.ncl'
+#ncl hybrid2pres_daily_limlev.ncl
 
 #echo 'Create_Seas_ts.ncl'
 #ncl Create_Seas_ts.ncl  # create timeseries of all years of monthly data for

@@ -2,20 +2,19 @@
 # Script to calculate variables that are useful for analysing Rossby wave
 # behaviour
 
-cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis/Standard/scripts/
-dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
-#dir="/home/disk/eos4/rachel/CESM_outfiles/"
-#dir="/home/disk/rachel/CESM_outfiles/"
+cd /home/rhwhite/NCLscripts/cesm_scripts/Analysis/Standard/scripts/
+dir="/data/ESS/rhwhite/cesm_archive/"
 
 numexps="1"
-exps=("WACCM_f19_CTL")
+exps=("WACCMSC_CTL_122" "WACCMSC_f19_1979-2010_4" "WACCMSC_f19_1979-2010_5")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
-dirbase="/home/disk/rachel/CESM_outfiles/"
+#exps=("WACCM_f19_highR")
+dirbase="/data/ESS/rhwhite/cesm_archive/"
 expsctl=("CAM4SOM4_noMT") 
-start="2"
-end="51"
-version="106"
+start="32"
+end="101"
+version="122"
 
 # For Tak-Nak fluxes:
 export NCL_startyrC=11
@@ -33,10 +32,9 @@ export NCL_Mtrans=0
 export NCL_GW=0
 export NCL_xrad=0
 export NCL_N_ARGS=$#
-export NCL_h2mon="02"
-
-export NCL_CESMversion=$version
-
+export NCL_CESMversion=122
+export NCL_h2mon="01"
+export NCL_omega=0
 export NCL_nsecs=$nsecs
 export NCL_h2start=$h2start
 # save command line arguments to environment variable NCL_ARG_#
@@ -65,6 +63,10 @@ eval export NCL_ARG_$index=$nsecs
 
 echo NCL_N_ARGS 
 
+
+echo Initial_analysis_addvars.ncl
+ncl Initial_analysis_addvars.ncl
+
 #echo 'Initial_analysis_means.ncl'
 #ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
                                 # including PV, SF, divergences MSE, etc
@@ -74,11 +76,8 @@ echo NCL_N_ARGS
 ###ncl Calc_VertGrad.ncl   # Calculate climatological mean vertical gradients
                         # of omega and T, TH, and omegaT NOT on pressure levels
 
-#echo 'hybrid2pres.ncl'
-#ncl hybrid2pres.ncl
-
-echo 'hybrid2pres_morelev.ncl'
-ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
+#echo 'hybrid2pres_morelev.ncl'
+#ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
                             # monthly resolution data including caluclation of
                             # potential temperaturei, PV, etc and vertical
                             # gradients etc
@@ -138,12 +137,9 @@ ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
 
 #ncl Calc_EPfluxes_wave2_daily.ncl
 
-#eval export NCL_seas="DJF"
-#ncl Calc_TEMcirc_daily.ncl
-#eval export NCL_seas="Annual"
-#ncl Calc_TEMcirc_daily.ncl
-#eval export NCL_seas="JJA"
-#ncl Calc_TEMcirc_daily.ncl
+##### Not used anymore - done in python Calculate FFT on geopotential heights
+#####ncl Calc_Z_FFT.ncl
+
 
 #echo 'Calc_TakNak_fluxes.ncl'
 #export NCL_season="DJF"
