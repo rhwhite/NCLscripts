@@ -26,7 +26,7 @@ version=getenv("NCL_CESMversion")
 if version .EQ. "122" then
     camversion="cam"
 else
-    camversion=." + camversion + ""
+    camversion="cam2"
 end if
 
 
@@ -135,15 +135,15 @@ do exps = 0,nexps-1
 		exit
 	end if
 
-    system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,RHREFHT,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + "." + camversion + ".h0.*-??.nc " + Dirout + "Annual" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")
+    system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + "." + camversion + ".h0.*-??.nc " + Dirout + "Annual" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + "." + camversion + "h0.nc")
 
-	system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,RHREFHT,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + "." + camversion + ".h0.*-12.nc " + Dir + Experiment + ".cam2.h0.*-01.nc " + Dir + Experiment + ".cam2.h0.*-02.nc " + Dirout + "DJF" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")
+	system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + "." + camversion + ".h0.*-12.nc " + Dir + Experiment + "." + camversion + "h0.*-01.nc " + Dir + Experiment + "." + camversion + "h0.*-02.nc " + Dirout + "DJF" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + "." + camversion + "h0.nc")
 	
-	system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,RHREFHT,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + "." + camversion + ".h0.*-03.nc " + Dir + Experiment + ".cam2.h0.*-04.nc " + Dir + Experiment + ".cam2.h0.*-05.nc " + Dirout + "MAM" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")
+	system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + "." + camversion + ".h0.*-03.nc " + Dir + Experiment + "." + camversion + "h0.*-04.nc " + Dir + Experiment + "." + camversion + "h0.*-05.nc " + Dirout + "MAM" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + "." + camversion + "h0.nc")
 	
-    system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,RHREFHT,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + "." + camversion + ".h0.*-06.nc " + Dir + Experiment + ".cam2.h0.*-07.nc " + Dir + Experiment + ".cam2.h0.*-08.nc " + Dirout + "JJA" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")
+    system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + "." + camversion + ".h0.*-06.nc " + Dir + Experiment + "." + camversion + "h0.*-07.nc " + Dir + Experiment + "." + camversion + "h0.*-08.nc " + Dirout + "JJA" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + "." + camversion + "h0.nc")
 
-    system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,RHREFHT,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + "." + camversion + ".h0.*-09.nc " + Dir + Experiment + ".cam2.h0.*-10.nc " + Dir + Experiment + ".cam2.h0.*-11.nc " + Dirout + "SON" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")
+    system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + "." + camversion + ".h0.*-09.nc " + Dir + Experiment + "." + camversion + "h0.*-10.nc " + Dir + Experiment + "." + camversion + "h0.*-11.nc " + Dirout + "SON" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + "." + camversion + "h0.nc")
 
 	
 	system("mv " + Dir + "TempDir/*.nc " + Dir + "/")

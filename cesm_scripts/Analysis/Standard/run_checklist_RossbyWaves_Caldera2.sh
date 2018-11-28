@@ -154,12 +154,12 @@ ncl Create_Seas_ts.ncl  # create timeseries of all years of monthly data for
 
 #ncl Calc_EPfluxes_wave2_daily.ncl
 
-eval export NCL_seas="DJF"
-ncl Calc_TEMcirc_daily.ncl
-eval export NCL_seas="Annual"
-ncl Calc_TEMcirc_daily.ncl
-eval export NCL_seas="JJA"
-ncl Calc_TEMcirc_daily.ncl
+#eval export NCL_seas="DJF"
+#ncl Calc_TEMcirc_daily.ncl
+#eval export NCL_seas="Annual"
+#ncl Calc_TEMcirc_daily.ncl
+#eval export NCL_seas="JJA"
+#ncl Calc_TEMcirc_daily.ncl
 
 #echo 'Calc_TakNak_fluxes.ncl'
 #export NCL_season="DJF"
