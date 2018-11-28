@@ -1,0 +1,46 @@
+reate_Seas_ts.ncl
+ Copyright (C) 1995-2017 - All Rights Reserved
+ University Corporation for Atmospheric Research
+ NCAR Command Language Version 6.5.0
+ The use of this software is governed by a License Agreement.
+ See http://www.ncl.ucar.edu/ for more details.
+(0)	251
+(0)	300
+
+
+Variable: Experiment
+Type: string
+Total Size: 8 bytes
+            1 values
+Number of Dimensions: 1
+Dimensions and sizes:	[1]
+Coordinates: 
+Number Of Attributes: 1
+  _FillValue :	missing
+(0)	CAM4POP_NoTopo_f09
+(0)	file not present/glade/scratch/rachelwh/archive/CAM4POP_NoTopo_f09//atm/hist//raw/CAM4POP_NoTopo_f09.cam2.h0.0251-01.nc
+ Copyright (C) 1995-2017 - All Rights Reserved
+ University Corporation for Atmospheric Research
+ NCAR Command Language Version 6.5.0
+ The use of this software is governed by a License Agreement.
+ See http://www.ncl.ucar.edu/ for more details.
+fatal:Could not open (/home/disk/eos4/rachel/git/NCL/Functions/TEMres_circ.ncl)
+fatal:error at line 4 in file Calc_TEMcirc_daily.ncl
+
+ Copyright (C) 1995-2017 - All Rights Reserved
+ University Corporation for Atmospheric Research
+ NCAR Command Language Version 6.5.0
+ The use of this software is governed by a License Agreement.
+ See http://www.ncl.ucar.edu/ for more details.
+fatal:Could not open (/home/disk/eos4/rachel/git/NCL/Functions/TEMres_circ.ncl)
+fatal:error at line 4 in file Calc_TEMcirc_daily.ncl
+
+ Copyright (C) 1995-2017 - All Rights Reserved
+ University Corporation for Atmospheric Research
+ NCAR Command Language Version 6.5.0
+ The use of this software is governed by a License Agreement.
+ See http://www.ncl.ucar.edu/ for more details.
+fatal:Could not open (/home/disk/eos4/rachel/git/NCL/Functions/TEMres_circ.ncl)
+fatal:error at line 4 in file Calc_TEMcirc_daily.ncl
+
+finished

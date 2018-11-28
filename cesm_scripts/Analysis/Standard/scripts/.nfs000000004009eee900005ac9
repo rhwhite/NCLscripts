@@ -165,13 +165,8 @@ do exps = 0,nexps-1
 			copy_VarCoords(U,dP)
 			gridtype = 1 	; 0 is gaussian, 1 is fixed
 
-
-            ; pot_vort_hybrid is now unsupported, and sometimes
-            ; returns divison by 0 errors.
-            ; seems we should use pot_vort_isobaric instead, on the daily data
-            ; if we really want PV
-			;newvars = pot_vort_hybrid(P,U,V,T,lat,gridtype,0)
-			;PV = newvars(:,:,:,:) 
+			newvars = pot_vort_hybrid(P,U,V,T,lat,gridtype,0)
+			PV = newvars(:,:,:,:) 
 			TH = pot_temp(P,T,0,False)
 
 			MSE = new(dimsizes(U),typeof(U))
@@ -220,7 +215,7 @@ do exps = 0,nexps-1
 			cdf_file->TH = TH
 			cdf_file->SF = SF
 			cdf_file->SFza = SFza
-			;cdf_file->PV = PV
+			cdf_file->PV = PV
             cdf_file->Z3za = Z3za
 			cdf_file->UQ = UQ
 			cdf_file->Udiv = Udiv

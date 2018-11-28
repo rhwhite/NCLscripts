@@ -18,14 +18,14 @@ cd /glade/u/home/rachelwh/scripts/NCLscripts/cesm_scripts/Analysis/Standard/scri
 dir="/glade/scratch/rachelwh/archive/"
 
 numexps="1"
-exps=("WACCMSC_1980-2010_FlatAsia")
+exps=("F_2000_WACCM5i_0CFCs" "WACCM5_LGM" "F_2000_WACCM5")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
 #exps=("WACCM_f19_highR")
 dirbase="/home/disk/rachel/CESM_outfiles/"
 expsctl=("CAM4SOM4_noMT") 
-start="1980"
-end="2009"
+start="2"
+end="30"
 version="122"
 
 # For Tak-Nak fluxes:
@@ -39,10 +39,12 @@ export NCL_ARG_lonstart=0
 export NCL_ARG_lonend=360
 
 export NCL_dirstr="/atm/hist/"
-export NCL_Ozone=0
+export NCL_Ozone=1
 export NCL_Mtrans=0
-export NCL_GW=0
+export NCL_GW=1
 export NCL_xrad=0
+export NCL_h2mon="02"
+export NCL_omega=1
 export NCL_N_ARGS=$#
 export NCL_CESMversion=$version
 
@@ -101,8 +103,6 @@ ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
 
 # Use to get U, V, TH  on limited pressure levels
 echo 'hybrid2pres_daily_limlev.ncl'
-
-#ncl hybrid2pres_daily_Caldera.ncl
 ncl hybrid2pres_daily_limlev.ncl
 
 #echo 'Create_Seas_ts.ncl'

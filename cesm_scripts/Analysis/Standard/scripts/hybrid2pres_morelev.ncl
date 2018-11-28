@@ -130,6 +130,9 @@ do ts = 0,nts - 1
         
         if O3 .EQ. 1 then
             O3pres = vinth2p_ecmwf(cdf_file->O3,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS)
+            CH4pres = vinth2p_ecmwf(cdf_file->CH4,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS)
+            CO2pres = vinth2p_ecmwf(cdf_file->CO2,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS)
+            N2Opres = vinth2p_ecmwf(cdf_file->N2O,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS)
         end if
         if xrad .EQ. 1 then
             NETDTpres = vinth2p_ecmwf(cdf_file->NETDT,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS)
@@ -318,6 +321,9 @@ do ts = 0,nts - 1
         end if
         if O3 .EQ. 1 then
             fout ->O3       = O3pres
+            fout ->CO2 = CO2pres
+            fout ->CH4 = CH4pres
+            fout ->N2O = N2Opres
         end if
 
         fout ->SF      = SFpres

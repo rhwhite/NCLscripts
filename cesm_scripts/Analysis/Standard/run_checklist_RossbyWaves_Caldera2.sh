@@ -15,10 +15,10 @@
 cd /glade/u/home/rachelwh/scripts/NCLscripts/cesm_scripts/Analysis/Standard/scripts/
 #dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
 #dir="/home/disk/eos4/rachel/CESM_outfiles/"
-dir="/glade/scratch_new/rachelwh/archive/"
+dir="/glade/scratch/rachelwh/archive/"
 
 numexps="1"
-exps=("CAM4POP_NoR_f09")
+exps=("CAM4POP_NoTopo_f09")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
 #exps=("WACCM_f19_highR")
@@ -79,8 +79,8 @@ eval export NCL_ARG_$index=$nsecs
 #ncl Initial_analysis_addvars.ncl
 
 
-echo 'Initial_analysis_means.ncl'
-ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
+#echo 'Initial_analysis_means.ncl'
+#ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
                                 # including PV, SF, divergences MSE, etc
                                 # then calculate climatological means
                                 # on monthly and annual time resolution
@@ -91,8 +91,8 @@ ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
 #echo 'hybrid2pres.ncl'
 #ncl hybrid2pres.ncl
 
-echo 'hybrid2pres_morelev.ncl'
-ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
+#echo 'hybrid2pres_morelev.ncl'
+#ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
                             # monthly resolution data including caluclation of
                             # potential temperaturei, PV, etc and vertical
                             # gradients etc
@@ -100,13 +100,13 @@ ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
                             # calculating them on hybrid and then converting
 
 # Use to get U, V, TH  on limited pressure levels
-echo 'hybrid2pres_daily_limlev.ncl'
+#echo 'hybrid2pres_daily_limlev.ncl'
 
 #ncl hybrid2pres_daily_Caldera.ncl
-ncl hybrid2pres_daily_limlev.ncl
+#ncl hybrid2pres_daily_limlev.ncl
 
-#echo 'Create_Seas_ts.ncl'
-#ncl Create_Seas_ts.ncl  # create timeseries of all years of monthly data for
+echo 'Create_Seas_ts.ncl'
+ncl Create_Seas_ts.ncl  # create timeseries of all years of monthly data for
                         # DJF, MAM, JJA and SON
 #echo 'hybrid2pres_ts.ncl' 
 #ncl hybrid2pres_ts.ncl  # convert the files created by Create_Seas_ts.ncl

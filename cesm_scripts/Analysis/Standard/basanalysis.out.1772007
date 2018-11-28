@@ -1,0 +1,254 @@
+Initial_analysis_means.ncl
+ Copyright (C) 1995-2017 - All Rights Reserved
+ University Corporation for Atmospheric Research
+ NCAR Command Language Version 6.5.0
+ The use of this software is governed by a License Agreement.
+ See http://www.ncl.ucar.edu/ for more details.
+(0)	251
+(0)	300
+
+
+Variable: Experiment
+Type: string
+Total Size: 8 bytes
+            1 values
+Number of Dimensions: 1
+Dimensions and sizes:	[1]
+Coordinates: 
+Number Of Attributes: 1
+  _FillValue :	missing
+(0)	CAM4POP_NoTopo_f09
+(0)	251
+(0)	252
+(0)	253
+(0)	254
+(0)	255
+(0)	256
+(0)	257
+(0)	258
+(0)	259
+(0)	260
+(0)	261
+(0)	262
+(0)	263
+(0)	264
+(0)	265
+(0)	266
+(0)	267
+(0)	268
+(0)	269
+(0)	270
+(0)	271
+(0)	272
+(0)	273
+(0)	274
+(0)	275
+(0)	276
+(0)	277
+(0)	278
+(0)	279
+(0)	280
+(0)	281
+(0)	282
+(0)	283
+(0)	284
+(0)	285
+(0)	286
+(0)	287
+(0)	288
+(0)	289
+(0)	290
+(0)	291
+(0)	292
+(0)	293
+(0)	294
+(0)	295
+(0)	296
+(0)	297
+(0)	298
+(0)	299
+(0)	300
+(0)	finished with CAM4POP_NoTopo_f09 from 251 to 300
+hybrid2pres_morelev.ncl
+ Copyright (C) 1995-2017 - All Rights Reserved
+ University Corporation for Atmospheric Research
+ NCAR Command Language Version 6.5.0
+ The use of this software is governed by a License Agreement.
+ See http://www.ncl.ucar.edu/ for more details.
+
+
+Variable: timespan
+Type: string
+Total Size: 8 bytes
+            1 values
+Number of Dimensions: 1
+Dimensions and sizes:	[1]
+Coordinates: 
+(0)	DJF
+
+
+Variable: Experiment
+Type: string
+Total Size: 8 bytes
+            1 values
+Number of Dimensions: 1
+Dimensions and sizes:	[1]
+Coordinates: 
+Number Of Attributes: 1
+  _FillValue :	missing
+(0)	CAM4POP_NoTopo_f09
+(0)	next
+
+
+Variable: timespan
+Type: string
+Total Size: 8 bytes
+            1 values
+Number of Dimensions: 1
+Dimensions and sizes:	[1]
+Coordinates: 
+(0)	Annual
+
+
+Variable: Experiment
+Type: string
+Total Size: 8 bytes
+            1 values
+Number of Dimensions: 1
+Dimensions and sizes:	[1]
+Coordinates: 
+Number Of Attributes: 1
+  _FillValue :	missing
+(0)	CAM4POP_NoTopo_f09
+(0)	next
+
+
+Variable: timespan
+Type: string
+Total Size: 8 bytes
+            1 values
+Number of Dimensions: 1
+Dimensions and sizes:	[1]
+Coordinates: 
+(0)	JJA
+
+
+Variable: Experiment
+Type: string
+Total Size: 8 bytes
+            1 values
+Number of Dimensions: 1
+Dimensions and sizes:	[1]
+Coordinates: 
+Number Of Attributes: 1
+  _FillValue :	missing
+(0)	CAM4POP_NoTopo_f09
+(0)	next
+
+
+Variable: timespan
+Type: string
+Total Size: 8 bytes
+            1 values
+Number of Dimensions: 1
+Dimensions and sizes:	[1]
+Coordinates: 
+(0)	MAM
+
+
+Variable: Experiment
+Type: string
+Total Size: 8 bytes
+            1 values
+Number of Dimensions: 1
+Dimensions and sizes:	[1]
+Coordinates: 
+Number Of Attributes: 1
+  _FillValue :	missing
+(0)	CAM4POP_NoTopo_f09
+(0)	next
+
+
+Variable: timespan
+Type: string
+Total Size: 8 bytes
+            1 values
+Number of Dimensions: 1
+Dimensions and sizes:	[1]
+Coordinates: 
+(0)	SON
+
+
+Variable: Experiment
+Type: string
+Total Size: 8 bytes
+            1 values
+Number of Dimensions: 1
+Dimensions and sizes:	[1]
+Coordinates: 
+Number Of Attributes: 1
+  _FillValue :	missing
+(0)	CAM4POP_NoTopo_f09
+(0)	next
+hybrid2pres_daily_limlev.ncl
+ Copyright (C) 1995-2017 - All Rights Reserved
+ University Corporation for Atmospheric Research
+ NCAR Command Language Version 6.5.0
+ The use of this software is governed by a License Agreement.
+ See http://www.ncl.ucar.edu/ for more details.
+(0)	doing this
+
+
+Variable: Experiments
+Type: string
+Total Size: 8 bytes
+            1 values
+Number of Dimensions: 1
+Dimensions and sizes:	[1]
+Coordinates: 
+Number Of Attributes: 1
+  _FillValue :	missing
+(0)	CAM4POP_NoTopo_f09
+
+
+Variable: Experiment
+Type: string
+Total Size: 8 bytes
+            1 values
+Number of Dimensions: 1
+Dimensions and sizes:	[1]
+Coordinates: 
+Number Of Attributes: 1
+  _FillValue :	missing
+(0)	CAM4POP_NoTopo_f09
+(0)	251
+warning:_NclOpenFile: cannot open file </glade/scratch/rachelwh/archive/CAM4POP_NoTopo_f09/atm/hist/raw/CAM4POP_NoTopo_f09.cam.h2.0251-01-01-00000.nc>; No such file or directory
+
+fatal:file (cdf_file) isn't defined
+fatal:["Execute.c":8637]:Execute: Error occurred at or near line 67 in file hybrid2pres_daily_limlev.ncl
+
+ Copyright (C) 1995-2017 - All Rights Reserved
+ University Corporation for Atmospheric Research
+ NCAR Command Language Version 6.5.0
+ The use of this software is governed by a License Agreement.
+ See http://www.ncl.ucar.edu/ for more details.
+fatal:Could not open (/home/disk/eos4/rachel/git/NCL/Functions/TEMres_circ.ncl)
+fatal:error at line 4 in file Calc_TEMcirc_daily.ncl
+
+ Copyright (C) 1995-2017 - All Rights Reserved
+ University Corporation for Atmospheric Research
+ NCAR Command Language Version 6.5.0
+ The use of this software is governed by a License Agreement.
+ See http://www.ncl.ucar.edu/ for more details.
+fatal:Could not open (/home/disk/eos4/rachel/git/NCL/Functions/TEMres_circ.ncl)
+fatal:error at line 4 in file Calc_TEMcirc_daily.ncl
+
+ Copyright (C) 1995-2017 - All Rights Reserved
+ University Corporation for Atmospheric Research
+ NCAR Command Language Version 6.5.0
+ The use of this software is governed by a License Agreement.
+ See http://www.ncl.ucar.edu/ for more details.
+fatal:Could not open (/home/disk/eos4/rachel/git/NCL/Functions/TEMres_circ.ncl)
+fatal:error at line 4 in file Calc_TEMcirc_daily.ncl
+
+finished
