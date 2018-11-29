@@ -114,7 +114,7 @@ do exps = 0,nexps-1
 
         ; Calculate PV on pressure levels
         gridtype = 1    ; normal grid
-        PVpres = potvort_isobaric(pnew,Upres,Vpres,Tpres,lat,gridtype,0)
+        PVpres = pot_vort_isobaric(pnew,Upres,Vpres,Tpres,lat,gridtype,0)
         copy_VarCoords(Upres,PVpres)
 ;-----------------------------------------------------------------------
 ;Write variables to a new netcdf file, for stat fits in matlab
