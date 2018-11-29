@@ -21,6 +21,14 @@ endyr = toint(getenv("NCL_endyr"))
 nyears = endyr-startyr+1
 
 dirstr = getenv("NCL_dirstr")
+version=getenv("NCL_CESMversion")
+
+if version .EQ. "122" then
+    camversion="cam"
+else
+    camversion="cam2"
+end if
+
 
 print(startyr*1)
 print(endyr*1)
@@ -43,9 +51,9 @@ do exps = 0,nexps-1
 	system("mkdir " + Dir + "TempDir")
 	system("mkdir " + Dir + "Extra")
 
-	system("mv " + Dir + "/Extra/" + Experiment + ".cam2.h0.0* " + Dir + "/")
+	system("mv " + Dir + "/Extra/" + Experiment + "." + camversion + ".h0.0* " + Dir + "/")
 
-	system("mv " + Dir + Experiment + ".cam2.h0.*" + ".nc " + Dir + "TempDir/")
+	system("mv " + Dir + Experiment + "." + camversion + ".h0.*" + ".nc " + Dir + "TempDir/")
 
 
 	if startyr-1 .lt. 10
@@ -67,20 +75,20 @@ do exps = 0,nexps-1
 	        end if
 	end if
 	
-	system("mv " + Dir + "TempDir/" + Experiment + ".cam2.h0." + startyrm1 + "-12*" + ".nc " + Dir + "/")
+	system("mv " + Dir + "TempDir/" + Experiment + "." + camversion + ".h0." + startyrm1 + "-12*" + ".nc " + Dir + "/")
 	
-	if (isfilepresent(Dir + Experiment + ".cam2.h0." + startyrm1 + "-01.nc")) then
-		print("file is present" + Dir + Experiment + "cam2.h0." + startyrm1 + "-01.nc")
+	if (isfilepresent(Dir + Experiment + "." + camversion + ".h0." + startyrm1 + "-01.nc")) then
+		print("file is present" + Dir + Experiment + "." + camversion + ".h0." + startyrm1 + "-01.nc")
 		exit
 	end if
-	if (isfilepresent(Dir + Experiment + ".cam2.h0." + startyrm1 + "-02.nc")) then
-		print("file is present" + Dir + Experiment + "cam2.h0." + startyrm1 + "-02.nc")
+	if (isfilepresent(Dir + Experiment + "." + camversion + ".h0." + startyrm1 + "-02.nc")) then
+		print("file is present" + Dir + Experiment + "." + camversion + ".h0." + startyrm1 + "-02.nc")
 		exit
 	end if
 
 ; No longer going to check for this, so we can start in year 1 if we want	
-;	if (.not.isfilepresent(Dir + Experiment + ".cam2.h0." + startyrm1 + "-12.nc")) then
-;		print("file not present" + Dir + Experiment + ".cam2.h0." + startyrm1 + "-12.nc")
+;	if (.not.isfilepresent(Dir + Experiment + "." + camversion + ".h0." + startyrm1 + "-12.nc")) then
+;		print("file not present" + Dir + Experiment + "." + camversion + ".h0." + startyrm1 + "-12.nc")
 ;		exit
 ;	end if
 		
@@ -95,7 +103,7 @@ do exps = 0,nexps-1
 			end if
 		end if
 		
-		system("mv " + Dir + "TempDir/" + Experiment + ".cam2.h0." + stringyear + "-*" + ".nc " + Dir + "/")
+		system("mv " + Dir + "TempDir/" + Experiment + "." + camversion + ".h0." + stringyear + "-*" + ".nc " + Dir + "/")
        		do im = 1,12
        	        	if im .lt. 10 then
                 	        stringmonth = "0" + tostring(im)
@@ -103,39 +111,39 @@ do exps = 0,nexps-1
                 	        stringmonth = tostring(im)
                 	end if
 	
-	                if (.not.isfilepresent(Dir + Experiment + ".cam2.h0."+ stringyear + "-" + stringmonth + ".nc")) then
-	                        print("file not present" + Dir + Experiment + ".cam2.h0."+ stringyear + "-" + stringmonth + ".nc")
+	                if (.not.isfilepresent(Dir + Experiment + "." + camversion + ".h0."+ stringyear + "-" + stringmonth + ".nc")) then
+	                        print("file not present" + Dir + Experiment + "." + camversion + ".h0."+ stringyear + "-" + stringmonth + ".nc")
 	                        exit
 	                end if
 	        end do
 	end do
 	
-	system("mv " + Dir + "TempDir/" + Experiment + ".cam2.h0." + endyrst + "-*" + ".nc " + Dir + "/")
-	system("mv " + Dir + Experiment + ".cam2.h0." + endyrst + "-12*" + ".nc " + Dir + "TempDir/")
+	system("mv " + Dir + "TempDir/" + Experiment + "." + camversion + ".h0." + endyrst + "-*" + ".nc " + Dir + "/")
+	system("mv " + Dir + Experiment + "." + camversion + ".h0." + endyrst + "-12*" + ".nc " + Dir + "TempDir/")
 	
 	
-	if (.not.isfilepresent(Dir + Experiment + ".cam2.h0." + endyrst + "-01.nc")) then
-		print("file not present" + Dir + Experiment + ".cam2.h0." + endyrst + "-01.nc")
+	if (.not.isfilepresent(Dir + Experiment + "." + camversion + ".h0." + endyrst + "-01.nc")) then
+		print("file not present" + Dir + Experiment + "." + camversion + ".h0." + endyrst + "-01.nc")
 		exit
 	end if
-	if (.not.isfilepresent(Dir + Experiment + ".cam2.h0." + endyrst + "-02.nc")) then
-		print("file not present" + Dir + Experiment + ".cam2.h0." + endyrst + "-02.nc")
+	if (.not.isfilepresent(Dir + Experiment + "." + camversion + ".h0." + endyrst + "-02.nc")) then
+		print("file not present" + Dir + Experiment + "." + camversion + ".h0." + endyrst + "-02.nc")
 		exit
 	end if
-	if (isfilepresent(Dir + Experiment + ".cam2.h0." + endyrst + "-12.nc")) then
-		print("file IS present" + Dir + Experiment + ".cam2.h0." + endyrst + "-12.nc")
+	if (isfilepresent(Dir + Experiment + "." + camversion + ".h0." + endyrst + "-12.nc")) then
+		print("file IS present" + Dir + Experiment + "." + camversion + ".h0." + endyrst + "-12.nc")
 		exit
 	end if
 
-    system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,RHREFHT,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + ".cam2.h0.*-??.nc " + Dirout + "Annual" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")
+    system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + "." + camversion + ".h0.*-??.nc " + Dirout + "Annual" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + "." + camversion + "h0.nc")
 
-	system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,RHREFHT,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + ".cam2.h0.*-12.nc " + Dir + Experiment + ".cam2.h0.*-01.nc " + Dir + Experiment + ".cam2.h0.*-02.nc " + Dirout + "DJF" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")
+	system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + "." + camversion + ".h0.*-12.nc " + Dir + Experiment + "." + camversion + ".h0.*-01.nc " + Dir + Experiment + "." + camversion + ".h0.*-02.nc " + Dirout + "DJF" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + "." + camversion + "h0.nc")
 	
-	system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,RHREFHT,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + ".cam2.h0.*-03.nc " + Dir + Experiment + ".cam2.h0.*-04.nc " + Dir + Experiment + ".cam2.h0.*-05.nc " + Dirout + "MAM" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")
+	system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + "." + camversion + ".h0.*-03.nc " + Dir + Experiment + "." + camversion + ".h0.*-04.nc " + Dir + Experiment + "." + camversion + ".h0.*-05.nc " + Dirout + "MAM" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + "." + camversion + "h0.nc")
 	
-    system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,RHREFHT,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + ".cam2.h0.*-06.nc " + Dir + Experiment + ".cam2.h0.*-07.nc " + Dir + Experiment + ".cam2.h0.*-08.nc " + Dirout + "JJA" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")
+    system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + "." + camversion + ".h0.*-06.nc " + Dir + Experiment + "." + camversion + ".h0.*-07.nc " + Dir + Experiment + "." + camversion + ".h0.*-08.nc " + Dirout + "JJA" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + "." + camversion + "h0.nc")
 
-    system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,RHREFHT,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + ".cam2.h0.*-09.nc " + Dir + Experiment + ".cam2.h0.*-10.nc " + Dir + Experiment + ".cam2.h0.*-11.nc " + Dirout + "SON" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")
+    system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + "." + camversion + ".h0.*-09.nc " + Dir + Experiment + "." + camversion + ".h0.*-10.nc " + Dir + Experiment + "." + camversion + ".h0.*-11.nc " + Dirout + "SON" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + "." + camversion + "h0.nc")
 
 	
 	system("mv " + Dir + "TempDir/*.nc " + Dir + "/")

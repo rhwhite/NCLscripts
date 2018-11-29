@@ -4,6 +4,7 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/contributed.ncl"
 
 begin
 
+print("doing this")
 
 Direc = getenv("NCL_ARG_1")
 nexps = toint(getenv("NCL_ARG_2"))
@@ -136,7 +137,7 @@ do exps = 0,nexps-1
         fout ->V = Vpres
         fout->Z3 = Z3pres
         fout ->T = Tpres
-        fout ->Q = Qpres
+        ;fout ->Q = Qpres
         fout ->PV = PVpres
         if omega .eq. 1 then
             fout ->OMEGA = OMEGApres
