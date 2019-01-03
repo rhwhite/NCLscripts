@@ -1,8 +1,7 @@
 load "$NCARG_ROOT/lib/ncarg/nclex/gsun/gsn_code.ncl"
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_csm.ncl"
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/contributed.ncl"
-load "/home/disk/eos4/rachel/git/NCL/cesm_scripts/Functions/EPflux.ncl"
-
+load "/home/disk/eos4/rachel/git/NCL/Functions/EPflux.ncl"
 
 ; Based on NOAA NCL script at http://www.esrl.noaa.gov/psd/data/epflux/epflux.2010.ncl
 ; See also: http://www.esrl.noaa.gov/psd/data/epflux/img/EP_Flux_Calculation_and_Display.pdf
@@ -115,6 +114,7 @@ do ts = 0,nts - 1
 
 
         ; Calculate potential temperature
+        THETA = T ; set-up variables in THETA
         THETA = T * (conform(T,level,1)/1000.0)^(-1.0 * kappa)
 
 
