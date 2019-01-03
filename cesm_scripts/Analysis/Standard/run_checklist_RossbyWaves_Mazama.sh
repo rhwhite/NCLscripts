@@ -6,14 +6,14 @@ cd /home/rhwhite/NCLscripts/cesm_scripts/Analysis/Standard/scripts/
 dir="/data/ESS/rhwhite/cesm_archive/"
 
 numexps="1"
-exps=("WACCMSC_CTL_122")
+exps=("WACCMSC_f19_ShiftGLND" "WACCMSC_CTL_122" "WACCMSC_f19_1979-2010_4" "WACCMSC_f19_1979-2010_5")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
 #exps=("WACCM_f19_highR")
 dirbase="/data/ESS/rhwhite/cesm_archive/"
 expsctl=("CAM4SOM4_noMT") 
 start="2"
-end="31"
+end="61"
 version="122"
 
 # For Tak-Nak fluxes:
@@ -33,7 +33,8 @@ export NCL_GW=0
 export NCL_xrad=0
 export NCL_N_ARGS=$#
 export NCL_CESMversion=122
-
+export NCL_h2mon="01"
+export NCL_omega=0
 export NCL_nsecs=$nsecs
 export NCL_h2start=$h2start
 # save command line arguments to environment variable NCL_ARG_#

@@ -111,13 +111,13 @@ do exps = 0,nexps-1
         end do
 	end do
 	
-	system("ncra -O -x -v THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-12.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-01.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-02.nc " + Dir + "DJF" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")	
-	system("ncra -O -x -v THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-03.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-04.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-05.nc " + Dir + "MAM" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
-	system("ncra -O -x -v THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-06.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-07.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-08.nc " + Dir + "JJA" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
-	system("ncra -O -x -v THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-09.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-10.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-11.nc " + Dir + "SON" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
-    system("ncra -O -x -v THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-07.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-08.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-09.nc " + Dir + "JAS" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+	system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-12.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-01.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-02.nc " + Dir + "DJF" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")	
+	system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-03.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-04.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-05.nc " + Dir + "MAM" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+	system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-06.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-07.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-08.nc " + Dir + "JJA" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+	system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-09.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-10.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-11.nc " + Dir + "SON" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+    system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-07.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-08.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-09.nc " + Dir + "JAS" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
 
-	system("ncra -O -x -v THilev " + Dirraw + Experiment + "." + camversion + ".h0.*.nc " + Dir + "Annual" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+	system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*.nc " + Dir + "Annual" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
 
 	;system("mv " + Dirraw + "TempDir/*.nc " + Dirraw + "/")
 
