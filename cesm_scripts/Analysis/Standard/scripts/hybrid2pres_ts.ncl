@@ -10,6 +10,7 @@ begin
 Direc = getenv("NCL_ARG_1")
 nexps = toint(getenv("NCL_ARG_2"))
 Experiments = new(nexps,"string")
+forCasey=toint(getenv("NCL_forCasey"))
 
 do ne = 0,nexps-1
         Experiments(ne) = getenv("NCL_ARG_" + tostring(3+ne))
@@ -42,11 +43,15 @@ do exps = 0,nexps-1
 
         timespan = timespans(ts)
         Experiment = Experiments(exps)
-        Dir = (Direc + Experiment + "/" + dirstr + "/raw/")
+        Dir = (Direc + Experiment + "/" + dirstr + "/")
 
         print(Experiment)
 
-        filename = (Dir + timespan + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")
+        if (forCasey .eq. 1) then
+            filename = (Dir + timespan + "UVTWO3_" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")
+        else
+            filename = (Dir + timespan + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")
+        end if
 
         cdf_file = addfile(filename,"r")
 
@@ -71,24 +76,39 @@ do exps = 0,nexps-1
         hybm = cdf_file->hybm
         PS = cdf_file->PS
 
-        Tpres = vinth2p_ecmwf(T,hyam,hybm,pnew,PS,1,P0mb,1,True,1,TBOT,PHIS)
-        Upres = vinth2p_ecmwf(cdf_file->U,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS) 
-        Vpres = vinth2p_ecmwf(cdf_file->V,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS) 
-        Z3pres = vinth2p_ecmwf(cdf_file->Z3,hyam,hybm,pnew,PS,1,P0mb,1,True,-1,TBOT,PHIS) 
-        Qpres = vinth2p_ecmwf(cdf_file->Q,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS) 
+        if (forCasey .eq. 1) then
+            Wpres = vinth2p_ecmwf(cdf_file->OMEGA,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS)
+            O3pres = vinth2p_ecmwf(cdf_file->O3,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS)
+            Tpres = vinth2p_ecmwf(cdf_file->T,hyam,hybm,pnew,PS,1,P0mb,1,True,1,TBOT,PHIS)
+            Upres = vinth2p_ecmwf(cdf_file->U,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS)
+            Vpres = vinth2p_ecmwf(cdf_file->V,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS)
+        else
+
+            Tpres = vinth2p_ecmwf(T,hyam,hybm,pnew,PS,1,P0mb,1,True,1,TBOT,PHIS)
+            Upres = vinth2p_ecmwf(cdf_file->U,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS) 
+            Vpres = vinth2p_ecmwf(cdf_file->V,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS) 
+            Z3pres = vinth2p_ecmwf(cdf_file->Z3,hyam,hybm,pnew,PS,1,P0mb,1,True,-1,TBOT,PHIS) 
+            Qpres = vinth2p_ecmwf(cdf_file->Q,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS) 
 
 
-        ; Calculate Potential temperature
-        TH = Tpres * (conform(Tpres,pnew,1)/1000.0)^(-1.0 * kappa)
-        copy_VarCoords(Tpres,TH)
+            ; Calculate Potential temperature
+            TH = Tpres * (conform(Tpres,pnew,1)/1000.0)^(-1.0 * kappa)
+            copy_VarCoords(Tpres,TH)
+    
+        end if
+
 
     ;-----------------------------------------------------------------------
     ;Write variables to a new netcdf file, for stat fits in matlab
     ;-----------------------------------------------------------------------
         ; allow large files
         setfileoption("nc","Format","LargeFile")
-
-        filo = timespan + tostring(startyr) + "_" + tostring(nyears) + "_ts_Xpl_" + Experiment + ".cam2.h0.nc"
+        
+        if (forCasey .eq. 1) then
+            filo = timespan + "UVTWO3_" + tostring(startyr) + "_" + tostring(nyears) + "_ts_Xpl_" + Experiment + ".cam2.h0.nc"
+        else
+            filo = timespan + tostring(startyr) + "_" + tostring(nyears) + "_ts_Xpl_" + Experiment + ".cam2.h0.nc"
+        end if
         system("/bin/rm -f " + Dir + filo)
         fout = addfile(Dir + filo, "c")
 
@@ -101,16 +121,29 @@ do exps = 0,nexps-1
         fAtt@history = "created by hybrid2pres_ts.ncl" 
         fileattdef(fout,fAtt)
 
-        fout ->U      = Upres
-        fout ->V      = Vpres
-        fout ->TH     = TH
-        fout ->Z3     = Z3pres
-        fout ->Q      = Qpres
+        if (forCasey .eq. 1) then
+            fout ->U      = Upres
+            fout ->V      = Vpres
+            fout ->T      = Tpres
+            fout ->OMEGA  = Wpres
+            fout ->O3     = O3pres
+        else
+
+            fout ->U      = Upres
+            fout ->V      = Vpres
+            fout ->TH     = TH
+            fout ->Z3     = Z3pres
+            fout ->Q      = Qpres
+        end if
 
         delete(Experiment)
         delete([/lat,lon,P0mb,T,hyam,hybm,PS/])
         delete(filename)
-        delete([/Tpres,Upres,Vpres,Qpres,Z3pres/])
+        if (forCasey .eq. 1) then
+            delete([/Upres,Vpres,Tpres,Wpres,O3pres/])
+        else
+            delete([/Tpres,Upres,Vpres,Qpres,Z3pres/])
+        end if
     end do
 end do
 

@@ -36,7 +36,9 @@ Mtrans = getenv("NCL_Mtrans")
 GW = getenv("NCL_GW")
 O3 = getenv("NCL_Ozone")
 xrad = getenv("NCL_xrad")
+diabatic = getenv("NCL_dia")
 
+print(diabatic)
 timespans = (/"DJF","Annual","JJA","MAM","SON"/)
 ;timespan = getenv("NCL_season")
 dimtimes = dimsizes(timespans)
@@ -102,6 +104,12 @@ do ts = 0,nts - 1
             VZ = cdf_file->VZ
 		end if
 
+        if (diabatic .EQ. 1) then
+            DTCOND = cdf_file->DTCOND
+            DTV = cdf_file->DTV
+            QRL = cdf_file->QRL
+            QRS = cdf_file->QRS
+        end if
 
 		levs = cdf_file->lev
 		nlevs = dimsizes(levs)
@@ -278,9 +286,26 @@ do ts = 0,nts - 1
 
 		end if
 
-            Tlog = vinth2p_ecmwf(T,hyam,hybm,p_int,PS,1,P0mb,1,True,1,TBOT,PHIS)
-            Ulog = vinth2p_ecmwf(U,hyam,hybm,p_int,PS,1,P0mb,1,True,0,TBOT,PHIS)
-            Vlog = vinth2p_ecmwf(V,hyam,hybm,p_int,PS,1,P0mb,1,True,0,TBOT,PHIS)
+        if (diabatic .EQ. 1) then
+            DTCONDpres = vinth2p_ecmwf(DTCOND,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS)
+            DTVpres = vinth2p_ecmwf(DTV,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS)
+            QRLpres = vinth2p_ecmwf(QRL,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS)
+            QRSpres = vinth2p_ecmwf(QRS,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS)
+
+            DIA = DTCOND + DTV + QRL + QRS
+            DIApres = vinth2p_ecmwf(DIA,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS)
+
+
+            copy_VarCoords(Upres,DTCONDpres)
+            copy_VarCoords(Upres,DTVpres)
+            copy_VarCoords(Upres,QRLpres)
+            copy_VarCoords(Upres,QRSpres)
+            copy_VarCoords(Upres,DIApres)
+        end if
+
+        Tlog = vinth2p_ecmwf(T,hyam,hybm,p_int,PS,1,P0mb,1,True,1,TBOT,PHIS)
+        Ulog = vinth2p_ecmwf(U,hyam,hybm,p_int,PS,1,P0mb,1,True,0,TBOT,PHIS)
+        Vlog = vinth2p_ecmwf(V,hyam,hybm,p_int,PS,1,P0mb,1,True,0,TBOT,PHIS)
 
 ;-----------------------------------------------------------------------
 ;Write variables to a new netcdf file, for stat fits in matlab
@@ -361,6 +386,14 @@ do ts = 0,nts - 1
             fout ->VTint = VTpresInt
             fout ->VQint = VQpresInt
             fout ->VZint = VZpresInt
+        end if
+        
+        if (diabatic .EQ. 1) then
+            fout ->DTCOND = DTCONDpres
+            fout ->DTV = DTVpres
+            fout ->QRL = QRLpres
+            fout ->QRS = QRSpres
+            fout ->DIA = DIApres
         end if
 
         fout->T_logp = Tlog
