@@ -3,19 +3,19 @@
 # behaviour
 
 cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis/Standard/scripts/
-dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
+#dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
 #dir="/home/disk/eos4/rachel/CESM_outfiles/"
-#dir="/home/disk/rachel/CESM_outfiles/"
+dir="/home/disk/rachel/CESM_outfiles/"
 
 numexps="1"
-exps=("WACCM_f19_CTL")
+exps=("CESMtopof19" "WACCM_f19_CTL" "WACCM_f19_NoM")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
 dirbase="/home/disk/rachel/CESM_outfiles/"
-expsctl=("CAM4SOM4_noMT") 
+expsctl=("CESMnoTf19") 
 start="2"
-end="51"
-version="106"
+end="31"
+version="106" # 122 for cesm 1.2.2, 106 for cesm 1.0.6
 
 # For Tak-Nak fluxes:
 export NCL_startyrC=11
@@ -32,6 +32,7 @@ export NCL_Ozone=0
 export NCL_Mtrans=0
 export NCL_GW=0
 export NCL_xrad=0
+export NCL_dia=1
 export NCL_N_ARGS=$#
 export NCL_CESMversion=$version
 
@@ -75,8 +76,8 @@ echo NCL_N_ARGS
 #echo 'hybrid2pres.ncl'
 #ncl hybrid2pres.ncl
 
-echo 'hybrid2pres_morelev.ncl'
-ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
+#echo 'hybrid2pres_morelev.ncl'
+#ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
                             # monthly resolution data including caluclation of
                             # potential temperaturei, PV, etc and vertical
                             # gradients etc
@@ -143,9 +144,9 @@ ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
 #eval export NCL_seas="JJA"
 #ncl Calc_TEMcirc_daily.ncl
 
-#echo 'Calc_TakNak_fluxes.ncl'
-#export NCL_season="DJF"
-#ncl Calc_TakNak_fluxes.ncl
+echo 'Calc_TakNak_fluxes.ncl'
+export NCL_season="DJF"
+ncl Calc_TakNak_fluxes.ncl
 #export NCL_season="SON"
 #ncl Calc_TakNak_fluxes.ncl
 #export NCL_season="MAM"
