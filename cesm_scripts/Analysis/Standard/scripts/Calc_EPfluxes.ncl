@@ -23,6 +23,15 @@ Direc = getenv("NCL_ARG_1")
 nexps = toint(getenv("NCL_ARG_2"))
 Experiments = new(nexps,"string")
 
+version=getenv("NCL_CESMversion")
+h2startday = getenv("NCL_h2start")
+
+if version .EQ. "122" then
+    camversion="cam"
+else
+    camversion="cam2"
+end if
+
 do ne = 0,nexps-1
         Experiments(ne) = getenv("NCL_ARG_" + tostring(3+ne))
 end do
@@ -62,11 +71,11 @@ do ts = 0,nts - 1
         print(Experiment)
 
 
-        filename = Dir + timespan + tostring(startyr) + "_" + tostring(nyears) + "_mean_Xpl_" + Experiment + ".cam2.h0.nc"
+        filename = Dir + timespan + tostring(startyr) + "_" + tostring(nyears) + "_mean_Xpl_" + Experiment + "." + camversion + ".h0.nc"
         ; open file with seasonal averages
         cdf_file = addfile(filename,"r")
 
-        filenamePS = Dir + timespan + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + ".cam2.h0.nc"
+        filenamePS = Dir + timespan + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc"
         ; open file with seasonal averages
         filePS = addfile(filenamePS,"r")
 
@@ -106,11 +115,10 @@ do ts = 0,nts - 1
 
 
         ; Calculate potential temperature
-        THETA = T
         THETA = T * (conform(T,level,1)/1000.0)^(-1.0 * kappa)
 
 
-        filo = "EPfluxes_stat_" + timespan + tostring(startyr) + "_" + tostring(nyears) + "_" + Experiment + ".cam2.h0.nc"
+        filo = "EPfluxes_stat_" + timespan + tostring(startyr) + "_" + tostring(nyears) + "_" + Experiment + "." + camversion + ".h0.nc"
 
         check = printEP(Dir,filo,U,V,THETA,level)
 
