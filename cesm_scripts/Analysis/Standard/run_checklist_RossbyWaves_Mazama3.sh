@@ -12,7 +12,7 @@ exps=("WACCMSC_f19_2000_CESMSSTs" "WACCMSC_CTL_122" "WACCMSC_f19_1979-2010_4" "W
 #exps=("WACCM_f19_highR")
 dirbase="/data/ESS/rhwhite/cesm_archive/"
 expsctl=("CAM4SOM4_noMT") 
-start="10"
+start="2"
 end="61"
 version="122"
 
@@ -64,11 +64,11 @@ eval export NCL_ARG_$index=$nsecs
 echo NCL_N_ARGS 
 
 
-echo Initial_analysis_addvars.ncl
-ncl Initial_analysis_addvars.ncl
+#echo Initial_analysis_addvars.ncl
+#ncl Initial_analysis_addvars.ncl
 
-#echo 'Initial_analysis_means.ncl'
-#ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
+echo 'Initial_analysis_means.ncl'
+ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
                                 # including PV, SF, divergences MSE, etc
                                 # then calculate climatological means
                                 # on monthly and annual time resolution
@@ -76,8 +76,8 @@ ncl Initial_analysis_addvars.ncl
 ###ncl Calc_VertGrad.ncl   # Calculate climatological mean vertical gradients
                         # of omega and T, TH, and omegaT NOT on pressure levels
 
-#echo 'hybrid2pres_morelev.ncl'
-#ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
+echo 'hybrid2pres_morelev.ncl'
+ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
                             # monthly resolution data including caluclation of
                             # potential temperaturei, PV, etc and vertical
                             # gradients etc

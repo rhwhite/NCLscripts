@@ -1,9 +1,0 @@
-Resetting modules to system default
-mkdir: cannot create directory '/glade/scratch_new/rachelwh/archive/CAM4POP_NoMT_f09/atm/hist/raw': No such file or directory
-mv: cannot stat '/glade/scratch_new/rachelwh/archive/CAM4POP_NoMT_f09/atm/hist/CAM4POP_NoMT_f09.cam.h*': No such file or directory
-mkdir: cannot create directory '/glade/scratch_new/rachelwh/archive/CAM4POP_NoMT_f09/atm/hist//raw/TempDir': No such file or directory
-mkdir: cannot create directory '/glade/scratch_new/rachelwh/archive/CAM4POP_NoMT_f09/atm/hist//raw/Extra': No such file or directory
-mv: cannot stat '/glade/scratch_new/rachelwh/archive/CAM4POP_NoMT_f09/atm/hist//raw//Extra/CAM4POP_NoMT_f09.cam.h0.0*': No such file or directory
-mv: cannot stat '/glade/scratch_new/rachelwh/archive/CAM4POP_NoMT_f09/atm/hist//raw/CAM4POP_NoMT_f09.cam.h0.*.nc': No such file or directory
-mv: cannot stat '/glade/scratch_new/rachelwh/archive/CAM4POP_NoMT_f09/atm/hist//raw/TempDir/CAM4POP_NoMT_f09.cam.h0.0251-*.nc': No such file or directory
-mkdir: cannot create directory '/glade/scratch_new/rachelwh/archive/CAM4POP_NoMT_f09/atm/hist/raw/Temp_pl': No such file or directory
