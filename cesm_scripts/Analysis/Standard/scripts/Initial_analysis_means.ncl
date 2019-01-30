@@ -110,7 +110,52 @@ do exps = 0,nexps-1
 
         end do
 	end do
-	
+
+    ; Average months separately and multiply by annual weighting
+    monthweights = (/31,28,31,30,31,30,31,31,30,31,30,31/)
+
+    DJFtot = 31+31+28
+    MAMtot = 31+30+31
+    JJAtot = 30+31+31 
+    SONtot = 30+31+30
+
+    do im = 1,12
+        monthwght = monthweight(im-1)
+        print(monthwght)
+
+        system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-" + sprinti("%0.2i",im) + ".nc " + " Dir + "Mon" + sprinti("%0.2i",im) + "_" + string(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+
+        system("ncflint -F -O -w + tostr(monthwght/365.0)+",0 " + Dir + "Mon" + sprinti("%0.2i",im) + "_" + string(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc " + Dir + "Mon" + sprinti("%0.2i",im) + "_" + string(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc " + Dir + "Mon" + sprinti("%0.2i",im) + "_wght_temp.nc") 
+
+    end do
+
+    ; Now average these files
+    ; DJF
+    system("ncra -O " + Dir + "Mon12_wght_temp.nc " + Dir + "Mon01_wght_temp.nc " + Dir + "Mon02_wght_temp.nc " + Dir + "DJFwgt_temp.nc") 
+    ; Reweight because annual, not seasonal
+    system("ncflint -F -w " + tostr(365.0/DJFtot) + ",0 " + Dir + "DJFwgt_temp.nc " + Dir + "DJFwgt_temp.nc " + Dir + "DJFwgt_" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+
+    ; MAM
+    system("ncra -O " + Dir + "Mon03_wght_temp.nc " + Dir + "Mon04_wght_temp.nc " + Dir + "Mon05_wght_temp.nc " + Dir + "MAMwgt_temp.nc")
+    ; Reweight because annual, not seasonal
+    system("ncflint -F -w " + tostr(365.0/MAMtot) + ",0 " + Dir + "MAMwgt_temp.nc " + Dir + "MAMwgt_temp.nc " + Dir + "MAMwgt_" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+
+    ; JJA
+    system("ncra -O " + Dir + "Mon06_wght_temp.nc " + Dir + "Mon07_wght_temp.nc " + Dir + "Mon08_wght_temp.nc " + Dir + "JJAwgt_temp.nc")
+    ; Reweight because annual, not seasonal
+    system("ncflint -F -w " + tostr(365.0/JJAtot) + ",0 " + Dir + "JJAwgt_temp.nc " + Dir + "JJAwgt_temp.nc " + Dir + "JJAwgt_" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+
+    ; SON
+    system("ncra -O " + Dir + "Mon09_wght_temp.nc " + Dir + "Mon10_wght_temp.nc " + Dir + "Mon11_wght_temp.nc " + Dir + "SONwgt_temp.nc")
+    ; Reweight because annual, not seasonal
+    system("ncflint -F -w " + tostr(365.0/SONtot) + ",0 " + Dir + "SONwgt_temp.nc " + Dir + "SONwgt_temp.nc " + Dir + "SONwgt_" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+
+    ; Annual
+    system("ncra -O " + Dir + "Mon??_wght_temp.nc " + + Dir + "ANNwgt_" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+
+    ;system("rm " + Dir + "Mon??_wght_temp.nc")
+
+    ; means without weighting for different length months	
 	system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-12.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-01.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-02.nc " + Dir + "DJF" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")	
 	system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-03.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-04.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-05.nc " + Dir + "MAM" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
 	system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-06.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-07.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-08.nc " + Dir + "JJA" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
