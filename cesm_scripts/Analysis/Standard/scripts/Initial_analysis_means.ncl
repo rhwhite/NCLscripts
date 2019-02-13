@@ -110,14 +110,60 @@ do exps = 0,nexps-1
 
         end do
 	end do
-	
-	system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-12.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-01.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-02.nc " + Dir + "DJF" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")	
-	system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-03.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-04.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-05.nc " + Dir + "MAM" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
-	system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-06.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-07.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-08.nc " + Dir + "JJA" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
-	system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-09.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-10.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-11.nc " + Dir + "SON" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
-    system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-07.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-08.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-09.nc " + Dir + "JAS" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
 
-	system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*.nc " + Dir + "Annual" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+    ; Average months separately and multiply by annual weighting
+    monthweights = (/31,28,31,30,31,30,31,31,30,31,30,31/)
+
+    DJFtot = 31+31+28
+    MAMtot = 31+30+31
+    JJAtot = 30+31+31 
+    SONtot = 30+31+30
+
+    do im = 1,12
+        monthwght = monthweights(im-1)
+
+        system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-" + sprinti("%0.2i",im) + ".nc " + Dir + "Mon" + sprinti("%0.2i",im) + "_" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+
+        ; weight by relative contribution of month to whole year average, because we average, not add, these files later
+        system("ncflint -F -O -w " + tostring(12.0 * monthwght/365.0) + ",0 " + Dir + "Mon" + sprinti("%0.2i",im) + "_" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc " + Dir + "Mon" + sprinti("%0.2i",im) + "_" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc " + Dir + "Mon" + sprinti("%0.2i",im) + "_wght_temp.nc") 
+
+    end do
+
+    ; Now average these files
+    ; DJF
+    system("ncra -O " + Dir + "Mon12_wght_temp.nc " + Dir + "Mon01_wght_temp.nc " + Dir + "Mon02_wght_temp.nc " + Dir + "DJFwgt_temp.nc")
+    ; re-weight because a season is not a quarter of a year
+    system("ncflint -F -O -w " + tostring(365.0/(4*DJFtot)) + ",0 " + Dir + "DJFwgt_temp.nc " + Dir + "DJFwgt_temp.nc " + Dir + "DJF" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+
+    ; MAM
+    system("ncra -O " + Dir + "Mon03_wght_temp.nc " + Dir + "Mon04_wght_temp.nc " + Dir + "Mon05_wght_temp.nc " + Dir + "MAMwgt_temp.nc")
+    ; re-weight because a season is not a quarter of a year
+    system("ncflint -F -O -w " + tostring(365.0/(4*MAMtot)) + ",0 " + Dir + "MAMwgt_temp.nc " + Dir + "MAMwgt_temp.nc " + Dir + "MAM" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+ 
+
+    ; JJA
+    system("ncra -O " + Dir + "Mon06_wght_temp.nc " + Dir + "Mon07_wght_temp.nc " + Dir + "Mon08_wght_temp.nc " + Dir + "JJAwgt_temp.nc") 
+    ; re-weight because a season is not a quarter of a year
+    system("ncflint -F -O -w " + tostring(365.0/(4*JJAtot)) + ",0 " + Dir + "JJAwgt_temp.nc " + Dir + "JJAwgt_temp.nc " + Dir + "JJA" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+
+    ; SON
+    system("ncra -O " + Dir + "Mon09_wght_temp.nc " + Dir + "Mon10_wght_temp.nc " + Dir + "Mon11_wght_temp.nc " + Dir + "SONwgt_temp.nc") 
+    ; re-weight because a season is not a quarter of a year
+    system("ncflint -F -O -w " + tostring(365.0/(4*SONtot)) + ",0 " + Dir + "SONwgt_temp.nc " + Dir + "SONwgt_temp.nc " + Dir + "SON" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+ 
+    ; Annual
+    system("ncra -O " + Dir + "Mon??_wght_temp.nc " + Dir + "Annual_" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+
+    system("rm " + Dir + "Mon??_wght_temp.nc")
+
+    ; means without weighting for different length months	
+	system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-12.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-01.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-02.nc " + Dir + "DJF_nowgt_" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")	
+	system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-03.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-04.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-05.nc " + Dir + "MAM_nowgt_" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+	system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-06.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-07.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-08.nc " + Dir + "JJA_nowgt_" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+	system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-09.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-10.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-11.nc " + Dir + "SON_nowgt_" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+    system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*-07.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-08.nc " + Dirraw + Experiment + "." + camversion + ".h0.*-09.nc " + Dir + "JAS_nowgt_" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+
+	system("ncra -O -x -v PV,THilev " + Dirraw + Experiment + "." + camversion + ".h0.*.nc " + Dir + "Annual_nowgt" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
 
 	;system("mv " + Dirraw + "TempDir/*.nc " + Dirraw + "/")
 
