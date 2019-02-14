@@ -140,7 +140,7 @@ do exps = 0,nexps-1
         system("ncrcat -h -O -v U,V,OMEGA,O3,T,Z3,TS,PS,TREFHT,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + ".cam2.h0.*-??.nc " + Dirout + "AnnualUVTWO3_" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")	
 
     else
-        system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + "." + camversion + ".h0.*-??.nc " + Dirout + "Annual" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + "." + camversion + "h0.nc")
+        system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + "." + camversion + ".h0.*-??.nc " + Dirout + "ANN" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + "." + camversion + "h0.nc")
 
     	system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + "." + camversion + ".h0.*-12.nc " + Dir + Experiment + "." + camversion + ".h0.*-01.nc " + Dir + Experiment + "." + camversion + ".h0.*-02.nc " + Dirout + "DJF" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + "." + camversion + "h0.nc")
 	
