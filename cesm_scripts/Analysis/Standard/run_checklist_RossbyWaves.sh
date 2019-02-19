@@ -5,17 +5,17 @@
 cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis/Standard/scripts/
 #dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
 #dir="/home/disk/eos4/rachel/CESM_outfiles/"
-dir="/home/disk/rachel/CESM_outfiles/"
+dir="/home/disk/eos4/rachel/CESM_outfiles/StationaryWaves/"
 
-numexps="1"
-exps=("CESMtopof19" "WACCM_f19_CTL" "WACCM_f19_NoM")
+numexps="2"
+exps=("WACCMSC_SOMSSTs" "WACCMSC_SOMSSTs_Flat" "WACCM_f19_NoM")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
-dirbase="/home/disk/rachel/CESM_outfiles/"
+dirbase="/home/disk/rachel/CESM_outfiles/StationaryWaves/"
 expsctl=("CESMnoTf19") 
 start="2"
 end="31"
-version="106" # 122 for cesm 1.2.2, 106 for cesm 1.0.6
+version="122" # 122 for cesm 1.2.2, 106 for cesm 1.0.6
 
 # For Tak-Nak fluxes:
 export NCL_startyrC=11
@@ -87,8 +87,8 @@ echo NCL_N_ARGS
                             # calculating them on hybrid and then converting
 
 # Use to get U, V, TH  on limited pressure levels
-echo 'hybrid2pres_daily_limlev.ncl'
-ncl hybrid2pres_daily_limlev.ncl
+#echo 'hybrid2pres_daily_limlev.ncl'
+#ncl hybrid2pres_daily_limlev.ncl
 
 #echo 'Create_Seas_ts.ncl'
 #ncl Create_Seas_ts.ncl  # create timeseries of all years of monthly data for
@@ -105,20 +105,20 @@ ncl hybrid2pres_daily_limlev.ncl
 #ncl Calc_ZMKs_monthly.ncl
 
 ## Eddy characteristics
-echo 'Calc_Eady.ncl'
-ncl Calc_Eady.ncl
-echo 'LanczosF_Z850_250.ncl'
-ncl LanczosF_Z850_250.ncl
+#echo 'Calc_Eady.ncl'
+#ncl Calc_Eady.ncl
+#echo 'LanczosF_Z850_250.ncl'
+#ncl LanczosF_Z850_250.ncl
 #echo 'Calc_varZ850.ncl'
 #ncl Calc_varZ850.ncl
-echo 'LanczosF_UVT_EKE_EV.ncl'
-ncl LanczosF_UVT_EKE_EV.ncl
+#echo 'LanczosF_UVT_EKE_EV.ncl'
+#ncl LanczosF_UVT_EKE_EV.ncl
 #echo 'Calc_EKE_VT.ncl'
 #ncl Calc_EKE_VT.ncl
 ##########
 
-#echo 'Calc_EPfluxes.ncl'
-#ncl Calc_EPfluxes.ncl
+echo 'Calc_EPfluxes.ncl'
+ncl Calc_EPfluxes.ncl
 #echo 'Calc_RIdx.ncl'
 #ncl Calc_RIdx.ncl
 #echo 'Calc_Ks.ncl'
@@ -146,9 +146,9 @@ ncl LanczosF_UVT_EKE_EV.ncl
 #eval export NCL_seas="JJA"
 #ncl Calc_TEMcirc_daily.ncl
 
-echo 'Calc_TakNak_fluxes.ncl'
-export NCL_season="DJF"
-ncl Calc_TakNak_fluxes.ncl
+#echo 'Calc_TakNak_fluxes.ncl'
+#export NCL_season="DJF"
+#ncl Calc_TakNak_fluxes.ncl
 #export NCL_season="SON"
 #ncl Calc_TakNak_fluxes.ncl
 #export NCL_season="MAM"

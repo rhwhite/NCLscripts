@@ -173,3 +173,160 @@ begin
     return(1)
 
 end
+
+undef("printTakNaksingle")
+function printTakNaksingle(Dir,filo:string,SF,SFbase,Ubase,Vbase,THbase,Zbase,level,lat,lon)
+begin
+
+    a = 6.37122e06  ; radius of Earth
+    pi = 3.14159265358979
+    omega =  7.2921e-5
+    g = 9.80616
+    P0 = 1000.0
+
+    ; conform pressure levels
+    levels = conform_dims(dimsizes(SF),level,0)
+
+    ; Calculate lat and lon in radians
+    latr = pi/180.0 * lat(:)
+    lonr = pi/180.0 * lon(:)
+
+    nlat = dimsizes(lat)
+    ; Calculate sin and cos of lat
+    sinlat = conform_dims(dimsizes(SF),sin(latr),1)
+    coslat = conform_dims(dimsizes(SF),cos(latr),1)
+
+    ; read in
+
+    ; Calculate coriolis frequency
+    ftmp =  2.*2.*pi/(60.*60.*24.)*sin(latr)
+    ftmp!0 = "lat"
+    ftmp&lat = lat
+    ftmp@_FillValue = SF@_FillValue
+
+    ; missing for 10S - 10N
+    do ilat = 0, nlat-1
+        if (abs(lat(ilat) ).lt. 10. ) then
+            ftmp(ilat)= ftmp@_FillValue
+        end if
+    end do
+
+    ; Calculate deviation streamfunction
+    PSIdev = SF - conform(SF,SFbase,(/0,1,2/))
+    
+    ; Calculate buoyancy
+    zdim = 1    ; z dimension is 2nd dimensions
+    dthdz = center_finite_diff_n(THbase,Zbase,False,0,zdim)
+    
+    NNtemp = (g/THbase) * dthdz
+    
+    ; Calculate magnitude of U
+    magUt = sqrt(Ubase*Ubase + Vbase*Vbase)
+    magUt@_FillValue = SF@_FillValue
+    
+    magU = conform(SF,magUt,(/0,1,2/))
+    
+    ; Conform remaining:
+    U = conform(SF,Ubase,(/0,1,2/))
+    V = conform(SF,Vbase,(/0,1,2/))
+    Z = conform(SF,Zbase,(/0,1,2/))
+    NN = conform(SF,NNtemp,(/0,1,2/))
+    f = conform(SF,ftmp,1)
+    
+    ; Calculate various derivatives of PSIdev
+    
+    dPSIdevdlon = center_finite_diff_n(PSIdev,lonr,True,0,2)
+    ddPSIdevdlonlon = center_finite_diff_n(dPSIdevdlon,lonr,True,0,2)
+    dPSIdevdlat = center_finite_diff_n(PSIdev,latr,False,0,1)
+    ddPSIdevdlatlat = center_finite_diff_n(dPSIdevdlat,latr,False,0,1)
+    ddPSIdevdlonlat = center_finite_diff_n(dPSIdevdlon,latr,False,0,1)
+    
+    ; Different to original script: using Z instead of -scaleheight * log(level/1000)
+    dPSIdevdz = center_finite_diff_n(PSIdev,Z,False,0,0)
+    ddPSIdevdlonz = center_finite_diff_n(dPSIdevdlon,Z,False,0,0)
+    ddPSIdevdlatz = center_finite_diff_n(dPSIdevdlat,Z,False,0,0)
+    
+    
+    ; Calculate terms, taking cosphi inside the bracket mostly
+    
+    xuterm = (dPSIdevdlon * dPSIdevdlon - PSIdev * ddPSIdevdlonlon)
+    xvterm = (dPSIdevdlat * dPSIdevdlon - PSIdev * ddPSIdevdlonlat)
+    
+    yuterm = xvterm
+    yvterm = (dPSIdevdlat * dPSIdevdlat - PSIdev * ddPSIdevdlatlat)
+    
+    zuterm = (dPSIdevdlon * dPSIdevdz - PSIdev * ddPSIdevdlonz)
+    zvterm = (dPSIdevdlat * dPSIdevdz - PSIdev * ddPSIdevdlatz)
+    
+    ; Add together terms with appropriate multipliers, taking cosphi inside the
+    ; bracket, and a2 outside 
+    ; Mask out where westerlies are small, or negative
+    Fx = mask((levels/1000. / (a * a * 2.0 *magU)) * (U * xuterm /coslat + V * xvterm),U .lt. 2,False)
+    
+    Fy = mask((levels/1000. / (a * a * 2.0 * magU)) * (U * yuterm + V * coslat * yvterm), U .lt. 2, False)
+    
+    denom = mask(NN  * a * 2.0 * magU, (NN  * a * 2.0 * magU) .eq. 0,False)
+    Fz = mask((levels/1000. * f * f / (denom)) * (U * zuterm + V * coslat * zvterm),U .lt. 2,False)
+
+   ; for output
+    Fx!0 = "level"
+    Fx&level = level
+    Fx!1 = "lat"
+    Fx&lat = lat
+    Fx!2 = "lon"
+    Fx&lon = lon
+
+    copy_VarMeta(Fx,Fy)
+    copy_VarMeta(Fx,Fz)
+    copy_VarMeta(Fx,PSIdev)
+    copy_VarMeta(Fx,NN)
+    copy_VarMeta(Fx,SF)
+
+    copy_VarMeta(Fx,dPSIdevdlon)
+    copy_VarMeta(Fx,dPSIdevdlat)
+    copy_VarMeta(Fx,ddPSIdevdlonlon)
+    copy_VarMeta(Fx,ddPSIdevdlonlat)
+
+
+    Fx@units = "m^2/s^2"
+    Fy@units = "m^2/s^2"
+    Fz@units = "m^2/s^2"
+
+    PSIdev@units = "m^2/s"
+
+    NN@units = "1/s^2"
+
+    ;-----------------------------------------------------------------------
+    system("/bin/rm -f " + Dir + filo)
+    ncF = addfile(Dir + filo, "c")
+
+    setfileoption(ncF,"DefineMode",True)
+
+    ;set attributes of output file
+    fAtt = True
+    fAtt@creation_date = systemfunc("date")
+    fileattdef(ncF,fAtt)
+    ; make time a record dimension
+    filedimdef(ncF,"time",-1,True)
+
+    ncF->Fx = Fx
+    ncF->Fy = Fy
+    ncF->Fz = Fz
+    ;ncF->NN = NN
+    ;ncF->PSIdev = PSIdev
+    ;ncF->SF = SF
+    ;ncF->SFno = SFno
+    ;ncF->Uno = Uno
+    ;ncF->Vno = Vno
+    ;ncF->magU = magU
+    ;ncF->dPSIdevdlon = dPSIdevdlon
+    ;ncF->dPSIdevdlat = dPSIdevdlat
+    ;ncF->ddPSIdevdlonlon = ddPSIdevdlonlon
+    ;ncF->ddPSIdevdlonlat = ddPSIdevdlonlat
+
+    ; make time a record dimension
+    filedimdef(ncF,"time",-1,True)
+
+    return(1)
+
+end 

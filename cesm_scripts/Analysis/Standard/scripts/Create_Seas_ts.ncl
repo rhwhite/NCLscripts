@@ -142,8 +142,7 @@ do exps = 0,nexps-1
 
     else
         system("mkdir " + Dir + "/forSeasts/")
-        system("which ncrcat") 
-        ;system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + "." + camversion + ".h0.????-??.nc " + Dirout + "Annual" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + "." + camversion + ".h0.nc")
+        system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + Experiment + "." + camversion + ".h0.????-??.nc " + Dirout + "ANN" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + "." + camversion + ".h0.nc")
 
         ; move seasonal files to new directory so we don't accidentally reorder them by month
         system("mv " + Dir + "/forSeasts/* " + Dir)
@@ -175,8 +174,6 @@ do exps = 0,nexps-1
         system("mv " + Dir + Experiment + "." + camversion + ".h0.*-11.nc " + Dir + "/forSeasts/")
 
         system("ncrcat -h -O -v TS,PS,TREFHT,FSNT,FLNT,CLDTOT,CLDLOW,CLDMED,FSNS,FLNS,QFLX,SHFLX,QREFHT,TMQ,TAUX,TAUY,U10,U,V,T,Z3,Q,PS,PHIS,P0,lat,lon,hyam,hybm " + Dir + "forSeasts/" + Experiment + "." + camversion + ".h0.????-??.nc " + Dirout + "SON" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + "." + camversion + ".h0.nc")
-
-        system("mv " + Dir + "/forSeasts/* " + Dir)
 
 	end if
 

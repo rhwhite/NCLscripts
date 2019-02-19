@@ -39,7 +39,7 @@ xrad = getenv("NCL_xrad")
 diabatic = getenv("NCL_dia")
 
 print(diabatic)
-timespans = (/"DJF","Annual","JJA","MAM","SON"/)
+timespans = (/"DJF","ANN","JJA","MAM","SON"/)
 ;timespan = getenv("NCL_season")
 dimtimes = dimsizes(timespans)
 nts = dimtimes(0)
