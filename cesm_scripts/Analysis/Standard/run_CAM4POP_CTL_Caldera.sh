@@ -18,13 +18,13 @@ cd /glade/u/home/rachelwh/scripts/NCLscripts/cesm_scripts/Analysis/Standard/scri
 dir="/glade/scratch/rachelwh/archive/"
 
 numexps="1"
-exps=("CAM4POP_NoR_f19")
+exps=("CAM4POP_NoMT_f09" "CAM4POP_CTL_f09")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
 #exps=("WACCM_f19_highR")
 dirbase="/home/disk/rachel/CESM_outfiles/"
 expsctl=("CAM4SOM4_noMT") 
-start="251"
+start="250"
 end="300"
 version="122"
 
@@ -32,8 +32,10 @@ version="122"
 export NCL_startyrC=11
 export NCL_nyearsC=20
 
-nsecs="00000"   # default = 00000, when running hybrid will be 21600
-h2start="01"    # default = 01, when running hybrid this will be 02
+export NCL_nsecs="00000"   # default = 00000, when running hybrid will be 21600
+export NCL_h2start="01"    # default = 01, when running hybrid this will be 02
+# which history files contain the daily data
+export NCL_dailyfile="h1"
 
 export NCL_ARG_lonstart=0
 export NCL_ARG_lonend=360
@@ -47,8 +49,6 @@ export NCL_N_ARGS=$#
 export NCL_CESMversion=$version
 export NCL_dia=1
 
-export NCL_nsecs=$nsecs
-export NCL_h2start=$h2start
 # save command line arguments to environment variable NCL_ARG_#
 export NCL_ARG_1=$dir
 export NCL_ARG_2=$numexps
@@ -101,11 +101,9 @@ eval export NCL_ARG_$index=$nsecs
                             # calculating them on hybrid and then converting
 
 # Use to get U, V, TH  on limited pressure levels
-#echo 'hybrid2pres_daily_limlev.ncl'
-#ncl hybrid2pres_daily_limlev.ncl
+echo 'hybrid2pres_daily_limlev.ncl'
+ncl hybrid2pres_daily_limlev.ncl
 
-# Use for storm tracks
-ncl omega500_daily.ncl # Calculate OMEGA, convert to 500mb, write out
 
 #echo 'Create_Seas_ts.ncl'
 #ncl Create_Seas_ts.ncl  # create timeseries of all years of monthly data for

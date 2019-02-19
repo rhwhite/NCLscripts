@@ -80,8 +80,8 @@ eval export NCL_ARG_$index=$nsecs
 #ncl Initial_analysis_addvars.ncl
 
 
-#echo 'Initial_analysis_means.ncl'
-#ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
+echo 'Initial_analysis_means.ncl'
+ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
                                 # including PV, SF, divergences MSE, etc
                                 # then calculate climatological means
                                 # on monthly and annual time resolution
@@ -92,8 +92,8 @@ eval export NCL_ARG_$index=$nsecs
 #####echo 'hybrid2pres.ncl'
 #####ncl hybrid2pres.ncl
 
-#echo 'hybrid2pres_morelev.ncl'
-#ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
+echo 'hybrid2pres_morelev.ncl'
+ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
                             # monthly resolution data including caluclation of
                             # potential temperaturei, PV, etc and vertical
                             # gradients etc
@@ -105,10 +105,11 @@ eval export NCL_ARG_$index=$nsecs
 #ncl hybrid2pres_daily_limlev.ncl
 
 # Use for storm tracks
+echo 'omeag500_daily'
 ncl omega500_daily.ncl # Calculate OMEGA, convert to 500mb, write out
 
-#echo 'Create_Seas_ts.ncl'
-#ncl Create_Seas_ts.ncl  # create timeseries of all years of monthly data for
+echo 'Create_Seas_ts.ncl'
+ncl Create_Seas_ts.ncl  # create timeseries of all years of monthly data for
                         # DJF, MAM, JJA and SON
 
 

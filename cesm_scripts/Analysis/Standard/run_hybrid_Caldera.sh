@@ -18,14 +18,14 @@ cd /glade/u/home/rachelwh/scripts/NCLscripts/cesm_scripts/Analysis/Standard/scri
 dir="/glade/scratch/rachelwh/archive/"
 
 numexps="1"
-exps=("CAM4POP_NoR_f19")
+exps=("CAM4POP_CTL_f09" "CAM4POP_CTL_f09")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
 #exps=("WACCM_f19_highR")
 dirbase="/home/disk/rachel/CESM_outfiles/"
 expsctl=("CAM4SOM4_noMT") 
-start="251"
-end="300"
+start="1"
+end="50"
 version="122"
 
 # For Tak-Nak fluxes:
@@ -92,8 +92,8 @@ eval export NCL_ARG_$index=$nsecs
 #####echo 'hybrid2pres.ncl'
 #####ncl hybrid2pres.ncl
 
-#echo 'hybrid2pres_morelev.ncl'
-#ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
+echo 'hybrid2pres_morelev.ncl'
+ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
                             # monthly resolution data including caluclation of
                             # potential temperaturei, PV, etc and vertical
                             # gradients etc
@@ -105,7 +105,8 @@ eval export NCL_ARG_$index=$nsecs
 #ncl hybrid2pres_daily_limlev.ncl
 
 # Use for storm tracks
-ncl omega500_daily.ncl # Calculate OMEGA, convert to 500mb, write out
+#echo 'omega700_daily'
+#ncl omega700_daily.ncl # Calculate OMEGA, convert to 500mb, write out
 
 #echo 'Create_Seas_ts.ncl'
 #ncl Create_Seas_ts.ncl  # create timeseries of all years of monthly data for
