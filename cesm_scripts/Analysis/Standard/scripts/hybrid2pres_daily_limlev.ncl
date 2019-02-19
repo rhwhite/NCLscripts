@@ -140,9 +140,9 @@ do exps = 0,nexps-1
 ;-----------------------------------------------------------------------
 ;Write variables to a new netcdf file, for stat fits in matlab
 ;-----------------------------------------------------------------------
-        filo = "U_V_T_Z3_pl_daily_" + Experiment + "_" + syear + "." + camversion + ".nc"
+        filoUV = "U_V_pl_daily_" + Experiment + "_" + syear + "." + camversion + ".nc"
         system("/bin/rm -f " + DirO + filo)
-        fout = addfile(DirO + filo, "c")
+        foutUV = addfile(DirO + filoUV, "c")
     
         setfileoption(fout,"DefineMode",True)
 
@@ -166,7 +166,21 @@ do exps = 0,nexps-1
         end if
     end do	
 
-    system("ncrcat -O " + DirO + "/U_V_T_Z3_pl_daily_" + Experiment + "_*"  + "." + camversion + ".nc " + DirFinal + "/U_V_T_Z3_pldaily_" + Experiment + "." + camversion + "." + sprinti("%0.4i",startyr) + "-" + sprinti("%0.4i",endyr) + ".nc")
+    system("ncrcat -O -v U,V " + DirO + "/U_V_T_Z3_pl_daily_" + Experiment + "_*"  + "." + camversion + ".nc " + DirFinal + "/U_V_pldaily_" + Experiment + "." + camversion + "." + sprinti("%0.4i",startyr) + "-" + sprinti("%0.4i",endyr) + ".nc")
+
+    system("ncrcat -O -v T " + DirO + "/U_V_T_Z3_pl_daily_" + Experiment + "_*"  + "." + camversion + ".nc " + DirFinal + "/T_pldaily_" + Experiment + "." + camversion + "." + sprinti("%0.4i",startyr) + "-" + sprinti("%0.4i",endyr) + ".nc")
+
+    system("ncrcat -O -v Z,PV " + DirO + "/U_V_T_Z3_pl_daily_" + Experiment + "_*"  + "." + camversion + ".nc " + DirFinal + "/Z3_PV_pldaily_" + Experiment + "." + camversion + "." + sprinti("%0.4i",startyr) + "-" + sprinti("%0.4i",endyr) + ".nc")
+
+    if dohumidity .eq. 1 then
+        system("ncrcat -O -v Q " + DirO + "/U_V_T_Z3_pl_daily_" + Experiment + "_*"  + "." + camversion + ".nc " + DirFinal + "/Q_pldaily_" + Experiment + "." + camversion + "." + sprinti("%0.4i",startyr) + "-" + sprinti("%0.4i",endyr) + ".nc")
+    end if
+
+    if doomega .eq. 1 then
+        system("ncrcat -O -v OMEGA " + DirO + "/U_V_T_Z3_pl_daily_" + Experiment + "_*"  + "." + camversion + ".nc " + DirFinal + "/OMEGA_pldaily_" + Experiment + "." + camversion + "." + sprinti("%0.4i",startyr) + "-" + sprinti("%0.4i",endyr) + ".nc")
+    end if
+
+
 
 end do
 
