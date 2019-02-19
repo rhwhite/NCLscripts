@@ -4,7 +4,7 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/contributed.ncl"
 
 begin
 
-print("doing this")
+print("hybrid to pressure levels on daily data")
 
 Direc = getenv("NCL_ARG_1")
 nexps = toint(getenv("NCL_ARG_2"))
@@ -14,13 +14,13 @@ do ne = 0,nexps-1
     Experiments(ne) = getenv("NCL_Exp2_" + tostring(ne))
 end do
 
-print(Experiments)
 startyr = toint(getenv("NCL_startyr"))
 endyr = toint(getenv("NCL_endyr"))
-h2mon = getenv("NCL_h2mon")
 version=getenv("NCL_CESMversion")
-omega=getenv("NCL_omega")
 h2startday = getenv("NCL_h2start")
+
+; history name of files with daily data (h1, h2 etc?)
+dailyfile = getenv("NCL_dailyfile")
 
 if version .EQ. "122" then
     camversion="cam"
@@ -53,13 +53,13 @@ do exps = 0,nexps-1
 
     print(Experiment)
     sstartyr = sprinti("%0.4i",startyr)
-    filePHIS = (Dir + Experiment + "." + camversion + ".h0." + sstartyr + "-" + h2mon + ".nc")
+    filePHIS = (Dir + Experiment + "." + camversion + ".h0." + sstartyr + "-06.nc")
 
     do iyear = startyr,endyr
         print(tostring(iyear))
 	    syear = sprinti("%0.4i",iyear)
 
-        filename = (Dir + Experiment + "." + camversion + ".h2." + syear + "-01-" + h2startday + "-00000.nc")
+        filename = (Dir + Experiment + "." + camversion + "." + dailyfile + "." + syear + "-01-" + h2startday + "-00000.nc")
     
         cdf_file = addfile(filename,"r")
         cdf_file_PHIS = addfile(filePHIS,"r")
@@ -74,10 +74,17 @@ do exps = 0,nexps-1
         V = cdf_file->V
         T = cdf_file->T
         Z3 = cdf_file->Z3
-        TBOT = cdf_file->TBOT
-        Q = cdf_file->Q
-        if omega .eq. 1 then
+
+        dohumidity=0
+        if (isfilevar(cdf_file, "Q")) then
+            Q = cdf_file->Q
+            dohumidity = 1
+        end if
+
+        doomega=0
+        if (isfilevar(cdf_file, "OMEGA")) then
             OMEGA = cdf_file->OMEGA
+            doomega = 1
         end if
 
         PHIS = cdf_file_PHIS->PHIS(0,:,:)
@@ -85,6 +92,17 @@ do exps = 0,nexps-1
 
         levs = cdf_file->lev
         nlevs = dimsizes(levs)
+
+        ; check that levels go from top down in order to get TBOT
+        if levs(0) .lt. levs(nlevs-1) then
+            TBOT = T(:,nlevs-1,:,:)
+        else if levs(0) .gt. levs(nlevs-1) then
+            TBOT = T(:,0,:,:)
+        else
+            print("something very wrong with levels when trying to find TBOT")
+            exit()
+        end if
+        end if
 
         hyam = cdf_file->hyam
         hybm = cdf_file->hybm
@@ -108,8 +126,10 @@ do exps = 0,nexps-1
         Vpres = vinth2p_ecmwf(V,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/))) 
         ;PVpres = vinth2p_ecmwf(PV,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/)))
         Z3pres = vinth2p_ecmwf(Z3,hyam,hybm,pnew,PS,1,P0mb,1,True,-1,TBOT,conform(PS,PHIS,(/1,2/))) 
-        Qpres = vinth2p_ecmwf(Q,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/))) 
-        if omega .eq. 1 then
+        if dohumidity .eq. 1 then
+            Qpres = vinth2p_ecmwf(Q,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/))) 
+        end if
+        if doomega .eq. 1 then
             OMEGApres = vinth2p_ecmwf(OMEGA,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,conform(PS,PHIS,(/1,2/)))
         end if
 
@@ -120,7 +140,7 @@ do exps = 0,nexps-1
 ;-----------------------------------------------------------------------
 ;Write variables to a new netcdf file, for stat fits in matlab
 ;-----------------------------------------------------------------------
-        filo = "U_V_T_Z3_pl" + Experiment + "_" + syear + "." + camversion + ".h2.nc"
+        filo = "U_V_T_Z3_pl_daily_" + Experiment + "_" + syear + "." + camversion + ".nc"
         system("/bin/rm -f " + DirO + filo)
         fout = addfile(DirO + filo, "c")
     
@@ -137,18 +157,16 @@ do exps = 0,nexps-1
         fout ->V = Vpres
         fout->Z3 = Z3pres
         fout ->T = Tpres
-        ;fout ->Q = Qpres
+        if dohumidity .eq. 1 then
+            fout ->Q = Qpres
+        end if
         fout ->PV = PVpres
-        if omega .eq. 1 then
+        if doomega .eq. 1 then
             fout ->OMEGA = OMEGApres
         end if
     end do	
 
-    if h2mon .eq. "01" then
-        system("ncrcat -O " + DirO + "/U_V_T_Z3_pl" + Experiment + "_*"  + "." + camversion + ".h2.nc " + DirFinal + "/U_V_T_Z3_pl" + Experiment + "." + camversion + ".h2." + sprinti("%0.4i",startyr) + "-" + sprinti("%0.4i",endyr) + ".nc")
-    else
-        system("ncrcat -O " + DirO + "/U_V_T_Z3_pl" + Experiment + "_*"  + "." + camversion + ".h2.nc " + DirFinal + "/U_V_T_Z3_pl" + Experiment + "." + camversion + ".h2." + sprinti("%0.4i",startyr) + "-" + h2mon + "-" + sprinti("%0.4i",endyr) + h2mon + ".nc")
-    end if
+    system("ncrcat -O " + DirO + "/U_V_T_Z3_pl_daily_" + Experiment + "_*"  + "." + camversion + ".nc " + DirFinal + "/U_V_T_Z3_pldaily_" + Experiment + "." + camversion + "." + sprinti("%0.4i",startyr) + "-" + sprinti("%0.4i",endyr) + ".nc")
 
 end do
 

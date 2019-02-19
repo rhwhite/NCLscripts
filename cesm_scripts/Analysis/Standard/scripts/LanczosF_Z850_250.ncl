@@ -10,7 +10,7 @@ nexps = toint(getenv("NCL_ARG_2"))
 Experiments = new(nexps,"string")
 
 do ne = 0,nexps-1
-        Experiments(ne) = getenv("NCL_ARG_" + tostring(3+ne))
+    Experiments(ne) = getenv("NCL_ARG_" + tostring(3+ne))
 end do
 
 startyr = toint(getenv("NCL_startyr"))

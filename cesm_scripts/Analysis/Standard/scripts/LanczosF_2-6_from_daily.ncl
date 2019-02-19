@@ -22,6 +22,13 @@ startyr = toint(getenv("NCL_ARG_" + tostring(3+nexps)))
 endyr = toint(getenv("NCL_ARG_" + tostring(4+nexps)))
 secs = getenv("NCL_ARG_" + tostring(5+nexps))
 
+version=getenv("NCL_CESMversion")
+if version .EQ. "122" then
+    camversion="cam"
+else
+    camversion="cam2"
+end if
+
 varin = getenv("NCL_ARG_var")
 print(varin)
 print(startyr*1)
@@ -35,26 +42,17 @@ nexps = dimsexps(0)
 do exps = 0,nexps-1
 
 	Experiment = Experiments(exps)
-        Dir = (Direc + Experiment + "/" + dirstring + "/")
+    Dir = (Direc + Experiment + "/" + dirstring + "/")
 	OutDir = (Direc + Experiment + "/" + outdirstring + "/")
 
 	print(Experiment)
+    iyear = startyr
 
-	iyear = startyr
-	if iyear .lt. 10
-		yearstring = ("000" + tostring(iyear))
-	else if iyear .lt. 100
-		yearstring = ("00" + tostring(iyear))
-	else if iyear .lt. 1000
-		yearstring = ("0" + tostring(iyear))
-	end if
-	end if
-	end if
+    yearstring = sprinti("%0.4i",iyear)
 
-	filename = (Dir + Experiment + ".cam2." + hfile + "." + yearstring +"-01-01-" + secs + ".nc")
+	filename = (Dir + Experiment + "." + camversion + "." + hfile + "." + yearstring +"-01-01-" + secs + ".nc")
 
 	cdf_file = addfile(filename,"r")
-	;print("file read in")
 
 	lat = cdf_file->lat
 	lon = cdf_file->lon
@@ -79,17 +77,9 @@ do exps = 0,nexps-1
 	;print(ntim)   
 
 	do iyear = startyr+1,endyr
-        	if iyear .lt. 10
-               		yearstring = ("000" + tostring(iyear))
-        	else if iyear .lt. 100
-                	yearstring = ("00" + tostring(iyear))
-        	else if iyear .lt. 1000
-                	yearstring = ("0" + tostring(iyear))
-        	end if
-        	end if
-        	end if
+        yearstring = sprinti("%0.4i",iyear)
 
-		filename = (Dir + Experiment + ".cam2." + hfile + "." + yearstring +"-01-01-" + secs + ".nc")
+		filename = (Dir + Experiment + "." + camversion + "." + hfile + "." + yearstring +"-01-01-" + secs + ".nc")
 
 		cdf_file = addfile(filename,"r")
 
@@ -177,7 +167,7 @@ do exps = 0,nexps-1
 	do nt = 731,ntimes-732
 		varbpf(count,:,:) = varbpf_temp(nt,:,:)
 		timebpf(count) = time(nt)
-                datebpf(count) = date(nt)
+        datebpf(count) = date(nt)
 		count = count + 1
 	end do
 
@@ -194,7 +184,7 @@ do exps = 0,nexps-1
 ;Write variables to a new netcdf file
 ;-----------------------------------------------------------------------
 	print("writing file")
-	filo = varin + "bpf_Annual_" + tostring(startyr) + "_" + tostring(nyears) + "_" + Experiment + ".cam2.nc"
+	filo = varin + "bpf_Annual_" + tostring(startyr) + "_" + tostring(nyears) + "_" + Experiment + "." + camversion + ".nc"
 	system("/bin/rm -f " + OutDir + filo)
 	setfileoption("nc","format","netcdf4")	; allow us to write variables >2GB
 	fout = addfile(OutDir + filo, "c")
@@ -213,13 +203,13 @@ do exps = 0,nexps-1
 	filedimdef(fout,dimNames,dimSizes,dimUnlim)
 	
 	filevardef(fout,"time",typeof(timebpf),getvardims(timebpf))
-        filevardef(fout,"date",typeof(datebpf),getvardims(datebpf))
+    filevardef(fout,"date",typeof(datebpf),getvardims(datebpf))
 	filevardef(fout,"lat",typeof(lat),getvardims(lat))
 	filevardef(fout,"lon",typeof(lon),getvardims(lon))
 	
 	filevardef(fout,varin + "bpf",typeof(varbpf),getvardims(varbpf))
 	
-        fout ->date    = (/datebpf/)
+    fout ->date    = (/datebpf/)
 	fout ->time    = (/timebpf/)
 	fout ->lat    = (/lat/)
 	fout ->lon    = (/lon/)
@@ -227,12 +217,12 @@ do exps = 0,nexps-1
 	if varin .EQ. "TS"	
 		fout ->TSbpf = (/varbpf/)
 	else if (varin .EQ. "Z850")
-                fout ->Z850bpf = (/varbpf/)
+        fout ->Z850bpf = (/varbpf/)
 	else if varin .EQ. "PRECT"
 		fout ->PRECTbpf = (/varbpf/)
 	else
 		print("defaulting for some reason")
-                fout ->varbpf = (/varbpf/)
+        fout ->varbpf = (/varbpf/)
 	end if
 	end if
 	end if	
