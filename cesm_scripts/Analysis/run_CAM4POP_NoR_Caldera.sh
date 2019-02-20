@@ -12,13 +12,13 @@
 # Script to calculate variables that are useful for analysing Rossby wave
 # behaviour
 
-cd /glade/u/home/rachelwh/scripts/NCLscripts/cesm_scripts/Analysis/Standard/scripts/
+cd /glade/u/home/rachelwh/scripts/NCLscripts/cesm_scripts/Analysis/scripts/
 #dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
 #dir="/home/disk/eos4/rachel/CESM_outfiles/"
 dir="/glade/scratch/rachelwh/archive/"
 
 numexps="1"
-exps=("CAM4POP_NoTopo_f09" "CAM4POP_CTL_f09")
+exps=("CAM4POP_NoMT_f09" "CAM4POP_CTL_f09")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
 #exps=("WACCM_f19_highR")
@@ -26,7 +26,6 @@ dirbase="/home/disk/rachel/CESM_outfiles/"
 expsctl=("CAM4SOM4_noMT") 
 start="251"
 end="300"
-version="122"
 
 # For Tak-Nak fluxes:
 export NCL_startyrC=11
@@ -44,7 +43,8 @@ export NCL_Mtrans=0
 export NCL_GW=0
 export NCL_xrad=0
 export NCL_N_ARGS=$#
-export NCL_CESMversion=$version
+export NCL_CESMversion=122
+export NCL_dailyfile='h1'
 export NCL_dia=1
 
 export NCL_nsecs=$nsecs
@@ -92,8 +92,8 @@ eval export NCL_ARG_$index=$nsecs
 #####echo 'hybrid2pres.ncl'
 #####ncl hybrid2pres.ncl
 
-echo 'hybrid2pres_morelev.ncl'
-ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
+#echo 'hybrid2pres_morelev.ncl'
+#ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
                             # monthly resolution data including caluclation of
                             # potential temperaturei, PV, etc and vertical
                             # gradients etc
@@ -101,8 +101,8 @@ ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
                             # calculating them on hybrid and then converting
 
 # Use to get U, V, TH  on limited pressure levels
-#echo 'hybrid2pres_daily_limlev.ncl'
-#ncl hybrid2pres_daily_limlev.ncl
+echo 'hybrid2pres_daily_limlev.ncl'
+ncl hybrid2pres_daily_limlev.ncl
 
 # Use for storm tracks
 #echo 'omega700_daily'
