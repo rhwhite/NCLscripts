@@ -152,7 +152,7 @@ do exps = 0,nexps-1
     system("ncflint -F -O -w " + tostring(365.0/(4*SONtot)) + ",0 " + Dir + "SONwgt_temp.nc " + Dir + "SONwgt_temp.nc " + Dir + "SON" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
  
     ; Annual
-    system("ncra -O " + Dir + "Mon??_wght_temp.nc " + Dir + "ANN_" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
+    system("ncra -O " + Dir + "Mon??_wght_temp.nc " + Dir + "ANN" + tostring(startyr) + "_" + tostring(nyears) + "_mean_" + Experiment + "." + camversion + ".h0.nc")
 
     system("rm " + Dir + "Mon??_wght_temp.nc")
 
