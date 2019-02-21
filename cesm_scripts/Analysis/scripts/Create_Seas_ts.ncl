@@ -178,6 +178,7 @@ do exps = 0,nexps-1
 	end if
 
     system("mv " + Dir + "TempDir/*.nc " + Dir + "/")
+    system("mv " + Dir + "/forSeasts/*.nc " + Dir + "/")
 
 
 	print("finished with " + Experiment + " from " + tostring(startyr) + " to " + tostring(endyr))
