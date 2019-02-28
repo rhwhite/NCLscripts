@@ -18,13 +18,13 @@ cd /glade/u/home/rachelwh/scripts/NCLscripts/cesm_scripts/Analysis/scripts/
 dir="/glade/scratch/rachelwh/archive/"
 
 numexps="1"
-exps=("CAM4POP_NoMT_f09" "CAM4POP_CTL_f09")
+exps=("CAM4POP_NoR_f19" "CAM4POP_NoMT_f09" "CAM4POP_CTL_f09")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
 #exps=("WACCM_f19_highR")
 dirbase="/home/disk/rachel/CESM_outfiles/"
 expsctl=("CAM4SOM4_noMT") 
-start="251"
+start="1"
 end="300"
 
 # For Tak-Nak fluxes:

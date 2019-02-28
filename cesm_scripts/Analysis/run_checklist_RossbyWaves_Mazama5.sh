@@ -2,7 +2,7 @@
 # Script to calculate variables that are useful for analysing Rossby wave
 # behaviour
 
-cd /home/rhwhite/NCLscripts/cesm_scripts/Analysis/Standard/scripts/
+cd /home/rhwhite/NCLscripts/cesm_scripts/Analysis//scripts/
 dir="/data/ESS/rhwhite/cesm_archive/"
 
 numexps="1"

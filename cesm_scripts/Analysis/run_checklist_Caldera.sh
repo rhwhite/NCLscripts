@@ -1,27 +1,41 @@
-#!/bin/sh
+#!/bin/bash -l
+#SBATCH -J basanalysis
+#SBATCH -n 1
+#SBATCH --ntasks-per-node=1
+#SBATCH --mem=100G
+#SBATCH -t 23:59:00
+#SBATCH -A UWAS0064
+#SBATCH -p dav
+#SBATCH -e basanalysis.err.%J
+#SBATCH -o basanalysis.out.%J
+
 # Script to calculate variables that are useful for analysing Rossby wave
 # behaviour
 
-cd /home/rhwhite/NCLscripts/cesm_scripts/Analysis//scripts/
-dir="/data/ESS/rhwhite/cesm_archive/"
+cd /glade/u/home/rachelwh/scripts/NCLscripts/cesm_scripts/Analysis/scripts/
+#dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
+#dir="/home/disk/eos4/rachel/CESM_outfiles/"
+dir="/glade/scratch/rachelwh/archive/"
 
 numexps="1"
-exps=("WACCMSC_f19_2000_CESMSSTs" "WACCMSC_CTL_122" "WACCMSC_f19_1979-2010_4" "WACCMSC_f19_1979-2010_5")
+exps=("WACCMSC_SOMSSTs_Flat" "CAM4POP_CTL_f09")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
 #exps=("WACCM_f19_highR")
-dirbase="/data/ESS/rhwhite/cesm_archive/"
+dirbase="/home/disk/rachel/CESM_outfiles/"
 expsctl=("CAM4SOM4_noMT") 
 start="2"
-end="61"
+end="31"
 version="122"
 
 # For Tak-Nak fluxes:
 export NCL_startyrC=11
 export NCL_nyearsC=20
 
-nsecs="00000"   # default = 00000, when running hybrid will be 21600
-h2start="01"    # default = 01, when running hybrid this will be 02
+export NCL_nsecs="00000"   # default = 00000, when running hybrid will be 21600
+export NCL_h2start="01"    # default = 01, when running hybrid this will be 02
+# which history files contain the daily data
+export NCL_dailyfile="h2"
 
 export NCL_ARG_lonstart=0
 export NCL_ARG_lonend=360
@@ -32,11 +46,9 @@ export NCL_Mtrans=0
 export NCL_GW=0
 export NCL_xrad=0
 export NCL_N_ARGS=$#
-export NCL_CESMversion=122
-export NCL_h2mon="01"
-export NCL_omega=0
-export NCL_nsecs=$nsecs
-export NCL_h2start=$h2start
+export NCL_CESMversion=$version
+export NCL_dia=1
+
 # save command line arguments to environment variable NCL_ARG_#
 export NCL_ARG_1=$dir
 export NCL_ARG_2=$numexps
@@ -58,14 +70,15 @@ eval export NCL_startyr=$start
 eval export NCL_endyr=$end
 
 ((index++))
-echo $index
+#echo $index
 eval export NCL_ARG_$index=$nsecs
 
-echo NCL_N_ARGS 
+#echo NCL_N_ARGS 
 
 
 #echo Initial_analysis_addvars.ncl
 #ncl Initial_analysis_addvars.ncl
+
 
 echo 'Initial_analysis_means.ncl'
 ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
@@ -76,6 +89,9 @@ ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
 ###ncl Calc_VertGrad.ncl   # Calculate climatological mean vertical gradients
                         # of omega and T, TH, and omegaT NOT on pressure levels
 
+#####echo 'hybrid2pres.ncl'
+#####ncl hybrid2pres.ncl
+
 echo 'hybrid2pres_morelev.ncl'
 ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
                             # monthly resolution data including caluclation of
@@ -85,12 +101,16 @@ ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
                             # calculating them on hybrid and then converting
 
 # Use to get U, V, TH  on limited pressure levels
-#echo 'hybrid2pres_daily_limlev.ncl'
-#ncl hybrid2pres_daily_limlev.ncl
+echo 'hybrid2pres_daily_limlev.ncl'
+ncl hybrid2pres_daily_limlev.ncl
 
-#echo 'Create_Seas_ts.ncl'
-#ncl Create_Seas_ts.ncl  # create timeseries of all years of monthly data for
+
+echo 'Create_Seas_ts.ncl'
+ncl Create_Seas_ts.ncl  # create timeseries of all years of monthly data for
                         # DJF, MAM, JJA and SON
+
+
+
 #echo 'hybrid2pres_ts.ncl' 
 #ncl hybrid2pres_ts.ncl  # convert the files created by Create_Seas_ts.ncl
                             # onto pressure levels specified in this file
@@ -137,9 +157,12 @@ ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
 
 #ncl Calc_EPfluxes_wave2_daily.ncl
 
-##### Not used anymore - done in python Calculate FFT on geopotential heights
-#####ncl Calc_Z_FFT.ncl
-
+#eval export NCL_seas="DJF"
+#ncl Calc_TEMcirc_daily.ncl
+#eval export NCL_seas="Annual"
+#ncl Calc_TEMcirc_daily.ncl
+#eval export NCL_seas="JJA"
+#ncl Calc_TEMcirc_daily.ncl
 
 #echo 'Calc_TakNak_fluxes.ncl'
 #export NCL_season="DJF"

@@ -12,7 +12,7 @@
 # Script to calculate variables that are useful for analysing Rossby wave
 # behaviour
 
-cd /glade/u/home/rachelwh/scripts/NCLscripts/cesm_scripts/Analysis/Standard/scripts/
+cd /glade/u/home/rachelwh/scripts/NCLscripts/cesm_scripts/Analysis//scripts/
 #dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
 #dir="/home/disk/eos4/rachel/CESM_outfiles/"
 dir="/glade/scratch/rachelwh/archive/"

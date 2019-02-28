@@ -2,7 +2,7 @@
 # Script to calculate variables that are useful for analysing Rossby wave
 # behaviour
 
-cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis/Standard/scripts/
+cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis//scripts/
 #dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
 dir="/home/disk/eos4/rachel/Rockies_vs_Antarctica"
 numexps="1"

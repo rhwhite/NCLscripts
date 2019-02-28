@@ -1,6 +1,6 @@
 #!/bin/sh
 # source cshrc_version cshrcSTD and load ncl/6.2
-cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis/Standard/scripts/
+cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis//scripts/
 #dir="/home/disk/eos4/rachel/CESM_outfiles/"
 dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
 

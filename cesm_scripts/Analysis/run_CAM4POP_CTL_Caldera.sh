@@ -12,13 +12,13 @@
 # Script to calculate variables that are useful for analysing Rossby wave
 # behaviour
 
-cd /glade/u/home/rachelwh/scripts/NCLscripts/cesm_scripts/Analysis/Standard/scripts/
+cd /glade/u/home/rachelwh/scripts/NCLscripts/cesm_scripts/Analysis/scripts/
 #dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
 #dir="/home/disk/eos4/rachel/CESM_outfiles/"
 dir="/glade/scratch/rachelwh/archive/"
 
 numexps="1"
-exps=("CAM4POP_NoMT_f09" "CAM4POP_CTL_f09")
+exps=("CAM4POP_NoMT_AtAr_hosing_f19" "CAM4POP_CTL_f09")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
 #exps=("WACCM_f19_highR")
@@ -80,8 +80,8 @@ eval export NCL_ARG_$index=$nsecs
 #ncl Initial_analysis_addvars.ncl
 
 
-#echo 'Initial_analysis_means.ncl'
-#ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
+echo 'Initial_analysis_means.ncl'
+ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
                                 # including PV, SF, divergences MSE, etc
                                 # then calculate climatological means
                                 # on monthly and annual time resolution
@@ -92,8 +92,8 @@ eval export NCL_ARG_$index=$nsecs
 #####echo 'hybrid2pres.ncl'
 #####ncl hybrid2pres.ncl
 
-#echo 'hybrid2pres_morelev.ncl'
-#ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
+echo 'hybrid2pres_morelev.ncl'
+ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
                             # monthly resolution data including caluclation of
                             # potential temperaturei, PV, etc and vertical
                             # gradients etc
@@ -105,8 +105,8 @@ echo 'hybrid2pres_daily_limlev.ncl'
 ncl hybrid2pres_daily_limlev.ncl
 
 
-#echo 'Create_Seas_ts.ncl'
-#ncl Create_Seas_ts.ncl  # create timeseries of all years of monthly data for
+echo 'Create_Seas_ts.ncl'
+ncl Create_Seas_ts.ncl  # create timeseries of all years of monthly data for
                         # DJF, MAM, JJA and SON
 
 

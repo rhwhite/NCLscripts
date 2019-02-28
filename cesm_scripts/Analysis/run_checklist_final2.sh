@@ -1,5 +1,5 @@
 #!/bin/sh
-cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis/Standard/scripts/
+cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis//scripts/
 #dir="/home/disk/eos4/rachel/CESM_outfiles/"
 dir="/home/disk/rachel/CESM_outfiles/"
 numexps="1"

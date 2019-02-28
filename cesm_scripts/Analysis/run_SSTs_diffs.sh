@@ -1,5 +1,5 @@
 #!/bin/sh
-cd /home/disk/eos4/rachel/NCL/cesm_scripts/Analysis/Standard/scripts/
+cd /home/disk/eos4/rachel/NCL/cesm_scripts/Analysis//scripts/
 dir="/home/disk/eos4/rachel/inputdata/ssts/SOMclims/"
 #dir="/home/disk/rachel/CESM_outfiles/"
 numexps="3"
