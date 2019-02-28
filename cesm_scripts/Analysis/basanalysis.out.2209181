@@ -1,0 +1,24 @@
+hybrid2pres_daily_limlev.ncl
+ Copyright (C) 1995-2017 - All Rights Reserved
+ University Corporation for Atmospheric Research
+ NCAR Command Language Version 6.5.0
+ The use of this software is governed by a License Agreement.
+ See http://www.ncl.ucar.edu/ for more details.
+(0)	hybrid to pressure levels on daily data
+
+
+Variable: Experiment
+Type: string
+Total Size: 8 bytes
+            1 values
+Number of Dimensions: 1
+Dimensions and sizes:	[1]
+Coordinates: 
+Number Of Attributes: 1
+  _FillValue :	missing
+(0)	CAM4POP_NoMT_f09
+(0)	1
+fatal:["Execute.c":6394]:variable (U) is not in file (cdf_file)
+fatal:["Execute.c":8637]:Execute: Error occurred at or near line 73 in file hybrid2pres_daily_limlev.ncl
+
+finished
