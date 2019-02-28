@@ -31,6 +31,15 @@ else
     camversion="cam2"
 end if
 
+ERAlev = toint(getenv("NCL_ERAlev"))
+
+if ERAlev .eq. 1 .or. ERAlev .eq. 0 then
+    continue
+else 
+    print("setting ERAlev to default 0")
+    ERAlev = 0
+end if
+
 do ne = 0,nexps-1
         Experiments(ne) = getenv("NCL_ARG_" + tostring(3+ne))
 end do
@@ -41,7 +50,7 @@ secs = getenv("NCL_ARG_" + tostring(5+nexps))
 
 nyears = endyr-startyr+1
 
-timespans = (/"Annual","DJF","JJA","MAM","SON"/)
+timespans = (/"ANN","DJF","JJA","MAM","SON"/)
 ;timespan = getenv("NCL_season")
 dimtimes = dimsizes(timespans)
 nts = dimtimes(0)
@@ -70,7 +79,12 @@ do ts = 0,nts - 1
         print(Experiment)
 
 
-        filename = Dir + timespan + tostring(startyr) + "_" + tostring(nyears) + "_mean_Xpl_" + Experiment + "." + camversion + ".h0.nc"
+        if ERAlev .eq. 1 then
+            filename = Dir + timespan + tostring(startyr) + "_" + tostring(nyears) + "_mean_ERAIpl_" + Experiment + "." + camversion + ".h0.nc"
+        else
+            filename = Dir + timespan + tostring(startyr) + "_" + tostring(nyears) + "_mean_Xpl_" + Experiment + "." + camversion + ".h0.nc"
+        end if
+
         ; open file with seasonal averages
         cdf_file = addfile(filename,"r")
 
@@ -80,9 +94,15 @@ do ts = 0,nts - 1
 
         ; get pressure levels
 
-        nlevels = filevardimsizes(cdf_file,"lev_int")
-        level = cdf_file->lev_int
-        level!0="lev_int"
+        if ERAlev .eq. 1 then
+            nlevels = filevardimsizes(cdf_file,"lev_p")
+            level = cdf_file->lev_p
+            level!0="lev_int"
+        else
+            nlevels = filevardimsizes(cdf_file,"lev_int")
+            level = cdf_file->lev_int
+            level!0="lev_int"
+        end if
 
         nlat = filevardimsizes(cdf_file,"lat")
         nlon = filevardimsizes(cdf_file,"lon")
@@ -92,9 +112,21 @@ do ts = 0,nts - 1
         lon = tofloat(cdf_file->lon)
         lon!0="lon"
 
-        U = cdf_file->U_logp
-        V = cdf_file->V_logp
-        T = cdf_file->T_logp
+        if ERAlev .eq. 1 then
+            U = cdf_file->U
+            V = cdf_file->V
+            T = cdf_file->T
+
+            T!1="lev_int"
+            U!1="lev_int"
+            V!1="lev_int"
+
+        else
+            U = cdf_file->U_logp
+            V = cdf_file->V_logp
+            T = cdf_file->T_logp
+        end if
+
         PS = filePS->PS(0,:,:)
 
         ; mask out regions below ground
@@ -117,8 +149,11 @@ do ts = 0,nts - 1
         THETA = T ; set-up variables in THETA
         THETA = T * (conform(T,level,1)/1000.0)^(-1.0 * kappa)
 
-
-        filo = "EPfluxes_stat_" + timespan + tostring(startyr) + "_" + tostring(nyears) + "_" + Experiment + "." + camversion + ".h0.nc"
+        if ERAlev .eq. 1 then
+            filo = "EPfluxes_stat_ERAIpl" + timespan + tostring(startyr) + "_" + tostring(nyears) + "_" + Experiment + "." + camversion + ".h0.nc"
+        else
+            filo = "EPfluxes_stat_" + timespan + tostring(startyr) + "_" + tostring(nyears) + "_" + Experiment + "." + camversion + ".h0.nc"
+        end if
 
         check = printEP(Dir,filo,U,V,THETA,level)
 

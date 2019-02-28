@@ -32,6 +32,15 @@ nyears = endyr-startyr+1
 
 dirstr = getenv("NCL_dirstr")
 
+ERAlev = toint(getenv("NCL_ERAlev"))
+
+if ERAlev .eq. 1 .or. ERAlev .eq. 0 then
+    continue
+else
+    print("setting ERAlev to default 0")
+    ERAlev = 0
+end if
+
 Mtrans = getenv("NCL_Mtrans")
 GW = getenv("NCL_GW")
 O3 = getenv("NCL_Ozone")
@@ -51,14 +60,15 @@ Rd = 287.0
 kappa = (Rd/cp)
 g = 9.81
 
-;pnew  = (/1,2,3,4,5,6,8, 10, 15,20,25,30,40,50,70,100,150,200,250 \
-;         , 300,400,500,600,700,750,775,850,925,1000 /)
-
-pnew  = (/1000,925,850,775,750,600,500,400,300,250,200,150,100, \
+if ERAlev .eq. 1 then
+    pnew  = (/1,2,3,5,7, 10,20,30,50,70,100,125,150,175,200,225,250,300 \
+         , 350,400,450,500,550,600,650,700,750,775,800,825,850,875,900,925,950,975,1000 /)
+else
+    pnew  = (/1000,925,850,775,750,600,500,400,300,250,200,150,100, \
             50,30,25,10,7.5,5,3,2,1,0.75,0.5,0.3,0.2, \
             0.1,0.075,0.05,0.03,0.02,0.01,0.0075,0.005,0.0003,0.0002,0.0001 /)
 
-
+end if
 
 p_int = 10^fspan(-3,3,60)   ; interpolation targets
 p_int!0 = "lev_int" 
@@ -309,12 +319,18 @@ do ts = 0,nts - 1
         Tlog = vinth2p_ecmwf(T,hyam,hybm,p_int,PS,1,P0mb,1,True,1,TBOT,PHIS)
         Ulog = vinth2p_ecmwf(U,hyam,hybm,p_int,PS,1,P0mb,1,True,0,TBOT,PHIS)
         Vlog = vinth2p_ecmwf(V,hyam,hybm,p_int,PS,1,P0mb,1,True,0,TBOT,PHIS)
+        Zlog = vinth2p_ecmwf(Z3,hyam,hybm,p_int,PS,1,P0mb,1,True,-1,TBOT,PHIS)
 
 ;-----------------------------------------------------------------------
 ;Write variables to a new netcdf file, for stat fits in matlab
 ;-----------------------------------------------------------------------
-		filo = timespan + tostring(startyr) + "_" + tostring(nyears) + "_mean_Xpl_" + Experiment + "." + camversion + ".h0.nc"
-		system("/bin/rm -f " + Dir + filo)
+        if ERAlev .eq. 1 then
+     		filo = timespan + tostring(startyr) + "_" + tostring(nyears) + "_mean_ERAIpl_" + Experiment + "." + camversion + ".h0.nc"
+		else
+            filo = timespan + tostring(startyr) + "_" + tostring(nyears) + "_mean_Xpl_" + Experiment + "." + camversion + ".h0.nc"
+        end if
+
+        system("/bin/rm -f " + Dir + filo)
 		fout = addfile(Dir + filo, "c")
 	
 		setfileoption(fout,"DefineMode",True)
@@ -405,6 +421,7 @@ do ts = 0,nts - 1
         fout->T_logp = Tlog
         fout->U_logp = Ulog
         fout->V_logp = Vlog
+        fout->Z_logp = Zlog
 
  
 		delete(Experiment)

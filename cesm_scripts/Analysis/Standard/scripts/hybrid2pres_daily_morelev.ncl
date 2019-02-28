@@ -19,7 +19,7 @@ secs = getenv("NCL_ARG_" + tostring(5+nexps))
 
 nyears = endyr-startyr+1
 
-timespans = (/"Annual"/)
+timespans = (/"ANN"/)
 dimtimes = dimsizes(timespans)
 nts = dimtimes(0)
 
