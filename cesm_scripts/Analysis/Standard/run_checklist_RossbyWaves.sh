@@ -5,17 +5,18 @@
 cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis/Standard/scripts/
 #dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
 #dir="/home/disk/eos4/rachel/CESM_outfiles/"
-dir="/home/disk/eos4/rachel/CESM_outfiles/StationaryWaves/"
+dir="/home/disk/eos4/rachel/CESM_outfiles/"
 
-numexps="2"
-exps=("WACCMSC_SOMSSTs" "WACCMSC_SOMSSTs_Flat" "WACCM_f19_NoM")
+numexps="1"
+#exps=("WACCM_f19_CTL" "WACCM_f19_Flat" "WACCM_f19_NoM")
+exps=("CAM4SOM4topo_backwards" "WACCMSC_SOMSSTs_Flat" "WACCM_f19_NoM")
 #exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
 dirbase="/home/disk/rachel/CESM_outfiles/StationaryWaves/"
 expsctl=("CESMnoTf19") 
 start="2"
 end="31"
-version="122" # 122 for cesm 1.2.2, 106 for cesm 1.0.6
+version="106" # 122 for cesm 1.2.2, 106 for cesm 1.0.6
 
 # For Tak-Nak fluxes:
 export NCL_startyrC=11
@@ -66,8 +67,8 @@ eval export NCL_ARG_$index=$nsecs
 
 echo NCL_N_ARGS 
 
-#echo 'Initial_analysis_means.ncl'
-#ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
+echo 'Initial_analysis_means.ncl'
+ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
                                 # including PV, SF, divergences MSE, etc
                                 # then calculate climatological means
                                 # on monthly and annual time resolution
@@ -78,17 +79,25 @@ echo NCL_N_ARGS
 #echo 'hybrid2pres.ncl'
 #ncl hybrid2pres.ncl
 
-#echo 'hybrid2pres_morelev.ncl'
-#ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
+#export NCL_ERAlev=0 # if 1 put onto ERAI pressure levels
+
+echo 'hybrid2pres_morelev.ncl'
+ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
                             # monthly resolution data including caluclation of
                             # potential temperaturei, PV, etc and vertical
                             # gradients etc
                             # Calculates these ON Pressure levels, rather than
                             # calculating them on hybrid and then converting
 
+#export NCL_ERAlev=1 # if 1 put onto ERAI pressure levels
+
+#echo 'hybrid2pres_morelev.ncl'
+#ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
+
+
 # Use to get U, V, TH  on limited pressure levels
-#echo 'hybrid2pres_daily_limlev.ncl'
-#ncl hybrid2pres_daily_limlev.ncl
+echo 'hybrid2pres_daily_limlev.ncl'
+ncl hybrid2pres_daily_limlev.ncl
 
 #echo 'Create_Seas_ts.ncl'
 #ncl Create_Seas_ts.ncl  # create timeseries of all years of monthly data for
@@ -117,8 +126,15 @@ echo NCL_N_ARGS
 #ncl Calc_EKE_VT.ncl
 ##########
 
+export NCL_ERAlev=1
 echo 'Calc_EPfluxes.ncl'
 ncl Calc_EPfluxes.ncl
+
+#export NCL_ERAlev=0
+#echo 'Calc_EPfluxes.ncl'
+#ncl Calc_EPfluxes.ncl
+
+
 #echo 'Calc_RIdx.ncl'
 #ncl Calc_RIdx.ncl
 #echo 'Calc_Ks.ncl'
