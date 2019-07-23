@@ -361,6 +361,141 @@ begin
 
 end
 
+undef("calc_Btp_ZMKs")
+function calc_Btp_ZMKs(U,lat,filo)
+
+; Code to calculate Rossby stationary wave number, following Hoskins and Ambrizzi 1993.
+; Rossby waves are refracted in latitude towards regions of higher Ks
+; As dl/dt = cg dKs/dy
+; Ks is defined as (Beta*/Uzm)^0.5
+; Or on a Mercator coordinate:
+; Ks = (2Omega - 1/a(1/cos(phi) d/dphi(1/cos(phi) d/dphi(cos(phi)U))))*cos2(phi)/a
+
+begin
+   ; Set up some constants
+    a = 6.37122e06  ; radius of Earth
+    PI = 3.14159265358979
+
+    omega =  7.2921e-5
+    g = 9.80616
+
+    ; Calculate sines and cosines etc
+    phi = lat*PI/180.0      ; Get latitude in radians
+    cphi = cos(phi)
+    c2phi = cphi * cphi
+    acphi = a * cos(phi)
+    asphi = a * sin(phi)
+    a2 = a*a
+
+    ; get dims
+    dimNames = getvardims(U)
+    ndims =dimsizes(dimNames)
+ 
+    if ndims .eq. 2 then
+        timeid = 0
+        latid = 1
+    else if ndims .eq. 3 then
+        timeid = 0
+        levid = 1
+        latid = 2
+    else if ndims .eq. 4 then
+        timeid = 1
+        levid = 2
+        latid = 3
+    else
+        print(ndims)
+        print("wrong number of dimensions, need at least 3, and not expecting more than 4!")
+        print("make sure you pass zonal means")
+        return(0)
+    end if
+    end if
+    end if
+
+    if dimNames(latid) .eq. "lat" .or. dimNames(latid) .eq. "latitude" .or. dimNames(latid) .eq. "lats" .or. dimNames(latid) .eq. "Latitude" then
+        continue
+    else
+        print(dimNames(latid))
+        print("this should be latitude! Your file dimensions are out of order or your latitude dimension is named differently to expected")
+        return(0)
+    end if
+
+    if dimNames(timeid) .eq. "time" .or. dimNames(timeid) .eq. "times" then
+        continue
+    else
+        print(dimNames(timeid))
+        print("this should be time! Your file dimensions are out of order or your time dimension is named differently to expected")
+        return(0)
+    end if
+
+    if ndims .ge. 3 then
+        if dimNames(levid) .eq. "plev" .or. dimNames(levid) .eq. "lev_p" .or.dimNames(levid) .eq. "levels" .or. dimNames(levid) .eq. "level" then
+            continue
+        else
+            print(dimNames(levid))
+            print("this should be levels! Your file dimensions are out of order or your levels dimension is named differently to expected")
+            return(0)
+        end if
+    end if
+
+    ; Calculate coriolis parameter
+    f = 2*omega*sin(phi)
+    f2 = conform(U,f * f,latid)
+
+    ; Calculate Ucos(phi)
+    Ucphi = U * conform(U,cphi,latid)
+    copy_VarCoords(U,Ucphi)
+
+    ; Calculate d/dphi (Ucphi)
+    dUcphidphi = center_finite_diff_n(Ucphi,phi,False,0,latid)
+
+    ; Calculate 1/cphi * dUcphi/dphi
+    tempdUcphidphi = dUcphidphi / conform(dUcphidphi,cphi,latid)
+
+    ; Calculate meridional gradient of this
+    d2Uetcdphi = center_finite_diff_n(tempdUcphidphi,phi,False,0,latid)
+
+    ; Calculate BetaM
+
+    BetaM1 = 2.0 * omega * c2phi / a
+
+    BetaM2 = d2Uetcdphi * conform(d2Uetcdphi,c2phi,latid) / a2
+
+    BetaM = conform(BetaM2,BetaM1,latid) - BetaM2
+
+    ; Calculate inverse of U
+    Uinv = 1. / where(U.ne.0, U, U@_FillValue)
+
+    ; Calculate Ks = (a^2 cos(phi) * BetaM / U)^0.5
+    Ks2 = conform(BetaM,a2,-1) * conform(BetaM,cphi,latid) * BetaM * Uinv
+    Ks = sqrt(Ks2)
+
+    copy_VarCoords(U,Ks)
+
+    copy_VarCoords(Ks,Ks2)
+    copy_VarCoords(Ks,BetaM)
+
+    ;----------------------------------------------------------------------
+    ; Write out results to a new netcdf file
+    ;-----------------------------------------------------------------------
+    fout_std = addfile(filo, "c")
+
+    setfileoption(fout_std,"DefineMode",True)
+
+    ;set attributes of output file
+    fAtt = True
+    fAtt@creation_date = systemfunc("date")
+    fAtt@history = "created by Calc_Btp_ZMKs on " + systemfunc("date")
+    fileattdef(fout_std,fAtt)
+
+    fout_std->U = U
+    fout_std->Ksa = Ks
+    fout_std->Ks2 = Ks2
+
+    return(1)
+
+end
+
+
 undef("printEP")
 function printEP(Dir,filo:string,U,V,THETA,level)
 ; Calculate EP fluxes on a daily basis and then take the average.
@@ -754,4 +889,272 @@ begin
 
     return(1)
 end
+
+; Plumb fluxes
+; Follows derivation of https://paperpile.com/view/3fd7d9e7-351f-08da-ba1d-af2f7191ed86
+; Calculated fluxes from climatological seasonal means
+; with perturbations as differences from zonal mean
+; Quasi-geostrophic, in spherical coordinates
+
+
+undef("printPlumb2D")
+function printPlumb2D(file_in,SF,lev_p,filo)
+begin
+
+    a = 6.37122e06  ; radius of Earth
+    pi = 3.14159265358979
+    omega =  7.2921e-5
+    g = 9.80616
+    P0 = 1000.0
+
+    nlat = filevardimsizes(file_in,"lat")
+    nlon = filevardimsizes(file_in,"lon")
+
+    lat = tofloat(file_in->lat)
+    lat!0="lat"
+    lon = tofloat(file_in->lon)
+    lon!0="lon"
+
+    ; get dimension indices
+    dimNames = getvardims(SF)
+    ndims = dimsizes(dimNames)
+
+    do idim =0,ndims-1
+        if dimNames(idim) .EQ. "lat" then
+            lat_idx = idim
+        else if dimNames(idim) .EQ. "lon" then
+            lon_idx = idim
+        end if
+        end if
+    end do
+
+    ; Calculate deviation streamfunction: effect of more ice
+
+    PSIdev = dim_rmvmean_n(SF,lon_idx)
+
+    ; Calculate lat and lon in radians
+    latr = pi/180.0 * lat(:)
+    lonr = pi/180.0 * lon(:)
+
+    ; Calculate sin and cos of lat
+    sinlat = conform_dims(dimsizes(SF),sin(latr),lat_idx)
+    coslat = conform_dims(dimsizes(SF),cos(latr),lat_idx)
+
+    ; Calculate coriolis frequency
+    ftmp =  2.*2.*pi/(60.*60.*24.)*sin(latr)
+    ftmp!0 = "lat"
+    ftmp&lat = lat
+    ftmp@_FillValue = SF@_FillValue
+
+    ; missing for 10S - 10N
+    do ilat = 0, nlat-1
+        if (abs(lat(ilat) ).lt. 10. ) then
+            ftmp(ilat)= ftmp@_FillValue
+        end if
+    end do
+
+    f = conform_dims(dimsizes(SF),ftmp,lat_idx)
+
+    ; Calculate various derivatives of PSIdev
+
+    dPSIdevdlon = center_finite_diff_n(PSIdev,lonr,True,0,lon_idx)
+
+    ddPSIdevdlonlon = center_finite_diff_n(dPSIdevdlon,lonr,True,0,lon_idx)
+
+    dPSIdevdlat = center_finite_diff_n(PSIdev,latr,False,0,lat_idx)
+
+    ddPSIdevdlatlat = center_finite_diff_n(dPSIdevdlat,latr,False,0,lat_idx)
+
+    ddPSIdevdlonlat = center_finite_diff_n(dPSIdevdlon,latr,False,0,lat_idx)
+
+    ; Calculate terms, taking cosphi inside the bracket mostly
+
+    xterm1 = dPSIdevdlon * dPSIdevdlon
+    xterm2 = PSIdev * ddPSIdevdlonlon
+
+    yterm1 = dPSIdevdlat * dPSIdevdlon
+    yterm2 = PSIdev * ddPSIdevdlonlat
+
+    ; coeff normalized by 1000mb
+    coeff = conform_dims(dimsizes(SF),lev_p/(1000.0 *2.0 * a * a),-1)
+
+    ; Add together terms with appropriate multipliers, taking cosphi inside the bracket, and a2 outside
+    ; Add together terms with appropriate multipliers, taking cosphi inside the bracket, and a2 outside
+    ; Mask out where westerlies are small, or negative
+    Fx = (coeff/coslat) * (xterm1 - xterm2)
+
+    Fy = coeff * (yterm1 - yterm2)
+    ; for output
+    print(dimsizes(Fx))
+    Fx!0 = "lat"
+    Fx&lat = lat
+    Fx!1 = "lon"
+    Fx&lon = lon
+
+    copy_VarMeta(Fx,Fy)
+    copy_VarMeta(Fx,PSIdev)
+    copy_VarMeta(Fx,SF)
+
+    copy_VarMeta(Fx,dPSIdevdlat)
+    copy_VarMeta(Fx,ddPSIdevdlonlon)
+    copy_VarMeta(Fx,ddPSIdevdlonlat)
+
+    Fx@units = "m^2/s^2"
+    Fy@units = "m^2/s^2"
+    PSIdev@units = "m^2/s"
+
+    filo->Fx = Fx
+    filo->Fy = Fy
+    filo->PSIdev = PSIdev
+    filo->SF = SF
+    filo->dPSIdevdlon = dPSIdevdlon
+    filo->dPSIdevdlat = dPSIdevdlat
+    filo->ddPSIdevdlonlon = ddPSIdevdlonlon
+    filo->ddPSIdevdlonlat = ddPSIdevdlonlat
+
+    return(1)
+
+end
+
+
+
+
+undef("printPlumb")
+function printPlumb(file_in,SF,filo)
+begin
+
+    a = 6.37122e06  ; radius of Earth
+    pi = 3.14159265358979
+    omega =  7.2921e-5
+    g = 9.80616
+    P0 = 1000.0
+
+    nlat = filevardimsizes(file_in,"lat")
+    nlon = filevardimsizes(file_in,"lon")
+
+    lat = tofloat(file_in->lat)
+    lat!0="lat"
+    lon = tofloat(file_in->lon)
+    lon!0="lon"
+
+    ; get dimension indices
+    dimNames = getvardims(SF)
+    ndims = dimsizes(dimNames)
+
+    do idim =0,ndims-1
+        if dimNames(idim) .EQ. "lev_p" then
+            lev_idx = idim
+        else if dimNames(idim) .EQ. "lat" then
+            lat_idx = idim
+        else if dimNames(idim) .EQ. "lon" then
+            lon_idx = idim
+        end if
+        end if
+        end if
+    end do
+
+    ; Calculate deviation streamfunction: effect of more ice
+
+    PSIdev = dim_rmvmean_n(SF,lon_idx)
+
+    ; conform pressure levels
+    level = file_in->lev_p
+    levels = conform_dims(dimsizes(SF),level,lev_idx)
+    
+    ; Calculate lat and lon in radians
+    latr = pi/180.0 * lat(:)
+    lonr = pi/180.0 * lon(:)
+
+    ; Calculate sin and cos of lat
+    sinlat = conform_dims(dimsizes(SF),sin(latr),lat_idx)
+    coslat = conform_dims(dimsizes(SF),cos(latr),lat_idx)
+
+    ; Calculate coriolis frequency
+    ftmp =  2.*2.*pi/(60.*60.*24.)*sin(latr)
+    ftmp!0 = "lat"
+    ftmp&lat = lat
+    ftmp@_FillValue = SF@_FillValue
+
+    ; missing for 10S - 10N
+    do ilat = 0, nlat-1
+        if (abs(lat(ilat) ).lt. 10. ) then
+            ftmp(ilat)= ftmp@_FillValue
+        end if
+    end do
+
+    f = conform_dims(dimsizes(SF),ftmp,lat_idx)
+
+    ; Calculate buoyancy
+    ;dthdz = center_finite_diff_n(TH,Z,False,0,lev_idx)
+
+    ;NN = (g/TH) * dthdz
+
+   ; Calculate various derivatives of PSIdev
+
+    dPSIdevdlon = center_finite_diff_n(PSIdev,lonr,True,0,lon_idx)
+
+    ddPSIdevdlonlon = center_finite_diff_n(dPSIdevdlon,lonr,True,0,lon_idx)
+
+    dPSIdevdlat = center_finite_diff_n(PSIdev,latr,False,0,lat_idx)
+
+    ddPSIdevdlatlat = center_finite_diff_n(dPSIdevdlat,latr,False,0,lat_idx)
+
+    ddPSIdevdlonlat = center_finite_diff_n(dPSIdevdlon,latr,False,0,lat_idx)
+
+    ; Different to original script: using Z instead of -scaleheight * log(level/1000)
+    ;dPSIdevdz = center_finite_diff_n(PSIdev,Z,False,0,lev_idx)
+    ;ddPSIdevdlonz = center_finite_diff_n(dPSIdevdlon,Z,False,0,lev_idx)
+    ;ddPSIdevdlatz = center_finite_diff_n(dPSIdevdlat,Z,False,0,lev_idx)
+
+    ; Calculate terms, taking cosphi inside the bracket mostly
+
+    xterm1 = dPSIdevdlon * dPSIdevdlon
+    xterm2 = PSIdev * ddPSIdevdlonlon
+
+    yterm1 = dPSIdevdlat * dPSIdevdlon
+    yterm2 = PSIdev * ddPSIdevdlonlat
+
+    ; coeff normalized by 1000mb
+    coeff = conform_dims(dimsizes(SF),level/(1000.0 *2.0 * a * a),lev_idx)
+
+    ; Add together terms with appropriate multipliers, taking cosphi inside the bracket, and a2 outside
+    ; Mask out where westerlies are small, or negative
+    Fx = (coeff/coslat) * (xterm1 - xterm2)
+
+    Fy = coeff * (yterm1 - yterm2)
+    ; for output
+    print(dimsizes(Fx))
+    Fx!0 = "level"
+    Fx&level = level
+    Fx!1 = "lat"
+    Fx&lat = lat
+    Fx!2 = "lon"
+    Fx&lon = lon
+
+    copy_VarMeta(Fx,Fy)
+    copy_VarMeta(Fx,PSIdev)
+    copy_VarMeta(Fx,SF)
+
+    copy_VarMeta(Fx,dPSIdevdlat)
+    copy_VarMeta(Fx,ddPSIdevdlonlon)
+    copy_VarMeta(Fx,ddPSIdevdlonlat)
+
+    Fx@units = "m^2/s^2"
+    Fy@units = "m^2/s^2"
+    PSIdev@units = "m^2/s"
+
+    filo->Fx = Fx
+    filo->Fy = Fy
+    filo->PSIdev = PSIdev
+    filo->SF = SF
+    filo->dPSIdevdlon = dPSIdevdlon
+    filo->dPSIdevdlat = dPSIdevdlat
+    filo->ddPSIdevdlonlon = ddPSIdevdlonlon
+    filo->ddPSIdevdlonlat = ddPSIdevdlonlat
+
+    return(1)
+
+end
+
+
 
