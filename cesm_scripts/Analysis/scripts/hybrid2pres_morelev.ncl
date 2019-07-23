@@ -111,7 +111,7 @@ do ts = 0,nts - 1
             VU = cdf_file->VU
             VT = cdf_file->VT
             VQ = cdf_file->VQ
-            VZ = cdf_file->VZ
+            ;VZ = cdf_file->VZ
 		end if
 
         if (diabatic .EQ. 1) then
@@ -289,13 +289,13 @@ do ts = 0,nts - 1
             VUpres = vinth2p_ecmwf(VU,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS)
             VTpres = vinth2p_ecmwf(VT,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS)
             VQpres = vinth2p_ecmwf(VQ,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS)
-            VZpres = vinth2p_ecmwf(VZ,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS)
+            ;VZpres = vinth2p_ecmwf(VZ,hyam,hybm,pnew,PS,1,P0mb,1,True,0,TBOT,PHIS)
 
             VVpresInt = vinth2p_ecmwf(VV,hyam,hybm,p_int,PS,1,P0mb,1,True,0,TBOT,PHIS)
             VUpresInt = vinth2p_ecmwf(VU,hyam,hybm,p_int,PS,1,P0mb,1,True,0,TBOT,PHIS)
             VTpresInt = vinth2p_ecmwf(VT,hyam,hybm,p_int,PS,1,P0mb,1,True,0,TBOT,PHIS)
             VQpresInt = vinth2p_ecmwf(VQ,hyam,hybm,p_int,PS,1,P0mb,1,True,0,TBOT,PHIS)
-            VZpresInt = vinth2p_ecmwf(VZ,hyam,hybm,p_int,PS,1,P0mb,1,True,0,TBOT,PHIS)
+            ;VZpresInt = vinth2p_ecmwf(VZ,hyam,hybm,p_int,PS,1,P0mb,1,True,0,TBOT,PHIS)
 
 		end if
 
@@ -401,13 +401,13 @@ do ts = 0,nts - 1
             fout ->VU = VUpres
             fout ->VT = VTpres
             fout ->VQ = VQpres
-            fout ->VZ = VZpres
+            ;fout ->VZ = VZpres
 
             fout ->VVint = VVpresInt
             fout ->VUint = VUpresInt
             fout ->VTint = VTpresInt
             fout ->VQint = VQpresInt
-            fout ->VZint = VZpresInt
+            ;fout ->VZint = VZpresInt
         end if
         
         if (diabatic .EQ. 1) then

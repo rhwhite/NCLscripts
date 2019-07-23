@@ -11,37 +11,34 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/popRemap.ncl"
 begin
 
 ; Get experiment names
-nexps = 1
+dir = "/home/disk/eos4/rachel/CESM_outfiles/AMOC/"
 
-;dirs = (/"/home/disk/rachel/CESM_outfiles/CAM4POP_B1850_NCAR/ocn/hist/","/home/disk/eos4/rachel/CESM_outfiles/CAM4POP_f19g16C_noTopo/ocn/hist/","/home/disk/eos4/rachel/CESM_outfiles/CAM4POP_f19g16C_noMT/ocn/hist/","/home/disk/eos4/rachel/CESM_outfiles/CAM4POP_f19g16C_noR/ocn/hist/"/)
+exps = (/"CAM4POP_NoMTR_f19"/) ;,"CAM4POP_NoMT_f09","CAM4POP_NoR_f19","CAM4POP_NoR_f09","CAM4POP_NoTopo_f19","CAM4POP_NoTopo_f09","CAM4POP_NoMT_AtAr_hosing_f19"/)
+;exps = (/"CAM4POP_CTL_f09","CAM4POP_CTL_f19"/)
 
-;files = (/"_HMXL_TEMP_MOC_SALT_RHO_b40.1850.track1.2deg.003.pop.080001-089912.nc", "_CAM4POP_f19g16C_noTopo.pop.h.0350-0373.nc","_CAM4POP_f19g16C_noMT.pop.h.0250-0273.nc","_CAM4POP_f19g16C_noR.pop.h.0411-0450.nc"/)
+nexps = dimsizes(exps)
 
-;dirs = (/"/home/disk/eos4/rachel/CESM_outfiles/Cheyenne/CAM4POP_NoMThosing/ocn/hist/"/)
-dirs = (/"/home/disk/eos4/rachel/CESM_outfiles/CAM4POP_f19g16C_noMT/ocn/hist/"/)
-
-;files = (/"clim_CAM4POP_NoMThosing.pop.h.0251-0300.nc"/)
-files = (/"clim_ROFF_F_CAM4POP_f19g16C_noMT.pop.h.0001-0049.nc"/)
 seasons = (/"ANN","DJF","MAM","JJA","SON"/)
 
+startyr = "0251"
+endyr = "0300"
 
-do ifile = 0,nexps-1
+do iexp = 0,nexps-1
     do iseas = 0,4
         seas = seasons(iseas)
-        inputdir = dirs(ifile)
-        print(inputdir)
+        ifile = seas + "clim_" + exps(iexp) + ".pop.h." + startyr + "-" + endyr + ".nc"
+        inputdir = dir + "/" + exps(iexp) + "/ocn/"
 
-        filein = files(ifile)
-
-        print(filein)
-        in = addfile(inputdir + seas + filein,"r")
-        outputfile = inputdir + "regrid_" + seas + filein
+        print(inputdir + ifile)
+        in = addfile(inputdir + ifile,"r")
+        outputfile = inputdir + "regrid_" + ifile
 
         HMXL = in->HMXL
         TEMP = in->TEMP
         SALT = in->SALT
         RHO = in->RHO 
-        MOC = in->MOC
+        MOC = in->AMOC
+        GMOC = in->GlobalMOC
         ROFF = in->ROFF_F
 
         remapHMXL = PopLatLon(HMXL,"gx1v6","1x1d","bilin","da","100716")
@@ -66,7 +63,8 @@ do ifile = 0,nexps-1
         fout_std->TEMP = remapTEMP
         fout_std->SALT = remapSALT
         fout_std->RHO = remapRHO
-        fout_std->MOC = MOC
+        fout_std->AMOC = MOC
+        fout_std->GlobalMOC = GMOC
         fout_std->ROFF = remapROFF
         print("printed it")
 

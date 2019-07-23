@@ -5,18 +5,17 @@
 cd /home/disk/eos4/rachel/git/NCL/cesm_scripts/Analysis//scripts/
 #dir="/home/disk/eos4/rachel/CESM_outfiles/HYAK/"
 #dir="/home/disk/eos4/rachel/CESM_outfiles/"
-dir="/home/disk/eos4/rachel/CESM_outfiles/"
+dir="/home/disk/eos4/rachel/CESM_outfiles/AMOC/"
 
-numexps="1"
-#exps=("WACCM_f19_CTL" "WACCM_f19_Flat" "WACCM_f19_NoM")
-exps=("CAM4SOM4topo_backwards" "WACCMSC_SOMSSTs_Flat" "WACCM_f19_NoM")
-#exps=("WACCM_f19_NoM" "WACCM_f19_NoT" "WACCM_f19_NoR" "WACCM_f19_LGM" "WACCM_f19_CTL")
+numexps="5"
+#exps=("CAM4POP_NoMTR_f19" "CAM4POP_NoMT_f19" "CAM4POP_NoR_f19" "CAM4POP_NoMT_f09" "CAM4POP_NoR_f09" "CAM4POP_NoTopo_f19" "CAM4POP_NoTopo_f09")
+exps=("CAM4slab_CTL_f19" "CAM4slab_NoTopo_f19" "CAM4slab_NoMT_f19" "CAM4slab_NoR_f19" "CAM4slab_NoMTR_f19")
 #expsctl=("WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL" "WACCM_f19_CTL")
-dirbase="/home/disk/rachel/CESM_outfiles/StationaryWaves/"
+dirbase="/home/disk/rachel/CESM_outfiles/"
 expsctl=("CESMnoTf19") 
-start="2"
-end="31"
-version="106" # 122 for cesm 1.2.2, 106 for cesm 1.0.6
+start="11"
+end="40"
+version="122" # 122 for cesm 1.2.2, 106 for cesm 1.0.6
 
 # For Tak-Nak fluxes:
 export NCL_startyrC=11
@@ -25,18 +24,22 @@ export NCL_nyearsC=20
 nsecs="00000"   # default = 00000, when running hybrid will be 21600
 h2start="01"    # default = 01, when running hybrid this will be 02
 
+
+export NCL_low_bpf=2 # 2 days minimum filter
+export NCL_high_bpf=6 # 6 days maximum filter
 export NCL_ARG_lonstart=0
 export NCL_ARG_lonend=360
 
-export NCL_dirstr="/atm/hist/"
+export NCL_dirstr="/atm/"
 export NCL_Ozone=0
-export NCL_Mtrans=0
+export NCL_Mtrans=1
 export NCL_GW=0
 export NCL_xrad=0
 export NCL_dia=1
 export NCL_N_ARGS=$#
 export NCL_h2mon="02"
-
+export NCL_dailyfile='h1'
+export NCL_ERAlev=0
 export NCL_CESMversion=$version
 
 export NCL_nsecs=$nsecs
@@ -67,8 +70,8 @@ eval export NCL_ARG_$index=$nsecs
 
 echo NCL_N_ARGS 
 
-echo 'Initial_analysis_means.ncl'
-ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
+#echo 'Initial_analysis_means.ncl'
+#ncl Initial_analysis_means.ncl  # Add variables to monthly resolution files
                                 # including PV, SF, divergences MSE, etc
                                 # then calculate climatological means
                                 # on monthly and annual time resolution
@@ -96,8 +99,8 @@ ncl hybrid2pres_morelev.ncl # convert many variables onto hybrid levels from
 
 
 # Use to get U, V, TH  on limited pressure levels
-echo 'hybrid2pres_daily_limlev.ncl'
-ncl hybrid2pres_daily_limlev.ncl
+#echo 'hybrid2pres_daily_limlev.ncl'
+#ncl hybrid2pres_daily_limlev.ncl
 
 #echo 'Create_Seas_ts.ncl'
 #ncl Create_Seas_ts.ncl  # create timeseries of all years of monthly data for
@@ -114,21 +117,30 @@ ncl hybrid2pres_daily_limlev.ncl
 #ncl Calc_ZMKs_monthly.ncl
 
 ## Eddy characteristics
-#echo 'Calc_Eady.ncl'
-#ncl Calc_Eady.ncl
+#echo 'Calc_Eady_long.ncl'
+#ncl Calc_Eady_long.ncl
 #echo 'LanczosF_Z850_250.ncl'
 #ncl LanczosF_Z850_250.ncl
 #echo 'Calc_varZ850.ncl'
 #ncl Calc_varZ850.ncl
+
+#export NCL_var="V"
+#export NCL_inlev="850"
+#echo 'Lanczos bandpass filter'
+#ncl LanczosF_bandpass_pres.ncl
+#export NCL_inlev="250"
+#echo 'Lanczos bandpass filter'
+#ncl LanczosF_bandpass_pres.ncl
+
 #echo 'LanczosF_UVT_EKE_EV.ncl'
 #ncl LanczosF_UVT_EKE_EV.ncl
 #echo 'Calc_EKE_VT.ncl'
 #ncl Calc_EKE_VT.ncl
 ##########
 
-export NCL_ERAlev=1
-echo 'Calc_EPfluxes.ncl'
-ncl Calc_EPfluxes.ncl
+#export NCL_ERAlev=1
+#echo 'Calc_EPfluxes.ncl'
+#ncl Calc_EPfluxes.ncl
 
 #export NCL_ERAlev=0
 #echo 'Calc_EPfluxes.ncl'

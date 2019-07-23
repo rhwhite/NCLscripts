@@ -9,6 +9,7 @@ print("hybrid to pressure levels on daily data")
 Direc = getenv("NCL_ARG_1")
 nexps = toint(getenv("NCL_ARG_2"))
 Experiments = new(nexps,"string")
+dirstr = getenv("NCL_dirstr")
 
 do ne = 0,nexps-1
     Experiments(ne) = getenv("NCL_Exp2_" + tostring(ne))
@@ -43,8 +44,8 @@ pnew  = (/ 2, 5,10,30,50,100,200,250,300,500,700,850,975/)
 
 do exps = 0,nexps-1
     Experiment = Experiments(exps)
-    Dir = (Direc + Experiment + "/atm/hist/raw/")
-    DirFinal = (Direc + Experiment + "/atm/hist/")
+    Dir = (Direc + Experiment + "/" + dirstr + "/raw/")
+    DirFinal = (Direc + Experiment + "/" + dirstr + "/")
 
     system("mkdir " + Dir + "Temp_pl")
 

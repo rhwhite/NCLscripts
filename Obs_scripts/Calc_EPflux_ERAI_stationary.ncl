@@ -45,7 +45,7 @@ T = cdf_file->t(:,:,:)
 
 ; Set up filename
 fileo = "/EPfluxes_" + filein
-system("/bin/rm -f " + fileo)
+system("/bin/rm -f " + DirOut + fileo)
 
 lev_id = 0
 lon_id = 2
@@ -61,8 +61,41 @@ copy_VarCoords(U,TH)
 copy_VarCoords(U,V)
 
 ; Calculate EP fluxes
-check = printEP_stat(Dirout,fileo,U,V,TH,level)
+check = printEP_stat(DirOut,fileo,U,V,TH,level)
 
 print(check)
+
+
+; Now repeat for JJA
+filein = "EI.JJA.nc"
+
+cdf_file = addfile(Dir + "/" + filein,"r")
+
+U = cdf_file->u(:,:,:)
+V = cdf_file->v(:,:,:)
+T = cdf_file->t(:,:,:)
+
+; Set up filename
+fileo = "/EPfluxes_" + filein
+system("/bin/rm -f " + DirOut + fileo)
+
+lev_id = 0
+lon_id = 2
+
+; Calculate TH from T
+TH = T*((1000.0/conform(T,level,lev_id))^0.286)
+
+; Change coordinate to those matching CESM
+U!0 = "lev_int"
+U!1 = "lat"
+U!2 = "lon"
+copy_VarCoords(U,TH)
+copy_VarCoords(U,V)
+
+; Calculate EP fluxes
+check = printEP_stat(DirOut,fileo,U,V,TH,level)
+
+print(check)
+
 
 end
