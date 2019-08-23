@@ -70,7 +70,10 @@ d2Uetcdphi = center_finite_diff_n(tempdUcphidphi,phi,False,0,1)
 
 BetaM1 = 2.0 * omega * c2phi / a
 
-BetaM2 = d2Uetcdphi * conform(d2Uetcdphi,c2phi,1) / a2
+; Correction on 22nd Aug 2019: c2phi to cphi
+; Mostly this only impacts higher latitudes
+;BetaM2 = d2Uetcdphi * conform(d2Uetcdphi,c2phi,1) / a2
+BetaM2 = d2Uetcdphi * conform(d2Uetcdphi,cphi,1) / a2
 
 BetaM = conform(BetaM2,BetaM1,1) - BetaM2
 
