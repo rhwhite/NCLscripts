@@ -10,37 +10,34 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/contributed.ncl"
 ; Ks = (2Omega - 1/a(1/cos(phi) d/dphi(1/cos(phi) d/dphi(cos(phi)U))))*cos2(phi)/a
 begin
 
-; Get experiment names
+; Get arguments
+argDir = getenv("NCL_ARG_dir")
+file_prefix = getenv("NCL_ARG_filename")
 
-startyr=1980
-endyr=2015
-nyears = endyr-startyr+1
+Dir = argDir
 
-;Dir = "/home/Earth/rwhite/data/ERAI/daily_mean/"
-Dir = "/esarchive/scratch/rwhite/data/ERAI/daily_data/"
-file_prefix = "FFT_Tur3_Lanczos10.0_noleap_allDaily_U_250mb_3deg_1980-2015.nc"
-;file_prefix = "FFT_Tur_lowpass4_noleap_Daily_U_250mb_3deg_1980-2015.nc"
 ; Define some constants
 a = 6.37122e06  ; radius of Earth
 PI = 3.14159265358979
 omega =  7.2921e-5  ; rotation speed
 g = 9.80616     ; gravitational constant
 
-
 filename = (Dir + file_prefix)
-
+print(filename)
 cdf_filepl = addfile(filename,"r")
 
 ; get coordinate data
-nlat = filevardimsizes(cdf_filepl,"latitude")
-nlon = filevardimsizes(cdf_filepl,"longitude")
+nlat = filevardimsizes(cdf_filepl,"lat")
+nlon = filevardimsizes(cdf_filepl,"lon")
+ntimes = filevardimsizes(cdf_filepl,"time")
 
-lat = cdf_filepl->latitude
-lon = cdf_filepl->longitude
+lat = cdf_filepl->lat
+lon = cdf_filepl->lon
 times = cdf_filepl->time
 
 ; get U wind data
-U = cdf_filepl->u(:,:,:)
+;U = cdf_filepl->U(:,:,:)
+U = cdf_filepl->U(:,0,:,:)
 
 ; Set up some trig constants
 phi = lat*PI/180.0      ; Get latitude in radians
@@ -58,7 +55,7 @@ Ucphi = U * conform(U,cphi,1)
 copy_VarCoords(U,Ucphi)
 
 ; Calculate d/dphi (Ucphi)
-dUcphidphi = center_finite_diff_n(Ucphi(time|:,latitude|:,longitude|:),phi,False,0,1)
+dUcphidphi = center_finite_diff_n(Ucphi(time|:,lat|:,lon|:),phi,False,0,1)
 
 ; Calculate 1/cphi * dUcphi/dphi
 tempdUcphidphi = dUcphidphi / conform(dUcphidphi,cphi,1)
@@ -77,16 +74,20 @@ BetaM2 = d2Uetcdphi * conform(d2Uetcdphi,cphi,1) / a2
 
 BetaM = conform(BetaM2,BetaM1,1) - BetaM2
 
-; Calculate zonal mean of U
-Umean = dim_avg_Wrap(U)
-printVarSummary(Umean)
 ; Calculate inverse of U
-Uinv = 1. / where(Umean.ne.0, Umean, Umean@_FillValue) 
+Uinv = 1. / where(U.ne.0, U, U@_FillValue) 
 
 ; Calculate Ks = (a^2 cos(phi) * BetaM / U)^0.5
-Ks2 = conform(BetaM,a2,-1) * conform(BetaM,cphi,1) * BetaM * conform(BetaM,Uinv,1)
+Ks2 = conform(BetaM,a2,-1) * conform(BetaM,cphi,1) * BetaM * Uinv
 Ks = sqrt(Ks2)
 
+delete("BetaM1")
+delete("BetaM2")
+delete("Uinv")
+delete("d2Uetcdphi")
+delete("tempdUcphidphi")
+delete("Ucphi")
+delete("U")
 ;Ks!0 = "time"
 ;Ks!1 = "lat"
 ;Ks!2 = "lon"
@@ -97,13 +98,13 @@ Ks = sqrt(Ks2)
 
 copy_VarCoords(U,Ks)
 copy_VarCoords(U,Ks2)
-
 copy_VarCoords(Ks,BetaM)
-
 
 ;----------------------------------------------------------------------
 ; Write out results to a new netcdf file
 ;-----------------------------------------------------------------------
+; allow large variables
+setfileoption("nc","format","netcdf4")
 
 filo = "Ks_" + file_prefix
 system("/bin/rm -f " + Dir + filo)
@@ -115,12 +116,22 @@ setfileoption(fout_std,"DefineMode",True)
 fAtt = True
 fAtt@creation_date = systemfunc("date")
 fileattdef(fout_std,fAtt)
-fAtt@history = "created by Calc_Btp_Ks_ERAI_daily.ncl on " + systemfunc("date")
+print("created it")
+filedimdef(fout_std,(/"time","lat","lon"/),(/ntimes,nlat,nlon/),(/True,False,False/))
+filevardef(fout_std,"Ks",typeof(Ks),getvardims(Ks))
+filevardef(fout_std,"Ks2",typeof(Ks2),getvardims(Ks2))
+filevardef(fout_std,"lat",typeof(lat),(/"lat"/))
+filevardef(fout_std,"lon",typeof(lon),(/"lon"/))
+filevardef(fout_std,"time",typeof(times),(/"time"/))
+
+fAtt@history = "created by Calc_Btp_Ks_daily_generic.ncl on " + systemfunc("date")
 
 ;filevardef(fout_std,"U",typeof(U),getvardims(U))
-fout_std->Ks = Ks
-fout_std->Ks2 = Ks2
-
+fout_std->Ks = (/Ks/)
+fout_std->Ks2 = (/Ks2/)
+fout_std->lat = (/lat/)
+fout_std->lon = (/lon/)
+fout_std->time = (/times/)
 
 print("printed it")
 
