@@ -11,10 +11,24 @@ Direc = getenv("NCL_ARG_1")
 nexps = toint(getenv("NCL_ARG_2"))
 Experiments = new(nexps,"string")
 forCasey=toint(getenv("NCL_forCasey"))
+version=getenv("NCL_CESMversion")
+
+; default argument if missing
+if ismissing(forCasey) then
+    forCasey = 0 
+end if
+
+ERAlev=toint(getenv("NCL_ERAlev"))
 
 do ne = 0,nexps-1
         Experiments(ne) = getenv("NCL_ARG_" + tostring(3+ne))
 end do
+
+if version .EQ. "122" then
+    camversion="cam"
+else
+    camversion="cam2"
+end if
 
 startyr = toint(getenv("NCL_startyr"))
 endyr = toint(getenv("NCL_endyr"))
@@ -23,15 +37,22 @@ nyears = endyr-startyr+1
 
 dirstr = getenv("NCL_dirstr")
 
-timespans = (/"Annual","DJF","MAM","JJA","SON"/)
+timespans = (/"DJF","MAM","JJA","SON","ANN"/)
 dimtimes = dimsizes(timespans)
 nts = dimtimes(0)
 
 dimsexps = dimsizes(Experiments)
 nexps = dimsexps(0)
 
-pnew  = (/1,2,3,4,5,6,8, 10, 15,20,25,30,40,50,70,100,150,200,250 \
-	     , 300,400,500,600,700,750,775,850,925,1000 /)
+if ERAlev .eq. 1 then
+    print("ERAlev")
+    pnew  = (/1,2,3,5,7, 10,20,30,50,70,100,125,150,175,200,225,250,300 \
+         , 350,400,450,500,550,600,650,700,750,775,800,825,850,875,900,925,950,975,1000 /)
+else
+    pnew  = (/1000,925,850,775,750,600,500,400,300,250,200,150,100, \
+            50,30,25,10,7.5,5,3,2,1,0.75,0.5,0.3,0.2, \
+            0.1,0.075,0.05,0.03,0.02,0.01,0.0075,0.005,0.0003,0.0002,0.0001 /)
+end if
 
 cp = 1.00464e3
 Rd = 287.0
@@ -48,9 +69,9 @@ do exps = 0,nexps-1
         print(Experiment)
 
         if (forCasey .eq. 1) then
-            filename = (Dir + timespan + "UVTWO3_" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")
+            filename = (Dir + timespan + "UVTWO3_" + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + "." + camversion + ".h0.nc")
         else
-            filename = (Dir + timespan + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + ".cam2.h0.nc")
+            filename = (Dir + timespan + tostring(startyr) + "_" + tostring(nyears) + "_ts_" + Experiment + "." + camversion + ".h0.nc")
         end if
 
         cdf_file = addfile(filename,"r")
@@ -105,10 +126,15 @@ do exps = 0,nexps-1
         setfileoption("nc","Format","LargeFile")
         
         if (forCasey .eq. 1) then
-            filo = timespan + "UVTWO3_" + tostring(startyr) + "_" + tostring(nyears) + "_ts_Xpl_" + Experiment + ".cam2.h0.nc"
+            filo = timespan + "UVTWO3_" + tostring(startyr) + "_" + tostring(nyears) + "_ts_Xpl_" + Experiment + "." + camversion + ".h0.nc"
         else
-            filo = timespan + tostring(startyr) + "_" + tostring(nyears) + "_ts_Xpl_" + Experiment + ".cam2.h0.nc"
+            if ERAlev .eq. 1 then
+                filo = timespan + tostring(startyr) + "_" + tostring(nyears) + "_ts_ERAIpl_" + Experiment + "." + camversion + ".h0.nc"
+            else
+                filo = timespan + tostring(startyr) + "_" + tostring(nyears) + "_ts_Xpl_" + Experiment + "." + camversion + ".h0.nc" 
+            end if
         end if
+        
         system("/bin/rm -f " + Dir + filo)
         fout = addfile(Dir + filo, "c")
 
@@ -137,7 +163,7 @@ do exps = 0,nexps-1
         end if
 
         delete(Experiment)
-        delete([/lat,lon,P0mb,T,hyam,hybm,PS/])
+        delete([/lat,lon,P0mb,T,hyam,hybm,PS,PHIS,levs,TBOT/])
         delete(filename)
         if (forCasey .eq. 1) then
             delete([/Upres,Vpres,Tpres,Wpres,O3pres/])
